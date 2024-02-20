@@ -7,7 +7,7 @@ export default function Header() {
   return (
     <header
       className={'shadow-xl flex items-center justify-center gap-[40px] fixed w-full z-50 bg-white h-[90px] px-[16px] md:px-[32px] xl:px-[60px]'}>
-      <Button text={'Создать объект'}/>
+
       <nav
         className={` flex gap-[40px]`}>
         <HeaderBtn change={(e) => setActive(e)} state={'all'} active={active}  text={'Все объекты'}/>
