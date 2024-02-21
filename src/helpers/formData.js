@@ -9,7 +9,7 @@ export const objectToFormData = (object, formName) => {
   for(let prop in object) {
     const currentData = object[prop];
 
-    if(!currentData) return
+    if(!currentData) continue
 
     formData.set(prop, currentData);
   }
