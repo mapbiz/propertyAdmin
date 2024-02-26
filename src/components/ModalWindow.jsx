@@ -83,8 +83,90 @@ export default function ModalWindow({isCreate, setOpenWindow, isOpen, revalidate
           </div>
           <div className={'pt-[20px]'}>
             <label htmlFor="file">Фото: </label>
-            <input id={'foto'} type="file"/>
+            <input
+              type='file'
+              multiple
+              onChange={({target: {files}}) => {
+                setUpload(true)
+                if (files.length <= 0) {
+                  return alert('Файлов нет!')
+                }
+                for (let file of Array.from(files)) {
+                  const fileUrl = URL.createObjectURL(file);
+
+                  setImages(prevState => {
+                    prevState.push({url: fileUrl, file: file});
+                    setUpload(false)
+                    return prevState;
+                  })
+                }
+              }}
+            />
+            {/*<div className="flex flex-wrap gap-2 pt-4">*/}
+            {/*  {images.length > 0 && images.map((imgUrl, index) => {*/}
+            {/*    return (*/}
+            {/*      <div*/}
+            {/*        key={index * 1000}*/}
+            {/*        className={'flex flex-col relative'}*/}
+            {/*      >*/}
+            {/*        <img*/}
+            {/*          onClick={() => {*/}
+            {/*            const swappedArray = images;*/}
+
+            {/*            swapElements(swappedArray, index, index + 1)*/}
+
+            {/*            setImages([...swappedArray]);*/}
+            {/*          }}*/}
+            {/*          src={'./arrowLeft.svg'}*/}
+            {/*          className={`absolute top-[100px] right-[10px] cursor-pointer ${index === images.length - 1 ? 'hidden' : ''}`}*/}
+            {/*        />*/}
+            {/*        <img*/}
+            {/*          src={'./arrowRight.svg'}*/}
+            {/*          className={`absolute top-[100px] left-[10px] cursor-pointer ${index === 0 ? 'hidden' : ''}`}*/}
+            {/*          onClick={() => {*/}
+            {/*            const swappedArray = images;*/}
+
+            {/*            swapElements(swappedArray, index, index - 1)*/}
+
+            {/*            setImages([...swappedArray]);*/}
+            {/*          }}*/}
+            {/*        />*/}
+
+            {/*        <img*/}
+            {/*          className={'max-h-[200px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}*/}
+            {/*          src={imgUrl.url}*/}
+            {/*        />*/}
+
+            {/*        <button*/}
+            {/*          onClick={() => {*/}
+            {/*            setImages(images.filter((img) => img.url !== imgUrl.url))*/}
+            {/*          }}*/}
+            {/*          className={'py-[12px] shadow-lg rounded-br-[5px] rounded-bl-[5px] flex justify-center w-full md:hover:bg-red-800 transition-all duration-300 bg-red-700'}*/}
+            {/*        >*/}
+            {/*          Удалить*/}
+            {/*        </button>*/}
+            {/*      </div>*/}
+
+            {/*    )*/}
+            {/*  })}*/}
+            {/*</div>*/}
+
+            <div
+              className={'flex flex-col relative'}
+            >
+              <img
+                className={'max-h-[200px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
+                src={object.images}
+              />
+              <button
+                className={'py-[12px] shadow-lg rounded-br-[5px] rounded-bl-[5px] flex justify-center w-full md:hover:bg-red-800 transition-all duration-300 bg-red-700'}
+              >
+                Удалить
+              </button>
+            </div>
+
           </div>
+
           <div className={'pt-[20px]'}>
             <label htmlFor="file">Планировка: </label>
             <input
@@ -99,7 +181,7 @@ export default function ModalWindow({isCreate, setOpenWindow, isOpen, revalidate
                   const fileUrl = URL.createObjectURL(file);
 
                   setImages(prevState => {
-                    prevState.push({ url: fileUrl, file: file });
+                    prevState.push({url: fileUrl, file: file});
                     setUpload(false)
                     return prevState;
                   })
@@ -108,7 +190,7 @@ export default function ModalWindow({isCreate, setOpenWindow, isOpen, revalidate
             />
 
             <div className="flex flex-wrap gap-2 pt-4">
-              { images.length > 0 && images.map((imgUrl, index) => {
+              {images.length > 0 && images.map((imgUrl, index) => {
                 return (
                   <div
                     key={index * 1000}
@@ -118,20 +200,20 @@ export default function ModalWindow({isCreate, setOpenWindow, isOpen, revalidate
                       onClick={() => {
                         const swappedArray = images;
 
-                        swapElements(swappedArray, index, index+1)
+                        swapElements(swappedArray, index, index + 1)
 
                         setImages([...swappedArray]);
                       }}
-                       src={'./arrowLeft.svg'}
-                       className={`absolute top-[100px] right-[10px] cursor-pointer ${index === images.length-1 ? 'hidden': ''}`}
+                      src={'./arrowLeft.svg'}
+                      className={`absolute top-[100px] right-[10px] cursor-pointer ${index === images.length - 1 ? 'hidden' : ''}`}
                     />
                     <img
                       src={'./arrowRight.svg'}
-                      className={`absolute top-[100px] left-[10px] cursor-pointer ${index === 0 ? 'hidden': ''}`}
+                      className={`absolute top-[100px] left-[10px] cursor-pointer ${index === 0 ? 'hidden' : ''}`}
                       onClick={() => {
                         const swappedArray = images;
 
-                        swapElements(swappedArray, index, index-1)
+                        swapElements(swappedArray, index, index - 1)
 
                         setImages([...swappedArray]);
                       }}

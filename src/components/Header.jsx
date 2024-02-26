@@ -1,8 +1,12 @@
 import HeaderBtn from "./HeaderBtn.jsx";
 import {useState} from "react";
-import Button from "./Button.jsx";
+import {useDispatch} from "react-redux";
+import {setTab} from "../slices/tabSlice.jsx";
+
 
 export default function Header() {
+  const dispatch = useDispatch()
+
   const [active, setActive] = useState('all')
   return (
     <header
@@ -10,10 +14,24 @@ export default function Header() {
 
       <nav
         className={` flex gap-[40px]`}>
-        <HeaderBtn change={(e) => setActive(e)} state={'all'} active={active}  text={'Все объекты'}/>
-        <HeaderBtn change={(e) => setActive(e)}  state={'2'} active={active}  text={'КВАРТИРЫ'}/>
-        <HeaderBtn change={(e) => setActive(e)}  state={'1'} active={active}  text={'КВАРТИРЫ'}/>
-        <HeaderBtn change={(e) => setActive(e)}  state={'3'} active={active}  text={'КВАРТИРЫ'}/>
+        <HeaderBtn change={(e) => {
+          setActive(e)
+          dispatch(setTab({
+            ['activeTab']: 'all'
+          }))
+        }} state={'all'} active={active}  text={'ВСЕ ОБЪЕКТЫ'}/>
+        <HeaderBtn change={(e) => {
+          setActive(e)
+          dispatch(setTab({
+            ['activeTab']: 'rent'
+          }))
+        }} state={'2'} active={active}  text={'АРЕНДА'}/>
+        <HeaderBtn change={(e) => {
+          setActive(e)
+          dispatch(setTab({
+            ['activeTab']: 'sell'
+          }))
+        }}  state={'1'} active={active}  text={'ПРОДАЖА'}/>
       </nav>
     </header>
   )

@@ -4,13 +4,17 @@ import ModalWindow from "./components/ModalWindow.jsx";
 import {useEffect, useState} from "react";
 
 import {getCards} from "./api/api.js";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {resetObject, setObject} from "./slices/tagSlice.jsx";
 
 
 
 function App() {
+  const tab = useSelector((state) => state.tabMore.value.activeTab)
   const dispatch = useDispatch()
+
+
+
 
   const [ModalWindowIsOpen, setModalWindowIsOpen] = useState(false)
   const [isCreateWindow, setCreateWindow] = useState(false)
@@ -19,14 +23,30 @@ function App() {
 
 
   const cardsRequest = async () => {
-    const res = await getCards()
+
+    let res = []
+
+    console.log(tab)
+
+    if (tab === 'all') {
+       res = await getCards('cards')
+    }
+    if (tab === 'rent') {
+       res = await getCards('rent')
+    }
+
+    if (tab === 'sell') {
+       res = await getCards('sell')
+    }
+
+
     setCards(res.data)
   }
 
   useEffect(() => {
-
+    console.log(tab)
     cardsRequest()
-  }, []);
+  }, [tab]);
 
 
   const revalidateCard = () => {

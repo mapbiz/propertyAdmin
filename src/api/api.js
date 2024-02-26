@@ -1,7 +1,7 @@
 import axios from "axios";
 
-export const getCards = async () => {
-  return await axios.get('https://65d32fb7522627d50108390b.mockapi.io/cards')
+export const getCards = async (slug) => {
+  return await axios.get(`https://65d32fb7522627d50108390b.mockapi.io/${slug}`)
 }
 
 /**
