@@ -6,8 +6,9 @@ import {createCard, updateCard} from "../api/api.js";
 import {objectToFormData} from "../helpers/formData.js";
 import {useState, useEffect} from "react";
 import {swapElements} from "../helpers/array.js";
+import {setModalWindow} from "../slices/modalSlice.jsx";
 
-export default function ModalWindow({isCreate, setOpenWindow, isOpen, revalidate}) {
+export default function ModalWindow({isCreate, revalidate}) {
   const [isUpload, setUpload] = useState(false)
   const [images, setImages] = useState( [
     {
@@ -22,6 +23,10 @@ export default function ModalWindow({isCreate, setOpenWindow, isOpen, revalidate
   ])
 
   const object = useSelector((state) => state.tagMore.value)
+  const modalWindow = useSelector((state) => state.modalWindow.value)
+
+  const isOpen = modalWindow.modalWindow
+  const stateWindow = modalWindow.stateWindow
   const dispatch = useDispatch()
 
   const imgToBlob = () => {
@@ -33,10 +38,11 @@ export default function ModalWindow({isCreate, setOpenWindow, isOpen, revalidate
   }
 
   const create = () => {
-   imgToBlob()
-   const data = objectToFormData(object, 'create')
+    imgToBlob()
+    const data = objectToFormData(object, 'create')
     console.log(object)
-   createCard(data)
+    createCard(data)
+    clickOutside()
   }
 
   const update = () => {
@@ -45,10 +51,11 @@ export default function ModalWindow({isCreate, setOpenWindow, isOpen, revalidate
     const data = objectToFormData(object, 'update')
     console.log(data)
     updateCard(data, object['id'])
+    clickOutside()
   }
 
   const clickOutside = () => {
-    setOpenWindow(false);
+    dispatch(setModalWindow())
   };
 
   return (
@@ -61,8 +68,8 @@ export default function ModalWindow({isCreate, setOpenWindow, isOpen, revalidate
         className={`${isOpen ? 'block' : 'hidden'} left-[50%] translate-x-[-50%] fixed h-max w-max flex items-center justify-center`}>
         <div className={'bg-white w-[1000px] h-[700px] px-[32px] py-[24px] overflow-y-auto'}>
           <div className={'flex flex-wrap gap-4'}>
-            <Tag title={'Цена:'} name={'price'}/>
             <Tag title={'Площадь:'} name={'square'}/>
+            <Tag title={'Цена:'} name={'price'}/>
             <Tag title={'Тип окон:'} name={'windowType'}/>
             <Tag title={'Планировка:'} name={'layout'}/>
             <Tag title={'Высота потолков:'} name={'cellingHeight'}/>
@@ -72,14 +79,28 @@ export default function ModalWindow({isCreate, setOpenWindow, isOpen, revalidate
             <Tag title={'Вытяжка:'} name={'hood'}/>
             <Tag title={'Общая стоимость:'} name={'totalCost'}/>
             <Tag title={'Цена за м²:'} name={'priceM'}/>
-            <Tag title={'Арендатор:'} name={'tenant'}/>
-            <Tag title={'Доходность:'} name={'profitability'}/>
+            {
+              stateWindow === 'sell' &&
+              <>
+                <Tag title={'Срок договора аренды:'} name={'tenant'}/>
+                <Tag title={'Месячный арендный поток:'} name={'tenant'}/>
+                <Tag title={'Годовой арендный поток:'} name={'tenant'}/>
+                <Tag title={'Арендатор:'} name={'tenant'}/>
+                <Tag title={'Доходность:'} name={'profitability'}/>
+              </>
+            }
+
 
           </div>
           <div className={'pt-[20px] flex flex-col gap-4'}>
-            <Tag full={true} title={'Месячный арендный поток:'} name={'monthlyRentalFlow'}/>
-            <Tag full={true} title={'Годовой арендный поток:'} name={'annualRentalFlow'}/>
-            <Tag full={true} title={'Срок договора аренды:'} name={'leaseTerm'}/>
+            {
+              stateWindow === 'rent' &&
+              <>
+                <Tag full={true} title={'Арендная ставка в мес:'} name={'monthlyRentalFlow'}/>
+                <Tag full={true} title={'Арендная ставка в год:'} name={'annualRentalFlow'}/>
+              </>
+            }
+
           </div>
           <div className={'pt-[20px]'}>
             <label htmlFor="file">Фото: </label>
@@ -150,9 +171,11 @@ export default function ModalWindow({isCreate, setOpenWindow, isOpen, revalidate
             {/*    )*/}
             {/*  })}*/}
             {/*</div>*/}
+            <div className="flex flex-wrap gap-2 pt-4 " >
+
 
             <div
-              className={'flex flex-col relative'}
+              className={'flex flex-col relative '}
             >
               <img
                 className={'max-h-[200px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
@@ -165,6 +188,7 @@ export default function ModalWindow({isCreate, setOpenWindow, isOpen, revalidate
               </button>
             </div>
 
+          </div>
           </div>
 
           <div className={'pt-[20px]'}>
@@ -189,12 +213,12 @@ export default function ModalWindow({isCreate, setOpenWindow, isOpen, revalidate
               }}
             />
 
-            <div className="flex flex-wrap gap-2 pt-4">
+            <div className="flex flex-wrap gap-2 pt-4 " >
               {images.length > 0 && images.map((imgUrl, index) => {
                 return (
                   <div
                     key={index * 1000}
-                    className={'flex flex-col relative'}
+                    className={'flex flex-col relative '}
                   >
                     <img
                       onClick={() => {
@@ -242,17 +266,25 @@ export default function ModalWindow({isCreate, setOpenWindow, isOpen, revalidate
           </div>
           <div className={'pt-[20px]'}>
             <label htmlFor="file">Панорама: </label>
-            <input onChange={(e) => {
-              dispatch(setObject({
-                ['panorama']: e.target.value
-              }))
-            }} value={object['panorama']} className={'w-full border-2 h-[40px] pl-[15px]'} type="text"/>
+            <div className={'flex gap-[50px]'}>
+
+              <input onChange={(e) => {
+                dispatch(setObject({
+                  ['coordinates1']: e.target.value
+                }))
+              }} value={object['coordinates1']} className={'w-full border-2 h-[40px] pl-[15px]'}
+                     placeholder={'Координаты 1'}
+                     type="text"/>
+              <input onChange={(e) => {
+                dispatch(setObject({
+                  ['coordinates2']: e.target.value
+                }))
+              }} value={object['coordinates2']} className={'w-full border-2 h-[40px] pl-[15px]'}
+                     placeholder={'Координаты 2'}
+                     type="text"/>
+            </div>
           </div>
           <div className={'pt-[40px] flex flex-col gap-4 pb-[20px]'}>
-            <select className={'border-2 h-[40px] pl-[15px]'} name="select" id="1">
-              <option value="Аренда">Аренда</option>
-              <option value="Продажа"> Продажа</option>
-            </select>
             <input onChange={(e) => {
               dispatch(setObject({
                 ['title']: e.target.value
@@ -271,17 +303,11 @@ export default function ModalWindow({isCreate, setOpenWindow, isOpen, revalidate
               }))
             }} value={object['addressM']} className={'w-full border-2 h-[40px] pl-[15px]'} placeholder={'Адрес метро'}
                    type="text"/>
-            <input onChange={(e) => {
-              dispatch(setObject({
-                ['coordinates']: e.target.value
-              }))
-            }} value={object['coordinates']} className={'w-full border-2 h-[40px] pl-[15px]'} placeholder={'Координаты'}
-                   type="text"/>
             <textarea onChange={(e) => {
               dispatch(setObject({
                 ['description']: e.target.value
               }))
-            }} value={object['description']} className={'w-full border-2 h-[120px] pl-[15px]'}
+            }} value={object['description']} className={'w-full border-2 h-[180px] pl-[15px]'}
                       placeholder={'Описание'}/>
 
           </div>
