@@ -9,6 +9,7 @@ import {
 import App from "./App.jsx";
 import Auth from "./Auth.jsx";
 import Layout from "./components/Layout.jsx";
+import PdfPages from "./Pages/PdfPages.jsx";
 
 const router = createBrowserRouter([
   {
@@ -19,12 +20,17 @@ const router = createBrowserRouter([
           index: true,
           element: <App />
         },
+      {
+        path: '/pdf',
+        element: <PdfPages />
+      },
       ]
   },
   {
     path: '/auth',
     element: <Auth />
-  }
+  },
+
 ]);
 
 export default function MyRouter() {
