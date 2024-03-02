@@ -11,6 +11,7 @@ import Button from "@mui/material/Button";
 import {styled} from "@mui/material/styles";
 import {TextareaAutosize, TextField} from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
+import MultipleSelectCheckmarks from "./MultipleSelectCheckmarks.jsx";
 
 export default function ModalWindow({isCreate, revalidate}) {
     const [isUpload, setUpload] = useState(false)
@@ -42,18 +43,17 @@ export default function ModalWindow({isCreate, revalidate}) {
     }
 
     const create = () => {
-        imgToBlob()
+        // imgToBlob()
         const data = objectToFormData(object, 'create')
         console.log(object)
-        createCard(data)
-        clickOutside()
+
     }
 
     const update = () => {
-        imgToBlob()
-        console.log(images)
+        // imgToBlob()
+        // console.log(images)
         const data = objectToFormData(object, 'update')
-        console.log(data)
+        console.log(object)
         updateCard(data, object['id'])
         clickOutside()
     }
@@ -81,61 +81,108 @@ export default function ModalWindow({isCreate, revalidate}) {
 
     return (
         <>
-            <div
-                className={`${isOpen ? 'block' : 'hidden'} top-0 right-0 left-0 bottom-0 opacity-60 bg-black fixed`}
-                onClick={e => clickOutside(e)}
-            ></div>
-            <div
-                className={`${isOpen ? 'block' : 'hidden'} left-[50%] translate-x-[-50%] fixed h-max w-max flex items-center justify-center`}>
-                <div className={'bg-white w-[1000px] h-[700px] px-[32px]  overflow-y-auto'}>
-                    <div className={'pt-[40px] flex flex-col gap-4 pb-[20px]'}>
-                        <TextField
-                            className={'w-full'}
-                            onChange={(e) => {
-                                dispatch(setObject({
-                                    ['title']: e.target.value
-                                }))
-                            }} value={object['title']} label={'Название'} variant="outlined"/>
-                        <TextField
-                            className={'w-full'}
-                            onChange={(e) => {
-                                dispatch(setObject({
-                                    ['address']: e.target.value
-                                }))
-                            }} value={object['addressM']} label={'Адрес'} variant="outlined"/>
-                        <TextField
-                            className={'w-full'}
-                            onChange={(e) => {
-                                dispatch(setObject({
-                                    ['description']: e.target.value
-                                }))
-                            }} value={object['description']} label={'Описание'} variant="outlined"/>
-                    </div>
-                    <div className={'flex flex-col w-full gap-4'}>
-                        <Tag title={'Площадь:'} name={'square'}/>
-                        <Tag title={'Цена:'} name={'price'}/>
-                        <Tag title={'Тип окон:'} name={'windowType'}/>
-                        <Tag title={'Планировка:'} name={'layout'}/>
-                        <Tag title={'Высота потолков:'} name={'cellingHeight'}/>
-                        <Tag title={'Вход:'} name={'entrance'}/>
-                        <Tag title={'Эл. мощность:'} name={'elPower'}/>
-                        <Tag title={'Отделка:'} name={'finishing'}/>
-                        <Tag title={'Вытяжка:'} name={'hood'}/>
-                        <Tag title={'Общая стоимость:'} name={'totalCost'}/>
-                        <Tag title={'Цена за м²:'} name={'priceM'}/>
-                        {
-                            stateWindow === 'sell' &&
-                            <>
-                                <Tag title={'Срок договора аренды:'} name={'tenant'}/>
-                                <Tag title={'Месячный арендный поток:'} name={'tenant'}/>
-                                <Tag title={'Годовой арендный поток:'} name={'tenant'}/>
-                                <Tag title={'Арендатор:'} name={'tenant'}/>
-                                <Tag title={'Доходность:'} name={'profitability'}/>
-                            </>
-                        }
+        <div
+            className={`${isOpen ? 'block' : 'hidden'} top-0 right-0 left-0 bottom-0 opacity-60 bg-black fixed`}
+            onClick={e => clickOutside(e)}
+        ></div>
+        <div
+            className={`${isOpen ? 'block' : 'hidden'} left-[50%] translate-x-[-50%] fixed h-max w-max flex items-center justify-center`}>
+            <div className={'bg-white w-[1000px] h-[700px] px-[32px]  overflow-y-auto'}>
+                <div className={'pt-[40px] flex flex-col gap-4 pb-[20px]'}>
+                    <h2 className={'font-bold'}>Основная информация</h2>
 
-
+                    <TextField
+                        className={'w-full'}
+                        onChange={(e) => {
+                            dispatch(setObject({
+                                ['title']: e.target.value
+                            }))
+                        }} value={object['title']} label={'Название'} variant="outlined"/>
+                    <TextField
+                        className={'w-full'}
+                        onChange={(e) => {
+                            dispatch(setObject({
+                                ['address']: e.target.value
+                            }))
+                        }} value={object['address']} label={'Адрес'} variant="outlined"/>
+                    <TextField
+                        className={'w-full'}
+                        onChange={(e) => {
+                            dispatch(setObject({
+                                ['addressM']: e.target.value
+                            }))
+                        }} value={object['addressM']} label={'Адрес метро'} variant="outlined"/>
+                    <TextField
+                        className={'w-full'}
+                        onChange={(e) => {
+                            dispatch(setObject({
+                                ['description']: e.target.value
+                            }))
+                        }} value={object['description']} label={'Описание'} variant="outlined"/>
+                    <Tag title={'Цена:'} name={'price'}/>
+                    <Tag title={'Цена за м²:'} name={'priceM'}/>
+                    {
+                        stateWindow === 'gap' &&
+                        <Tag title={'Окупаемость:'} name={'rambursare'}/>
+                    }
+                </div>
+                <div className={'pb-[20px]'}>
+                    <h2 className={''}>Координаты панорамы</h2>
+                    <div className={'flex gap-[50px] '}>
+                        <TextField
+                            className={'w-full'}
+                            onChange={(e) => {
+                                dispatch(setObject({
+                                    ['coordinates1']: e.target.value
+                                }))
+                            }} value={object['coordinates1']} label={'Координаты 1'} variant="outlined"/>
+                        <TextField
+                            className={'w-full'}
+                            onChange={(e) => {
+                                dispatch(setObject({
+                                    ['coordinates2']: e.target.value
+                                }))
+                            }} value={object['coordinates2']} label={'Координаты 2'} variant="outlined"/>
                     </div>
+                    <h2 className={''}>Координаты карты</h2>
+                    <div className={'flex gap-[50px] '}>
+                        <TextField
+                            className={'w-full'}
+                            onChange={(e) => {
+                                dispatch(setObject({
+                                    ['coordinatesMap1']: e.target.value
+                                }))
+                            }} value={object['coordinatesMap1']} label={'Координаты 1'} variant="outlined"/>
+                        <TextField
+                            className={'w-full'}
+                            onChange={(e) => {
+                                dispatch(setObject({
+                                    ['coordinatesMap2']: e.target.value
+                                }))
+                            }} value={object['coordinatesMap2']} label={'Координаты 2'} variant="outlined"/>
+                    </div>
+                </div>
+
+                <div className={'flex flex-col w-full gap-4'}>
+                    <h2 className={'font-bold'}>Информация об объекте</h2>
+                    <Tag title={'Площадь:'} name={'square'}/>
+                    <Tag title={'Тип окон:'} name={'windowType'}/>
+                    <Tag title={'Планировка:'} name={'layout'}/>
+                    <Tag title={'Высота потолков:'} name={'cellingHeight'}/>
+                    <Tag title={'Вход:'} name={'entrance'}/>
+                    <Tag title={'Эл. мощность:'} name={'elPower'}/>
+                    <Tag title={'Отделка:'} name={'finishing'}/>
+                    <Tag title={'Вытяжка:'} name={'hood'}/>
+                    <Tag title={'Зона погрузки/разгрузки:'} name={'zona'}/>
+                    {
+                        stateWindow === 'gap' &&
+                        <>
+                            <h2 className={'font-bold'}>Общий арендный поток</h2>
+                            <Tag title={'Месячный арендный поток:'} name={'tenant'}/>
+                            <Tag title={'Годовой арендный поток:'} name={'tenant'}/>
+                        </>
+                    }
+                    <h2 className={'font-bold'}>Коммерческие условия</h2>
                     <div className={'pt-[20px] flex flex-col gap-4'}>
                         {
                             stateWindow === 'rent' &&
@@ -146,212 +193,211 @@ export default function ModalWindow({isCreate, revalidate}) {
                         }
 
                     </div>
-                    <div className={'pt-[20px]'}>
-                        <Button
-                            component="label"
-                            role={undefined}
-                            variant="contained"
-                            tabIndex={-1}
-                            startIcon={<CloudUploadIcon/>}
+                    {
+                        (stateWindow === 'gap' || stateWindow === 'sell')  &&
+                        <>
+                            {
+                                stateWindow === 'gap' && <Tag title={'Доходность:'} name={'profitability'}/>
+                            }
+                            <Tag title={'Общая стоимость:'} name={'totalCost'}/>
+                            <Tag title={'Цена за м²:'} name={'priceM'}/>
+                        </>
+                }
+
+
+                <h2 className={'font-bold'}>Арендаторы</h2>
+                   <MultipleSelectCheckmarks />
+            </div>
+
+            <div className={'pt-[20px]'}>
+                <Button
+                    component="label"
+                    role={undefined}
+                    variant="contained"
+                    tabIndex={-1}
+                    startIcon={<CloudUploadIcon/>}
+                >
+                    Загрузить фотографии объекта
+                    <VisuallyHiddenInput multiple onChange={({target: {files}}) => {
+                        setUpload(true)
+                        if (files.length <= 0) {
+                            return alert('Файлов нет!')
+                        }
+                        for (let file of Array.from(files)) {
+                            const fileUrl = URL.createObjectURL(file);
+                            setImages(prevState => {
+                                prevState.push({url: fileUrl, file: file});
+                                setUpload(false)
+                                return prevState;
+                            })
+                        }
+                    }} type="file"/>
+                </Button>
+
+                {/*<div className="flex flex-wrap gap-2 pt-4">*/}
+                {/*  {images.length > 0 && images.map((imgUrl, index) => {*/}
+                {/*    return (*/}
+                {/*      <div*/}
+                {/*        key={index * 1000}*/}
+                {/*        className={'flex flex-col relative'}*/}
+                {/*      >*/}
+                {/*        <img*/}
+                {/*          onClick={() => {*/}
+                {/*            const swappedArray = images;*/}
+
+                {/*            swapElements(swappedArray, index, index + 1)*/}
+
+                {/*            setImages([...swappedArray]);*/}
+                {/*          }}*/}
+                {/*          src={'./arrowLeft.svg'}*/}
+                {/*          className={`absolute top-[100px] right-[10px] cursor-pointer ${index === images.length - 1 ? 'hidden' : ''}`}*/}
+                {/*        />*/}
+                {/*        <img*/}
+                {/*          src={'./arrowRight.svg'}*/}
+                {/*          className={`absolute top-[100px] left-[10px] cursor-pointer ${index === 0 ? 'hidden' : ''}`}*/}
+                {/*          onClick={() => {*/}
+                {/*            const swappedArray = images;*/}
+
+                {/*            swapElements(swappedArray, index, index - 1)*/}
+
+                {/*            setImages([...swappedArray]);*/}
+                {/*          }}*/}
+                {/*        />*/}
+
+                {/*        <img*/}
+                {/*          className={'max-h-[200px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}*/}
+                {/*          src={imgUrl.url}*/}
+                {/*        />*/}
+
+                {/*        <button*/}
+                {/*          onClick={() => {*/}
+                {/*            setImages(images.filter((img) => img.url !== imgUrl.url))*/}
+                {/*          }}*/}
+                {/*          className={'py-[12px] shadow-lg rounded-br-[5px] rounded-bl-[5px] flex justify-center w-full md:hover:bg-red-800 transition-all duration-300 bg-red-700'}*/}
+                {/*        >*/}
+                {/*          Удалить*/}
+                {/*        </button>*/}
+                {/*      </div>*/}
+
+                {/*    )*/}
+                {/*  })}*/}
+                {/*</div>*/}
+                <div className="flex flex-wrap gap-2 pt-4 ">
+                    <div
+                        className={'flex flex-col relative '}
+                    >
+                        <img
+                            className={'max-h-[200px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
+                            src={object.images}
+                        />
+                        <button
+                            className={'py-[12px] shadow-lg rounded-br-[5px] rounded-bl-[5px] flex justify-center w-full md:hover:bg-red-800 transition-all duration-300 bg-red-700'}
                         >
-                            Загрузить фотографии объекта
-                            <VisuallyHiddenInput multiple onChange={({target: {files}}) => {
-                                setUpload(true)
-                                if (files.length <= 0) {
-                                    return alert('Файлов нет!')
-                                }
-                                for (let file of Array.from(files)) {
-                                    const fileUrl = URL.createObjectURL(file);
-                                    setImages(prevState => {
-                                        prevState.push({url: fileUrl, file: file});
-                                        setUpload(false)
-                                        return prevState;
-                                    })
-                                }
-                            }} type="file"/>
-                        </Button>
+                            Удалить
+                        </button>
+                    </div>
 
-                        {/*<div className="flex flex-wrap gap-2 pt-4">*/}
-                        {/*  {images.length > 0 && images.map((imgUrl, index) => {*/}
-                        {/*    return (*/}
-                        {/*      <div*/}
-                        {/*        key={index * 1000}*/}
-                        {/*        className={'flex flex-col relative'}*/}
-                        {/*      >*/}
-                        {/*        <img*/}
-                        {/*          onClick={() => {*/}
-                        {/*            const swappedArray = images;*/}
+                </div>
+            </div>
 
-                        {/*            swapElements(swappedArray, index, index + 1)*/}
+            <div className={'pt-[20px]'}>
+                <Button
+                    component="label"
+                    role={undefined}
+                    variant="contained"
+                    tabIndex={-1}
+                    startIcon={<CloudUploadIcon/>}
+                >
+                    Загрузить фотографии планировки
+                    <VisuallyHiddenInput multiple
+                                         onChange={({target: {files}}) => {
+                                             setUpload(true)
+                                             if (files.length <= 0) {
+                                                 return alert('Файлов нет!')
+                                             }
+                                             for (let file of Array.from(files)) {
+                                                 const fileUrl = URL.createObjectURL(file);
 
-                        {/*            setImages([...swappedArray]);*/}
-                        {/*          }}*/}
-                        {/*          src={'./arrowLeft.svg'}*/}
-                        {/*          className={`absolute top-[100px] right-[10px] cursor-pointer ${index === images.length - 1 ? 'hidden' : ''}`}*/}
-                        {/*        />*/}
-                        {/*        <img*/}
-                        {/*          src={'./arrowRight.svg'}*/}
-                        {/*          className={`absolute top-[100px] left-[10px] cursor-pointer ${index === 0 ? 'hidden' : ''}`}*/}
-                        {/*          onClick={() => {*/}
-                        {/*            const swappedArray = images;*/}
+                                                 setImages(prevState => {
+                                                     prevState.push({url: fileUrl, file: file});
+                                                     setUpload(false)
+                                                     return prevState;
+                                                 })
+                                             }
+                                         }}
+                                         type="file"/>
+                </Button>
 
-                        {/*            swapElements(swappedArray, index, index - 1)*/}
-
-                        {/*            setImages([...swappedArray]);*/}
-                        {/*          }}*/}
-                        {/*        />*/}
-
-                        {/*        <img*/}
-                        {/*          className={'max-h-[200px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}*/}
-                        {/*          src={imgUrl.url}*/}
-                        {/*        />*/}
-
-                        {/*        <button*/}
-                        {/*          onClick={() => {*/}
-                        {/*            setImages(images.filter((img) => img.url !== imgUrl.url))*/}
-                        {/*          }}*/}
-                        {/*          className={'py-[12px] shadow-lg rounded-br-[5px] rounded-bl-[5px] flex justify-center w-full md:hover:bg-red-800 transition-all duration-300 bg-red-700'}*/}
-                        {/*        >*/}
-                        {/*          Удалить*/}
-                        {/*        </button>*/}
-                        {/*      </div>*/}
-
-                        {/*    )*/}
-                        {/*  })}*/}
-                        {/*</div>*/}
-                        <div className="flex flex-wrap gap-2 pt-4 ">
+                <div className="flex flex-wrap gap-2 pt-4 ">
+                    {images.length > 0 && images.map((imgUrl, index) => {
+                        return (
                             <div
+                                key={index * 1000}
                                 className={'flex flex-col relative '}
                             >
                                 <img
-                                    className={'max-h-[200px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
-                                    src={object.images}
+                                    onClick={() => {
+                                        const swappedArray = images;
+
+                                        swapElements(swappedArray, index, index + 1)
+
+                                        setImages([...swappedArray]);
+                                    }}
+                                    src={'./arrowLeft.svg'}
+                                    className={`absolute top-[100px] right-[10px] cursor-pointer ${index === images.length - 1 ? 'hidden' : ''}`}
                                 />
-                                <button
+                                <img
+                                    src={'./arrowRight.svg'}
+                                    className={`absolute top-[100px] left-[10px] cursor-pointer ${index === 0 ? 'hidden' : ''}`}
+                                    onClick={() => {
+                                        const swappedArray = images;
+
+                                        swapElements(swappedArray, index, index - 1)
+
+                                        setImages([...swappedArray]);
+                                    }}
+                                />
+
+                                <img
+                                    className={'h-[200px] w-[200px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
+                                    src={imgUrl.url}
+                                />
+
+                                <Button
+                                    variant="outlined"
+                                    startIcon={<DeleteIcon/>}
+                                    onClick={() => {
+                                        setImages(images.filter((img) => img.url !== imgUrl.url))
+                                    }}
                                     className={'py-[12px] shadow-lg rounded-br-[5px] rounded-bl-[5px] flex justify-center w-full md:hover:bg-red-800 transition-all duration-300 bg-red-700'}
                                 >
                                     Удалить
-                                </button>
+                                </Button>
                             </div>
 
-                        </div>
-                    </div>
-
-                    <div className={'pt-[20px]'}>
-                        <Button
-                            component="label"
-                            role={undefined}
-                            variant="contained"
-                            tabIndex={-1}
-                            startIcon={<CloudUploadIcon/>}
-                        >
-                            Загрузить фотографии планировки
-                            <VisuallyHiddenInput multiple
-                                                 onChange={({target: {files}}) => {
-                                                     setUpload(true)
-                                                     if (files.length <= 0) {
-                                                         return alert('Файлов нет!')
-                                                     }
-                                                     for (let file of Array.from(files)) {
-                                                         const fileUrl = URL.createObjectURL(file);
-
-                                                         setImages(prevState => {
-                                                             prevState.push({url: fileUrl, file: file});
-                                                             setUpload(false)
-                                                             return prevState;
-                                                         })
-                                                     }
-                                                 }}
-                                                 type="file"/>
-                        </Button>
-
-                        <div className="flex flex-wrap gap-2 pt-4 ">
-                            {images.length > 0 && images.map((imgUrl, index) => {
-                                return (
-                                    <div
-                                        key={index * 1000}
-                                        className={'flex flex-col relative '}
-                                    >
-                                        <img
-                                            onClick={() => {
-                                                const swappedArray = images;
-
-                                                swapElements(swappedArray, index, index + 1)
-
-                                                setImages([...swappedArray]);
-                                            }}
-                                            src={'./arrowLeft.svg'}
-                                            className={`absolute top-[100px] right-[10px] cursor-pointer ${index === images.length - 1 ? 'hidden' : ''}`}
-                                        />
-                                        <img
-                                            src={'./arrowRight.svg'}
-                                            className={`absolute top-[100px] left-[10px] cursor-pointer ${index === 0 ? 'hidden' : ''}`}
-                                            onClick={() => {
-                                                const swappedArray = images;
-
-                                                swapElements(swappedArray, index, index - 1)
-
-                                                setImages([...swappedArray]);
-                                            }}
-                                        />
-
-                                        <img
-                                            className={'h-[200px] w-[200px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
-                                            src={imgUrl.url}
-                                        />
-
-                                        <Button
-                                            variant="outlined"
-                                            startIcon={<DeleteIcon />}
-                                            onClick={() => {
-                                                setImages(images.filter((img) => img.url !== imgUrl.url))
-                                            }}
-                                            className={'py-[12px] shadow-lg rounded-br-[5px] rounded-bl-[5px] flex justify-center w-full md:hover:bg-red-800 transition-all duration-300 bg-red-700'}
-                                        >
-                                            Удалить
-                                        </Button>
-                                    </div>
-
-                                )
-                            })}
+                        )
+                    })}
 
 
-                        </div>
-                    </div>
-                    <div className={'pt-[20px]'}>
-                        <div className={'flex gap-[50px]'}>
-                            <TextField
-                                className={'w-full'}
-                                onChange={(e) => {
-                                    dispatch(setObject({
-                                        ['coordinates1']: e.target.value
-                                    }))
-                                }} value={object['coordinates1']} label={'Координаты 1'} variant="outlined"/>
-                            <TextField
-                                className={'w-full'}
-                                onChange={(e) => {
-                                    dispatch(setObject({
-                                        ['coordinates2']: e.target.value
-                                    }))
-                                }} value={object['coordinates2']} label={'Координаты 2'} variant="outlined"/>
-                        </div>
-                    </div>
-
-                    <button
-                        onClick={() => {
-                            if (isCreate) {
-                                create()
-                                revalidate()
-                            } else {
-                                update()
-                                revalidate()
-                            }
-                        }}
-                        className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}>{isCreate ? 'Создать' : 'Редактировать'}</button>
                 </div>
             </div>
-        </>
 
 
-    )
+            <button
+                onClick={() => {
+                    if (isCreate) {
+                        create()
+                        revalidate()
+                    } else {
+                        update()
+                        revalidate()
+                    }
+                }}
+                className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}>{isCreate ? 'Создать' : 'Редактировать'}</button>
+        </div>
+        </div>
+</>
+
+
+)
 }

@@ -27,6 +27,7 @@ const initialState = {
     annualRentalFlow: '',
     leaseTerm: '',
     panorama: '',
+    arendators: [],
   },
 }
 
@@ -37,7 +38,15 @@ export const tagSlice = createSlice({
     resetObject: (state) => {
       return state = initialState;
     },
-
+    setArendators: (state, action) => {
+      return {
+        ...state,
+        value: {
+          ...state.value,
+          arendators: action.payload.arendators,
+        },
+      };
+    },
     setObject: (state, action) => {
       state.value = {...state.value, ...action.payload }
     },
@@ -45,6 +54,6 @@ export const tagSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setObject, resetObject } = tagSlice.actions
+export const { setObject, resetObject, setArendators } = tagSlice.actions
 
 export default tagSlice.reducer

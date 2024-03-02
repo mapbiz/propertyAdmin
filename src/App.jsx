@@ -54,7 +54,6 @@ function App() {
       }))
       dispatch(resetObject())
     } else {
-
       dispatch(setObject(
         card
       ))
