@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const getCards = async (slug) => {
-  return await axios.get(`https://65d32fb7522627d50108390b.mockapi.io/${slug}`)
+  return await axios.get(` http://79.174.82.17:8080/api/v1/objects`)
 }
 
 /**
@@ -17,4 +17,8 @@ export const updateCard = async (data, id) => {
 
 export const deleteCard = async (id) => {
   return await axios.delete(`https://65d32fb7522627d50108390b.mockapi.io/cards/${id}`)
+}
+
+export const getArendators = async () => {
+  return (await axios.get('http://79.174.82.17:8080/api/v1/tentant/')).data
 }

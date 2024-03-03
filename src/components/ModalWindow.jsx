@@ -13,7 +13,7 @@ import {TextareaAutosize, TextField} from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import MultipleSelectCheckmarks from "./MultipleSelectCheckmarks.jsx";
 
-export default function ModalWindow({isCreate, revalidate}) {
+export default function ModalWindow({isCreate}) {
     const [isUpload, setUpload] = useState(false)
     const [images, setImages] = useState([
         {
@@ -28,7 +28,7 @@ export default function ModalWindow({isCreate, revalidate}) {
     ])
 
     const object = useSelector((state) => state.tagMore.value)
-    const modalWindow = useSelector((state) => state.modalWindow.value)
+    const modalWindow = useSelector((state) => state.modalWindow)
 
     const isOpen = modalWindow.modalWindow
     const stateWindow = modalWindow.stateWindow
@@ -59,7 +59,9 @@ export default function ModalWindow({isCreate, revalidate}) {
     }
 
     const clickOutside = () => {
-        dispatch(setModalWindow())
+        dispatch(setModalWindow({
+            modalWindow: false
+        }))
     };
 
 
@@ -109,9 +111,9 @@ export default function ModalWindow({isCreate, revalidate}) {
                         className={'w-full'}
                         onChange={(e) => {
                             dispatch(setObject({
-                                ['addressM']: e.target.value
+                                ['metro']: e.target.value
                             }))
-                        }} value={object['addressM']} label={'Адрес метро'} variant="outlined"/>
+                        }} value={object['metro']} label={'Адрес метро'} variant="outlined"/>
                     <TextField
                         className={'w-full'}
                         onChange={(e) => {

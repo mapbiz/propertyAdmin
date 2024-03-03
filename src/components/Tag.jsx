@@ -9,20 +9,23 @@ export default function Tag({name, full, title}) {
 
 
   const object = useSelector((state) => state.tagMore.value)
+    console.log(object)
   const dispatch = useDispatch()
 
   useEffect(() => {
     // console.log(object)
   }, [object]);
 
+    const handleChange = (e) => {
+        const updatedObject = { ...object };
+        updatedObject[name] = { ...updatedObject[name], global: e.target.value };
+        dispatch(setObject(updatedObject));
+    };
+
   return (
     <div className={`flex w-full `}>
       <div className={'text-[18px]'}></div>
-        <TextField className={'w-full'} onChange={(e) => {
-            dispatch(setObject({
-                [`${name}`]: e.target.value
-            }))
-        }} value={object[name]}  label={title && title} variant="outlined" />
+        <TextField className={'w-full'} onChange={handleChange} value={object[name]?.global || ''}  label={title && title} variant="outlined" />
 
     </div>
   )

@@ -10,6 +10,7 @@ import App from "./App.jsx";
 import Auth from "./Auth.jsx";
 import Layout from "./components/Layout.jsx";
 import PdfPages from "./Pages/PdfPages.jsx";
+import ArendatorsList from "./components/ArendatorsList.jsx";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: '/pdf',
         element: <PdfPages />
+      },
+      {
+        path: '/arendators',
+        element: <ArendatorsList />
       },
       ]
   },
