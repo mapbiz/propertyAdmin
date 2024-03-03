@@ -1,4 +1,4 @@
-import {deleteCard} from "../api/api.js";
+import {deleteCard, getCurrentCard} from "../api/api.js";
 import {useDispatch} from "react-redux";
 import {setStateWindow} from "../slices/modalSlice.jsx";
 import {setObject} from "../slices/tagSlice.jsx";
@@ -17,12 +17,17 @@ export default function Card({card}) {
 
     return (
         <div
-            onClick={() => {
-                dispatch(setStateWindow({
-                    modalWindow: true,
-                    item: card
-                }))
-                dispatch(setObject(card))
+            onClick={async () => {
+                const currentCard = await getCurrentCard(card.slug)
+                if(currentCard.ok) {
+                    dispatch(setStateWindow({
+                        modalWindow: true,
+                        item: currentCard
+                    }))
+                    dispatch(setObject(currentCard.data))
+                } else {
+                    alert('ошибка загрузки карточки')
+                }
             }
 
 

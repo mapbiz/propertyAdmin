@@ -1,11 +1,22 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  value: {
-    images: [],
+  value: {   images: [
+      '',
+      '',
+      ''
+    ],
     id: '',
     title: '',
-    price: '',
+    price: {
+      square: null,
+      profitability: null,
+      global: null,
+      rent: {
+        year: null,
+        mouth: null
+      }
+    },
     square: '',
     windowType: '',
     cellingHeight: '',
@@ -26,9 +37,59 @@ const initialState = {
     monthlyRentalFlow: '',
     annualRentalFlow: '',
     leaseTerm: '',
-    panorama: '',
+    panorama: {
+      lat: null,
+      lon: null
+    },
     arendators: [],
-  },
+    createdAt: '',
+    updatedAt: '',
+    type: '',
+    slug: '',
+    info: {
+      square: null,
+      floor: null,
+      ceilingHeight: null,
+      countEntrance: null,
+      glazing: null,
+      typeWindow: '',
+      layout: '',
+      enter: '',
+      finishing: '',
+      hood: null,
+      force: ''
+    },
+    metro: '',
+    tenantsInfo: [
+      {
+        detalization: [
+          ''
+        ],
+        indexation: null,
+        contract: '',
+        rentFlow: {
+          mount: null,
+          year: null
+        },
+        tentant: {
+          id: '',
+          name: '',
+          category: '',
+          logo: ''
+        }
+      }
+    ],
+    globalRentFlow: {
+      year: null,
+      mouth: null
+    },
+    payback: null,
+    zone: null,
+    layoutImages: [
+      '',
+      '',
+      ''
+    ]},
 }
 
 export const tagSlice = createSlice({
@@ -36,7 +97,7 @@ export const tagSlice = createSlice({
   initialState,
   reducers: {
     resetObject: (state) => {
-      return state = initialState;
+      return initialState
     },
     setArendators: (state, action) => {
       return {
@@ -50,10 +111,14 @@ export const tagSlice = createSlice({
     setObject: (state, action) => {
       state.value = {...state.value, ...action.payload }
     },
+    openCurrentObject: (state, action) => {
+      state.value = action.payload
+    },
+
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { setObject, resetObject, setArendators } = tagSlice.actions
+export const { setObject, resetObject, setArendators,  openCurrentObject} = tagSlice.actions
 
 export default tagSlice.reducer

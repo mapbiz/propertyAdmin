@@ -22,3 +22,7 @@ export const deleteCard = async (id) => {
 export const getArendators = async () => {
   return (await axios.get('http://79.174.82.17:8080/api/v1/tentant/')).data
 }
+
+export const getCurrentCard = async (slug) => {
+  return (await axios.get(`http://79.174.82.17:8080/api/v1/object/${slug}`)).data
+}
