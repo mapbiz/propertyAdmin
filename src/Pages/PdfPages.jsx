@@ -8,9 +8,11 @@ import object from '../../public/5.jpg'
 import specifications from '../../public/specifications.png'
 import cardMap from '../../public/mapCard.jpg'
 import propertyLogo from '../../public/property.png'
+import {useSelector} from "react-redux";
+
 
 const images = [
-    '../../public/object.jpg', '../../public/object2.jpg','../../public/object3.jpg','../../public/object4.jpg','../../public/object5.jpg','../../public/object6.jpg',
+    '../../public/object.jpg', '../../public/object2.jpg', '../../public/object3.jpg', '../../public/object4.jpg', '../../public/object5.jpg', '../../public/object6.jpg',
 ]
 
 const arendators = [
@@ -83,20 +85,60 @@ Font.register({family: 'Inter', src: InterRegular});
 Font.register({family: 'InterBold', src: InterBold});
 export default function TestPdf() {
 
+    const card = useSelector((state) => state.tagMore.value)
     const title = () => {
         return (
             <View style={styles.titleObject}>
                 <View style={{...styles.flexRow, ...styles.gap}}>
                     <Image style={{width: '38px', height: '38px'}} src={map}></Image>
-                    <Text style={styles.text}>г Москва, ул 14-я Парковая, д 8</Text>
+                    <Text style={styles.text}>{card.title}</Text>
                 </View>
                 <View style={styles.flexRow}>
                     <Image style={{width: '38px', height: '38px'}} src={metro}></Image>
-                    <Text style={styles.text}>м. Первомайская</Text>
+                    <Text style={styles.text}>{card.metro}</Text>
                 </View>
             </View>
         )
     }
+
+    const item = (icon, tag, value, metric) => {
+        return (
+            <View style={{
+                display: "flex",
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+                padding: '20px',
+                borderBottom: '2px solid #DDEEE4'
+            }}>
+                <View style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: '6.5px',
+                    alignItems: 'center'
+                }}>
+                    <Image style={{width: '40px', height: '40px'}}
+                           src={icon}></Image>
+                    <Text style={{fontSize: '44px', color: 'black'}}>
+                        {tag}
+                    </Text>
+                </View>
+                <View style={{display: "flex", flexDirection: 'row', gap: '6px'}}>
+                    <Text style={{fontSize: '42px'}}>
+                        {value}
+                    </Text>
+                    {
+                        metric
+                        &&
+                        <Text style={{fontSize: '42px'}}>
+                            {metric}
+                        </Text>
+                    }
+                </View>
+
+            </View>
+        )
+    }
+
     const footer = () => {
         return (
             <View style={{
@@ -111,11 +153,19 @@ export default function TestPdf() {
                 bottom: '100px'
             }}>
                 <Image style={{width: '533px', height: '156px', objectFit: 'contain'}} src={propertyLogo}></Image>
-                <View style={{width: '100%', flexDirection: "column", display: "flex", justifyContent: 'flex-end', alignItems: 'flex-end'}}>
-                    <Link style={{textDecoration: 'none', color: 'black', fontSize: '40px'}} href={'tel:+7 495 792 84 98'}>
+                <View style={{
+                    width: '100%',
+                    flexDirection: "column",
+                    display: "flex",
+                    justifyContent: 'flex-end',
+                    alignItems: 'flex-end'
+                }}>
+                    <Link style={{textDecoration: 'none', color: 'black', fontSize: '40px'}}
+                          href={'tel:+7 495 792 84 98'}>
                         +7 495 792 84 98
                     </Link>
-                    <Link style={{textDecoration: 'none', color: 'black', fontSize: '40px'}} href={'mailto:info@propertyplus.ru'}>
+                    <Link style={{textDecoration: 'none', color: 'black', fontSize: '40px'}}
+                          href={'mailto:info@propertyplus.ru'}>
                         info@propertyplus.ru
                     </Link>
                     <Text style={{fontSize: '40px', fontFamily: 'Inter'}}>г. Москва, ул Усачева 2, стр. 3</Text>
@@ -198,6 +248,11 @@ export default function TestPdf() {
         }
 
     });
+    const typeOfCard = {
+        sale: "Продажа торговой площади",
+        rent: 'Аренда торговой площади',
+        'sale-business': 'ГАБ'
+    }
     return (
         <div className={'pt-[150px]'}>
             <PDFViewer className={'h-screen w-full'}>
@@ -206,7 +261,7 @@ export default function TestPdf() {
                         {title()}
                         <View style={{...styles.pt120, display: "flex", flexDirection: 'row', gap: '40px'}}>
                             <View style={{maxWidth: '1020px'}}>
-                                <Image style={styles.imagePreview} src={object}></Image>
+                                <Image style={styles.imagePreview} src={card.images[0]}></Image>
                                 <Text style={{
                                     ...styles.textSale,
                                     width: '100%',
@@ -214,14 +269,9 @@ export default function TestPdf() {
                                     display: 'flex',
                                     alignItems: "center",
                                     justifyContent: 'center'
-                                }}>Продажа торговой площади</Text>
+                                }}>{typeOfCard[card.type]}</Text>
                                 <Text style={{paddingTop: '40px', fontSize: '40px'}}>
-                                    Торговое помещение c сетевыми арендаторами: супермаркет "Пятерочка" и аптека “Шах”.
-                                    Зальная планировка, первая линия, отдельная входная группа с фасада ОСЗ,
-                                    оборудованная зона загрузки. Объект расположен на пересечении улиц 14-я Парковая и
-                                    Нижняя Первомайская. Рядом оживленный пешеходный переход. Хорошие рекламные
-                                    возможности. Парковка перед фасадом. В шаговой доступности школа, банк, аптека и
-                                    колледж. Плотный жилой массив.
+                                    {card.description}
                                 </Text>
                             </View>
                             <View style={{maxWidth: '1020px'}}>
@@ -246,7 +296,7 @@ export default function TestPdf() {
                                             display: 'flex',
                                             gap: '8px'
                                         }}>
-                                            575.6
+                                            {card.info.square}
                                             <Text style={{color: '#144728', fontSize: '40px'}}>м²</Text>
                                         </Text>
                                     </View>
@@ -264,7 +314,7 @@ export default function TestPdf() {
                                             display: 'flex',
                                             gap: '8px'
                                         }}>
-                                            110 000 000
+                                            {card.price.global}
                                             <Text style={{color: '#144728', fontSize: '40px'}}>₽</Text>
                                         </Text>
                                     </View>
@@ -282,7 +332,7 @@ export default function TestPdf() {
                                             display: 'flex',
                                             gap: '8px'
                                         }}>
-                                            309 510
+                                            {card.price.square}
                                             <Text style={{color: '#144728', fontSize: '40px'}}>₽</Text>
                                         </Text>
                                     </View>
@@ -314,8 +364,9 @@ export default function TestPdf() {
                                     <Text style={styles.titleBlack}>
                                         Коммерческие условия
                                     </Text>
+
                                     <View style={{border: '3px solid #DDEEE4', marginTop: '20px'}}>
-                                        <View style={{
+                                        {card.globalRentFlow.mouth && <View style={{
                                             display: "flex",
                                             justifyContent: 'space-between',
                                             flexDirection: 'row',
@@ -335,54 +386,64 @@ export default function TestPdf() {
                                                 </Text>
                                             </View>
                                             <Text style={{fontSize: '44px'}}>
-                                                995 120 руб.
+                                                {card.globalRentFlow.mouth && card.globalRentFlow.mouth}
                                             </Text>
                                         </View>
-                                        <View style={{
-                                            display: "flex",
-                                            justifyContent: 'space-between',
-                                            flexDirection: 'row',
-                                            padding: '20px',
-                                            borderBottom: '2px solid #DDEEE4'
-                                        }}>
+                                        }
+
+                                        {
+                                            card.globalRentFlow.year &&
                                             <View style={{
-                                                display: 'flex',
+                                                display: "flex",
+                                                justifyContent: 'space-between',
                                                 flexDirection: 'row',
-                                                gap: '6.5px',
-                                                alignItems: 'center'
+                                                padding: '20px',
+                                                borderBottom: '2px solid #DDEEE4'
                                             }}>
-                                                <Image style={{width: '40px', height: '40px'}}
-                                                       src={specifications}></Image>
-                                                <Text style={{fontSize: '44px', color: '#144728'}}>
-                                                    ГАП:
+                                                <View style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    gap: '6.5px',
+                                                    alignItems: 'center'
+                                                }}>
+                                                    <Image style={{width: '40px', height: '40px'}}
+                                                           src={specifications}></Image>
+                                                    <Text style={{fontSize: '44px', color: '#144728'}}>
+                                                        ГАП:
+                                                    </Text>
+                                                </View>
+                                                <Text style={{fontSize: '44px'}}>
+                                                    {card.globalRentFlow.year && card.globalRentFlow.year}
                                                 </Text>
                                             </View>
-                                            <Text style={{fontSize: '44px'}}>
-                                                11 941 440 руб.
-                                            </Text>
-                                        </View>
-                                        <View style={{
-                                            display: "flex",
-                                            justifyContent: 'space-between',
-                                            flexDirection: 'row',
-                                            padding: '20px'
-                                        }}>
+                                        }
+                                        {
+                                            card.payback &&
                                             <View style={{
-                                                display: 'flex',
+                                                display: "flex",
+                                                justifyContent: 'space-between',
                                                 flexDirection: 'row',
-                                                gap: '6.5px',
-                                                alignItems: 'center'
+                                                padding: '20px'
                                             }}>
-                                                <Image style={{width: '40px', height: '40px'}}
-                                                       src={specifications}></Image>
-                                                <Text style={{fontSize: '44px', color: '#144728'}}>
-                                                    Окупаемость:
+                                                <View style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    gap: '6.5px',
+                                                    alignItems: 'center'
+                                                }}>
+                                                    <Image style={{width: '40px', height: '40px'}}
+                                                           src={specifications}></Image>
+                                                    <Text style={{fontSize: '44px', color: '#144728'}}>
+                                                        Окупаемость:
+                                                    </Text>
+                                                </View>
+
+                                                <Text style={{fontSize: '44px'}}>
+                                                    {card.payback && card.payback} лет
                                                 </Text>
                                             </View>
-                                            <Text style={{fontSize: '44px'}}>
-                                                9.2 лет/11%
-                                            </Text>
-                                        </View>
+                                        }
+
                                     </View>
                                 </View>
                                 {/*Коммерческие условия*/}
@@ -392,33 +453,47 @@ export default function TestPdf() {
                                         Технические характеристики
                                     </Text>
                                     <View style={{border: '3px solid #DDEEE4', marginTop: '20px'}}>
-                                        {texnicalData.map((item, index) => {
-                                            return (
-                                                <View style={{
-                                                    display: "flex",
-                                                    justifyContent: 'space-between',
-                                                    flexDirection: 'row',
-                                                    padding: '20px',
-                                                    borderBottom: '2px solid #DDEEE4'
-                                                }}>
-                                                    <View style={{
-                                                        display: 'flex',
-                                                        flexDirection: 'row',
-                                                        gap: '6.5px',
-                                                        alignItems: 'center'
-                                                    }}>
-                                                        <Image style={{width: '40px', height: '40px'}}
-                                                               src={item.icon}></Image>
-                                                        <Text style={{fontSize: '44px', color: 'black'}}>
-                                                            {item.text}
-                                                        </Text>
-                                                    </View>
-                                                    <Text style={{fontSize: '42px'}}>
-                                                        {item.value}
-                                                    </Text>
-                                                </View>
-                                            )
-                                        })}
+                                        {
+                                            card.info.floor
+                                            &&
+                                            item('../../public/etazh.jpg', 'Этаж', `${card.info.floor}`)
+                                        }
+                                        {
+                                            card.info.enter
+                                            &&
+                                            item('../../public/vhod.png', 'Количество входов', `${card.info.enter}`)
+                                        }
+                                        {
+                                            card.info.square
+                                            &&
+                                            item('../../public/ploshad.png', 'Площадь', `${card.info.square}`, 'м²')
+                                        }
+                                        {
+                                            card.info.ceilingHeight
+                                            &&
+                                            item('../../public/potolok.png', 'Высота потолков', `${card.info.ceilingHeight}`, 'м')
+                                        }
+                                        {
+                                            card.info.force
+                                            &&
+                                            item('../../public/set.png', 'Мощность', `${card.info.force}`, 'кВт')
+                                        }
+                                        {
+                                            card.info.layout
+                                            &&
+                                            item('../../public/plan.png', 'Планировка', `${card.info.layout}`,)
+                                        }
+                                        {
+                                            card.info.typeWindow
+                                            &&
+                                            item('../../public/steklo.png', 'Остекление', `${card.info.typeWindow}`,)
+                                        }
+                                        {
+                                            card.info.finishing
+                                            &&
+                                            item('../../public/otdelka.png', 'Отделка', `${card.info.finishing}`,)
+                                        }
+
                                     </View>
                                 </View>
                                 {/*Технические хар-ки*/}
@@ -632,15 +707,38 @@ export default function TestPdf() {
                                     </View>
                                 </View>
                             })}
-                            <Image style={{maxHeight: '1200px', objectFit: 'contain', paddingTop: '200px'}}
-                                   src={'../../public/planing.jpg'}></Image>
+                            <View style={{display: "flex", flexDirection: 'row', flexWrap: 'wrap'}}>
+                                {card.layoutImages.length > 1 ?
+                                    card.layoutImages.map(item => {
+                                        return (
+                                            <Image
+                                                style={{maxWidth: '1010px', objectFit: 'contain'}}
+                                                src={item}></Image>
+                                        )
+                                    }) :
+                                    card.layoutImages.map(item => {
+                                        return (
+                                            <Image
+                                                style={{maxHeight: '1200px', objectFit: 'contain', paddingTop: '200px'}}
+                                                src={item}></Image>
+                                        )
+                                    })
+                                }
+
+                            </View>
                         </View>
                         {footer()}
                     </Page>
                     <Page size={{width: 2480, height: 3508}} style={styles.page}>
                         {title()}
-                        <View style={{display: "flex", flexDirection: 'row', flexWrap: 'wrap', gap: '60px', paddingTop: '150px'}}>
-                            {images.map(item => {
+                        <View style={{
+                            display: "flex",
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            gap: '60px',
+                            paddingTop: '150px'
+                        }}>
+                            {card.images.map(item => {
                                 return (
                                     <Image style={{maxWidth: '1010px', objectFit: 'contain'}} src={item}>
 

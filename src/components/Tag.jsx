@@ -1,11 +1,11 @@
 import {useDispatch, useSelector} from "react-redux";
 import {setObject} from "../slices/tagSlice.jsx";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {TextField} from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import {Label} from "@mui/icons-material";
 
-export default function Tag({name, full, title, subName = null, checkbox = false}) {
+export default function Tag({name, full, title, subName = null, checkbox = false, sub3Name = null}) {
     const field = useRef("");
     const [isCheked, setIsCheked] = useState(false)
     const object = useSelector((state) => state.tagMore.value)
@@ -40,10 +40,22 @@ export default function Tag({name, full, title, subName = null, checkbox = false
         const updatedObject = {...object};
 
         if (subName === null) updatedObject[name] = e.target.value;
+        else if (sub3Name !== null && subName !== null) updatedObject[name] = {
+            [subName]: {
+                ...updatedObject[subName],
+                [sub3Name]: e.target.value
+            }
+        };
         else updatedObject[name] = {...updatedObject[name], [subName]: e.target.value};
 
         dispatch(setObject(updatedObject));
     };
+
+    const tagDisplayValue = useMemo(() => {
+        if(subName !== null && sub3Name === null) return object[name][subName];
+        if(subName !== null && sub3Name !== null) return object[name][subName][sub3Name];
+        if(subName === null && sub3Name === null) return object[name];
+    }, [object]);
 
     return (
         <div className={`flex w-full `}>
@@ -54,17 +66,12 @@ export default function Tag({name, full, title, subName = null, checkbox = false
                 <TextField
                     className={'w-full'}
                     onChange={handleChange}
-                    value={
-                        subName !== null ?
-                            object[name][subName]
-                            :
-                            object[name]
-                    }
+                    value={tagDisplayValue}
                     label={title && title}
                     variant="outlined"
                 />
                 :
-                <>
+                <div className={'flex justify-center items-center'}>
                     <p>{title}</p>
                     <Checkbox
                         onChange={(e) => {
@@ -73,7 +80,7 @@ export default function Tag({name, full, title, subName = null, checkbox = false
                         }}
                         checked={isCheked}>
                     </Checkbox>
-                </>
+                </div>
             }
 
         </div>

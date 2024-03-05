@@ -1,8 +1,16 @@
 import Tag from "./Tag.jsx";
 import {useDispatch, useSelector} from "react-redux";
-import {resetObject, setObject} from "../slices/tagSlice.jsx";
+import {
+    addCardImage,
+    addLayoutImage,
+    removeCardImage,
+    removeLayoutImage,
+    resetObject,
+    setObject
+} from "../slices/tagSlice.jsx";
 import {createCard, updateCard} from "../api/api.js";
 import {objectToFormData} from "../helpers/formData.js";
+import {useNavigate} from "react-router-dom";
 import {useState, useEffect} from "react";
 import {swapElements} from "../helpers/array.js";
 import {setModalWindow} from "../slices/modalSlice.jsx";
@@ -45,7 +53,6 @@ export default function ModalWindow({isCreate}) {
     const create = () => {
         // imgToBlob()
         const data = objectToFormData(object, 'create')
-        console.log(object)
 
     }
 
@@ -53,7 +60,6 @@ export default function ModalWindow({isCreate}) {
         // imgToBlob()
         // console.log(images)
         const data = objectToFormData(object, 'update')
-        console.log(object)
         updateCard(data, object['id'])
         clickOutside()
     }
@@ -65,6 +71,38 @@ export default function ModalWindow({isCreate}) {
         }))
 
     };
+
+    const navigate = useNavigate()
+
+
+    const handleFileChange = (event) => {
+        const files = event.target.files;
+        // Предполагаем, что вы загружаете и обрабатываете один файл за раз
+        if (files.length > 0) {
+            const file = files[0];
+
+            // Здесь должна быть логика для отправки файла на сервер и получения URL
+            // Для примера предположим, что вы получили URL как 'urlToUploadedFile'
+            const urlToUploadedFile = URL.createObjectURL(file);
+
+            // Добавляем URL в redux
+            dispatch(addLayoutImage(urlToUploadedFile));
+        }
+    }
+    const handleImagesChange = (event) => {
+        const files = event.target.files;
+        // Предполагаем, что вы загружаете и обрабатываете один файл за раз
+        if (files.length > 0) {
+            const file = files[0];
+
+            // Здесь должна быть логика для отправки файла на сервер и получения URL
+            // Для примера предположим, что вы получили URL как 'urlToUploadedFile'
+            const urlToUploadedFile = URL.createObjectURL(file);
+
+            // Добавляем URL в redux
+            dispatch(addCardImage(urlToUploadedFile));
+        }
+    }
 
 
     // стилизация кнопок загрузки
@@ -93,6 +131,7 @@ export default function ModalWindow({isCreate}) {
                 className={`${isOpen ? 'block' : 'hidden'} left-[50%] translate-x-[-50%] fixed h-max w-max flex items-center justify-center`}>
                 <div className={'bg-white w-[1000px] h-[700px] px-[32px]  overflow-y-auto'}>
                     <div className={'pt-[40px] flex flex-col gap-4 pb-[20px]'}>
+                        <p>{object.type}</p>
                         <h2 className={'font-bold'}>Основная информация</h2>
                         <Tag
                             title={'Название:'}
@@ -119,10 +158,10 @@ export default function ModalWindow({isCreate}) {
                             variant="outlined"
                         />
                         <Tag title={'Цена:'} subName={'global'} name={'price'}/>
-                        <Tag subName={'profitability'} title={'Цена за м²:'} name={'price'}/>
+                        <Tag subName={'square'} title={'Цена за м²:'} name={'price'}/>
                         {
                             stateWindow === 'sale-business' &&
-                            <Tag title={'Окупаемость:'} name={'rambursare'}/>
+                            <Tag title={'Окупаемость:'} name={'payback'}/>
                         }
                     </div>
                     <div className={'pb-[20px]'}>
@@ -172,13 +211,13 @@ export default function ModalWindow({isCreate}) {
                         <Tag title={'Эл. мощность:'} subName={'force'} name={'info'}/>
                         <Tag title={'Отделка:'} name={'info'} subName={'finishing'}/>
                         <Tag checkbox={true} title={'Вытяжка:'} subName={'hood'} name={'info'}/>
-                        <Tag title={'Зона погрузки/разгрузки:'} subName={'zone'} name={'info'}/>
+                        <Tag checkbox={true} title={'Зона погрузки/разгрузки:'} name={'zone'}/>
                         {
                             stateWindow === 'sale-business' &&
                             <>
                                 <h2 className={'font-bold'}>Общий арендный поток</h2>
-                                <Tag title={'Месячный арендный поток:'} name={'tenant'}/>
-                                <Tag title={'Годовой арендный поток:'} name={'tenant'}/>
+                                <Tag title={'Месячный арендный поток:'} subName={'year'} name={'globalRentFlow'}/>
+                                <Tag title={'Годовой арендный поток:'} subName={'mouth'} name={'globalRentFlow'}/>
                             </>
                         }
                         <h2 className={'font-bold'}>Коммерческие условия</h2>
@@ -186,8 +225,10 @@ export default function ModalWindow({isCreate}) {
                             {
                                 stateWindow === 'rent' &&
                                 <>
-                                    <Tag full={true} title={'Арендная ставка в мес:'} name={'monthlyRentalFlow'}/>
-                                    <Tag full={true} title={'Арендная ставка в год:'} name={'annualRentalFlow'}/>
+                                    <Tag full={true} title={'Арендная ставка в мес:'} subName={'rent'}
+                                         sub3Name={'mouth'} name={'price'}/>
+                                    <Tag full={true} title={'Арендная ставка в год:'} subName={'rent'} sub3Name={'year'}
+                                         name={'price'}/>
                                 </>
                             }
 
@@ -196,16 +237,20 @@ export default function ModalWindow({isCreate}) {
                             (stateWindow === 'sale-business' || stateWindow === 'sell') &&
                             <>
                                 {
-                                    stateWindow === 'sale-business' && <Tag title={'Доходность:'} name={'profitability'}/>
+                                    stateWindow === 'sale-business' &&
+                                    <Tag title={'Доходность:'} subName={'profitability'} name={'price'}/>
                                 }
-                                <Tag title={'Общая стоимость:'} name={'totalCost'}/>
-                                <Tag title={'Цена за м²:'} name={'priceM'}/>
                             </>
                         }
 
+                        {
+                            stateWindow === 'sale' || stateWindow === 'sale-business' &&
+                            <>
+                                <h2 className={'font-bold'}>Арендаторы</h2>
+                                <MultipleSelectCheckmarks/>
+                            </>
+                        }
 
-                        <h2 className={'font-bold'}>Арендаторы</h2>
-                        <MultipleSelectCheckmarks/>
                     </div>
 
                     <div className={'pt-[20px]'}>
@@ -216,23 +261,11 @@ export default function ModalWindow({isCreate}) {
                             tabIndex={-1}
                             startIcon={<CloudUploadIcon/>}
                         >
-                            Загрузить фотографии объекта
-                            <VisuallyHiddenInput multiple onChange={({target: {files}}) => {
-                                setUpload(true)
-                                if (files.length <= 0) {
-                                    return alert('Файлов нет!')
-                                }
-                                for (let file of Array.from(files)) {
-                                    const fileUrl = URL.createObjectURL(file);
-                                    setImages(prevState => {
-                                        prevState.push({url: fileUrl, file: file});
-                                        setUpload(false)
-                                        return prevState;
-                                    })
-                                }
-                            }} type="file"/>
+                            Загрузить фотографии планировки
+                            <VisuallyHiddenInput multiple
+                                                 onChange={handleImagesChange}
+                                                 type="file"/>
                         </Button>
-
                         {/*<div className="flex flex-wrap gap-2 pt-4">*/}
                         {/*  {images.length > 0 && images.map((imgUrl, index) => {*/}
                         {/*    return (*/}
@@ -285,21 +318,44 @@ export default function ModalWindow({isCreate}) {
                             <div
                                 className={'flex flex-col relative '}
                             >
-                                <img
-                                    className={'max-h-[200px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
-                                    src={object.images}
-                                />
-                                <button
-                                    className={'py-[12px] shadow-lg rounded-br-[5px] rounded-bl-[5px] flex justify-center w-full md:hover:bg-red-800 transition-all duration-300 bg-red-700'}
-                                >
-                                    Удалить
-                                </button>
+                                <div className={'flex gap-2.5'}>
+                                    {object.images && object.images.map((item, index) => {
+                                        return (
+                                            <div>
+                                                <img
+                                                    className={'max-h-[150px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
+                                                    src={`${item}`}
+                                                />
+                                                <Button onClick={(e) => {
+                                                    dispatch(removeCardImage(index));
+                                                }}
+                                                        variant={"contained"}>
+                                                    Удалить
+                                                </Button>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
                             </div>
-
                         </div>
                     </div>
 
                     <div className={'pt-[20px]'}>
+                        {/*    ({target: {files}}) => {*/}
+                        {/*    setUpload(true)*/}
+                        {/*    if (files.length <= 0) {*/}
+                        {/*    return alert('Файлов нет!')*/}
+                        {/*}*/}
+                        {/*    for (let file of Array.from(files)) {*/}
+                        {/*    const fileUrl = URL.createObjectURL(file);*/}
+
+                        {/*    setImages(prevState => {*/}
+                        {/*    prevState.push({url: fileUrl, file: file});*/}
+                        {/*    setUpload(false)*/}
+                        {/*    return prevState;*/}
+                        {/*})*/}
+                        {/*}*/}
+                        {/*}*/}
                         <Button
                             component="label"
                             role={undefined}
@@ -309,90 +365,51 @@ export default function ModalWindow({isCreate}) {
                         >
                             Загрузить фотографии планировки
                             <VisuallyHiddenInput multiple
-                                                 onChange={({target: {files}}) => {
-                                                     setUpload(true)
-                                                     if (files.length <= 0) {
-                                                         return alert('Файлов нет!')
-                                                     }
-                                                     for (let file of Array.from(files)) {
-                                                         const fileUrl = URL.createObjectURL(file);
-
-                                                         setImages(prevState => {
-                                                             prevState.push({url: fileUrl, file: file});
-                                                             setUpload(false)
-                                                             return prevState;
-                                                         })
-                                                     }
-                                                 }}
+                                                 onChange={handleFileChange}
                                                  type="file"/>
                         </Button>
 
                         <div className="flex flex-wrap gap-2 pt-4 ">
-                            {images.length > 0 && images.map((imgUrl, index) => {
+                            {object.layoutImages && object.layoutImages.map((item, index) => {
                                 return (
-                                    <div
-                                        key={index * 1000}
-                                        className={'flex flex-col relative '}
-                                    >
-                                        <img
-                                            onClick={() => {
-                                                const swappedArray = images;
-
-                                                swapElements(swappedArray, index, index + 1)
-
-                                                setImages([...swappedArray]);
-                                            }}
-                                            src={'./arrowLeft.svg'}
-                                            className={`absolute top-[100px] right-[10px] cursor-pointer ${index === images.length - 1 ? 'hidden' : ''}`}
-                                        />
-                                        <img
-                                            src={'./arrowRight.svg'}
-                                            className={`absolute top-[100px] left-[10px] cursor-pointer ${index === 0 ? 'hidden' : ''}`}
-                                            onClick={() => {
-                                                const swappedArray = images;
-
-                                                swapElements(swappedArray, index, index - 1)
-
-                                                setImages([...swappedArray]);
-                                            }}
-                                        />
-
+                                    <div>
                                         <img
                                             className={'h-[200px] w-[200px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
-                                            src={imgUrl.url}
-                                        />
-
-                                        <Button
-                                            variant="outlined"
-                                            startIcon={<DeleteIcon/>}
-                                            onClick={() => {
-                                                setImages(images.filter((img) => img.url !== imgUrl.url))
-                                            }}
-                                            className={'py-[12px] shadow-lg rounded-br-[5px] rounded-bl-[5px] flex justify-center w-full md:hover:bg-red-800 transition-all duration-300 bg-red-700'}
-                                        >
+                                            src={item}
+                                            alt={''}/>
+                                        <Button onClick={(e) => {
+                                            dispatch(removeLayoutImage(index));
+                                        }}
+                                                variant={"contained"}>
                                             Удалить
                                         </Button>
                                     </div>
 
+
                                 )
                             })}
-
-
                         </div>
                     </div>
+                    <div className={'flex gap-2'}>
+                        <button
+                            onClick={() => {
+                                if (isCreate) {
+                                    create()
+                                    revalidate()
+                                } else {
+                                    update()
+                                    revalidate()
+                                }
+                            }}
+                            className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}>{isCreate ? 'Создать' : 'Редактировать'}</button>
+                        <button
+                            className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}
+                            onClick={() => {
+                                navigate('/pdf')
+                            }}>Сформировать PDF
+                        </button>
+                    </div>
 
-
-                    <button
-                        onClick={() => {
-                            if (isCreate) {
-                                create()
-                                revalidate()
-                            } else {
-                                update()
-                                revalidate()
-                            }
-                        }}
-                        className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}>{isCreate ? 'Создать' : 'Редактировать'}</button>
                 </div>
             </div>
         </>

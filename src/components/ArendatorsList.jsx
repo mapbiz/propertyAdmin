@@ -21,7 +21,6 @@ export default function ArendatorsList() {
     const {arendators} = useSelector(state => state.arendators)
 
 
-    console.log(arendators)
 
     useEffect(() => {
         dispatch(getArendatorsRedux())

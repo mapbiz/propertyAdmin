@@ -108,6 +108,18 @@ export const tagSlice = createSlice({
         },
       };
     },
+    addLayoutImage: (state, action) => {
+      state.value.layoutImages.push(action.payload);
+    },
+    addCardImage: (state, action) => {
+      state.value.images.push(action.payload);
+    },
+    removeLayoutImage: (state, action) => {
+      state.value.layoutImages.splice(action.payload, 1);
+    },
+    removeCardImage: (state, action) => {
+      state.value.images.splice(action.payload, 1);
+    },
     setObject: (state, action) => {
       state.value = {...state.value, ...action.payload }
     },
@@ -119,6 +131,6 @@ export const tagSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setObject, resetObject, setArendators,  openCurrentObject} = tagSlice.actions
+export const { setObject,addCardImage,removeCardImage, resetObject, setArendators,  openCurrentObject, addLayoutImage, removeLayoutImage} = tagSlice.actions
 
 export default tagSlice.reducer
