@@ -55,7 +55,6 @@ export default function Tentants({
                             id="select"
                             onClick={e => {
                                 console.log(e);
-
                             }}
                             labelId="demo-multiple-chip-label"
                         >

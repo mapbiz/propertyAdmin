@@ -11,6 +11,7 @@ import Auth from "./Auth.jsx";
 import Layout from "./components/Layout.jsx";
 import PdfPages from "./Pages/PdfPages.jsx";
 import ArendatorsList from "./components/ArendatorsList.jsx";
+import Sale from "./Pages/Sale.jsx";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,14 @@ const router = createBrowserRouter([
       {
         path: '/arendators',
         element: <ArendatorsList />
+      },
+      {
+        path: '/sale',
+        element: <Sale />
+      },
+      {
+        path: '/rent',
+        element: <Sale />
       },
       ]
   },
