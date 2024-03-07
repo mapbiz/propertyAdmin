@@ -120,6 +120,27 @@ export const tagSlice = createSlice({
                 }
             })
         },
+        setTentantData: (state, action) => {
+            state.value.tenantsInfo[action.payload.id] = {
+                ...action.payload.data,
+            };
+
+        },
+        joinTentant: (state, action) => {
+            state.value.tenantsInfo[action.payload.index] = {
+                type: "create",
+                tentant: action.payload.tentant,
+                detalization: [
+                    ''
+                ],
+                indexation: null,
+                contract: '',
+                rentFlow: {
+                    mount: null,
+                    year: null
+                },
+            };
+        },
 
         setArendators: (state, action) => {
             return {
@@ -143,7 +164,19 @@ export const tagSlice = createSlice({
             state.value.images.splice(action.payload, 1);
         },
         setObject: (state, action) => {
-            state.value = {...state.value, ...action.payload}
+            const newPayload = {
+                ...action.payload,
+            };
+
+            newPayload.tenantsInfo = newPayload.tenantsInfo.map(tentant => {
+                return {
+                    type: 'update',
+                    ...tentant,
+                };
+            })
+            console.log(newPayload);
+
+            state.value = { ...state.value, ...newPayload }
         },
         openCurrentObject: (state, action) => {
             state.value = action.payload
@@ -213,6 +246,8 @@ export const {
     updateRent,
     updateCheckBox,
     addNewTentant,
+    joinTentant,
+    setTentantData,
 } = tagSlice.actions
 
 export default tagSlice.reducer

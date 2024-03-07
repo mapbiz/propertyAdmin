@@ -54,6 +54,13 @@ export const getTentants = async () => await axios.get("http://79.174.82.17:8080
 
 export const deleteCard = async id => await axios.delete(`http://79.174.82.17:8080/api/v1/object/${id}`);
 
+export const createTentantsInCard = async (tenstantsInfo, id) => await axios.post(`http://79.174.82.17:8080/api/v1/object/add-tentant/${id}`, {
+    tentants: tenstantsInfo,
+});
+export const updateTentantsInCard = async (tenstantsInfo, id) => await axios.put(`http://79.174.82.17:8080/api/v1/object/update-tentant/${id}`, 
+    [...tenstantsInfo]
+);
+
 export const updateCard = async (id, data) => {
     console.log({ agentRemuneration: data.agentRemuneration });
 
