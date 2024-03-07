@@ -38,48 +38,7 @@ const arendators = [
     },
 ]
 
-const texnicalData = [
-    {
-        icon: '../../public/etazh.jpg',
-        text: 'Этаж',
-        value: '1'
-    },
-    {
-        icon: '../../public/vhod.png',
-        text: 'Количество входов',
-        value: '5'
-    },
-    {
-        icon: '../../public/ploshad.png',
-        text: 'Площадь',
-        value: '355,4 м²'
-    },
-    {
-        icon: '../../public/potolok.png',
-        text: 'Высота потолков',
-        value: '3,77 м'
-    },
-    {
-        icon: '../../public/set.png',
-        text: 'Мощность',
-        value: '3,77 м'
-    },
-    {
-        icon: '../../public/plan.png',
-        text: 'Планировка:',
-        value: 'свободная'
-    },
-    {
-        icon: '../../public/steklo.png',
-        text: 'Остекление:',
-        value: 'витринное'
-    },
-    {
-        icon: '../../public/otdelka.png',
-        text: 'Отделка:',
-        value: 'Shell core'
-    },
-]
+
 
 Font.register({family: 'Inter', src: InterRegular});
 Font.register({family: 'InterBold', src: InterBold});
@@ -254,7 +213,7 @@ export default function TestPdf() {
         'sale-business': 'ГАБ'
     }
     return (
-        <div className={'pt-[150px]'}>
+        <div className={'pt-[300px] max-w-[1280px] mx-auto'}>
             <PDFViewer className={'h-screen w-full'}>
                 <Document>
                     <Page size={{width: 2480, height: 3508,}} style={styles.page}>
@@ -348,15 +307,24 @@ export default function TestPdf() {
                                     flexDirection: "row",
                                     justifyContent: "space-between"
                                 }}>
-                                    <Text style={styles.text64}>
-                                        Габ
-                                    </Text>
-                                    <Text style={styles.text64}>
-                                        “ДИКСИ”
-                                    </Text>
-                                    <Text style={styles.text64}>
-                                        9.2 лет
-                                    </Text>
+                                    {card.type !== 'rent' ?
+                                        <>
+                                            <Text style={styles.text64}>
+                                                {typeOfCard[card.type]}
+                                            </Text>
+                                            <Text style={styles.text64}>
+                                                “ДИКСИ”
+                                            </Text>
+                                            <Text style={styles.text64}>
+                                                {card.payback} лет
+                                            </Text>
+                                        </>
+                                        :
+                                        <Text style={styles.text64}>
+                                            Аренда
+                                        </Text>
+                                    }
+
                                 </View>
                                 {/*блок зеленый*/}
                                 {/*Коммерческие условия*/}
@@ -510,119 +478,122 @@ export default function TestPdf() {
                     <Page size={{width: 2480, height: 3508}} style={styles.page}>
                         {title()}
                         <View style={{paddingTop: '200px'}}>
-                            <View style={{
-                                flexDirection: "row",
-                                display: 'flex',
-                                width: '100%',
-                                border: '2px solid #9E9E9E',
-                                backgroundColor: '#EAEAEA'
-                            }}>
+                            {card.type !== 'rent' &&
                                 <View style={{
-                                    width: '40%',
-                                    paddingTop: '30px',
-                                    paddingBottom: '30px',
-                                    height: '100%',
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    borderRight: '1px solid #9E9E9E'
-                                }}>
-                                    <Text style={{
-                                        fontSize: '36px',
-                                        fontWeight: 'bold',
-                                        fontFamily: 'InterBold',
-                                        width: '100%',
-                                        textAlign: "center"
-                                    }}>
-                                        Арендатор
-                                    </Text>
-                                </View>
-                                <View style={{
-                                    width: '40%',
-                                    height: '100%',
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    borderRight: '1px solid #9E9E9E'
-                                }}>
-                                    <Text style={{
-                                        fontSize: '36px',
-                                        fontFamily: 'Inter',
-                                        width: '100%',
-                                        textAlign: "center"
-                                    }}>
-                                        МАП
-                                    </Text>
-                                </View>
-                                <View style={{
-                                    width: '40%',
-                                    height: '100%',
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    borderRight: '1px solid #9E9E9E'
-                                }}>
-                                    <Text style={{
-                                        fontSize: '36px',
-                                        fontFamily: 'Inter',
-                                        width: '100%',
-                                        textAlign: "center"
-                                    }}>
-                                        ГАП
-                                    </Text>
-                                </View>
-                                <View style={{
-                                    width: '50%',
-                                    height: '100%',
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    borderRight: '1px solid #9E9E9E'
-                                }}>
-                                    <Text style={{
-                                        fontSize: '36px',
-                                        fontFamily: 'Inter',
-                                        width: '100%',
-                                        textAlign: "center"
-                                    }}>
-                                        Срок договора
-                                    </Text>
-                                </View>
-                                <View style={{
-                                    width: '50%',
-                                    height: '100%',
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    borderRight: '1px solid #9E9E9E'
-                                }}>
-                                    <Text style={{
-                                        fontSize: '36px',
-                                        fontFamily: 'Inter',
-                                        width: '100%',
-                                        textAlign: "center"
-                                    }}>
-                                        Индексация
-                                    </Text>
-                                </View>
-                                <View style={{
+                                    flexDirection: "row",
+                                    display: 'flex',
                                     width: '100%',
-                                    height: '100%',
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center"
+                                    border: '2px solid #9E9E9E',
+                                    backgroundColor: '#EAEAEA'
                                 }}>
-                                    <Text style={{
-                                        fontSize: '36px',
-                                        fontFamily: 'Inter',
-                                        width: '100%',
-                                        textAlign: "center",
+                                    <View style={{
+                                        width: '40%',
+                                        paddingTop: '30px',
+                                        paddingBottom: '30px',
+                                        height: '100%',
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        borderRight: '1px solid #9E9E9E'
                                     }}>
-                                        Детализация арендного потока
-                                    </Text>
+                                        <Text style={{
+                                            fontSize: '36px',
+                                            fontWeight: 'bold',
+                                            fontFamily: 'InterBold',
+                                            width: '100%',
+                                            textAlign: "center"
+                                        }}>
+                                            Арендатор
+                                        </Text>
+                                    </View>
+                                    <View style={{
+                                        width: '40%',
+                                        height: '100%',
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        borderRight: '1px solid #9E9E9E'
+                                    }}>
+                                        <Text style={{
+                                            fontSize: '36px',
+                                            fontFamily: 'Inter',
+                                            width: '100%',
+                                            textAlign: "center"
+                                        }}>
+                                            МАП
+                                        </Text>
+                                    </View>
+                                    <View style={{
+                                        width: '40%',
+                                        height: '100%',
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        borderRight: '1px solid #9E9E9E'
+                                    }}>
+                                        <Text style={{
+                                            fontSize: '36px',
+                                            fontFamily: 'Inter',
+                                            width: '100%',
+                                            textAlign: "center"
+                                        }}>
+                                            ГАП
+                                        </Text>
+                                    </View>
+                                    <View style={{
+                                        width: '50%',
+                                        height: '100%',
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        borderRight: '1px solid #9E9E9E'
+                                    }}>
+                                        <Text style={{
+                                            fontSize: '36px',
+                                            fontFamily: 'Inter',
+                                            width: '100%',
+                                            textAlign: "center"
+                                        }}>
+                                            Срок договора
+                                        </Text>
+                                    </View>
+                                    <View style={{
+                                        width: '50%',
+                                        height: '100%',
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        borderRight: '1px solid #9E9E9E'
+                                    }}>
+                                        <Text style={{
+                                            fontSize: '36px',
+                                            fontFamily: 'Inter',
+                                            width: '100%',
+                                            textAlign: "center"
+                                        }}>
+                                            Индексация
+                                        </Text>
+                                    </View>
+                                    <View style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                    }}>
+                                        <Text style={{
+                                            fontSize: '36px',
+                                            fontFamily: 'Inter',
+                                            width: '100%',
+                                            textAlign: "center",
+                                        }}>
+                                            Детализация арендного потока
+                                        </Text>
+                                    </View>
                                 </View>
-                            </View>
-                            {arendators.map(item => {
+                            }
+
+                            {card.type !== 'rent' && arendators.map(item => {
                                 return <View style={{
                                     display: "flex",
                                     flexDirection: "row",

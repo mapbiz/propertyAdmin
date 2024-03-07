@@ -88,208 +88,58 @@ export default function Tentants({
     };
 
     return (
-        <>
-            <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                {
-                    objectStorage.tenantsInfo.length > 0 ?
-                        <>
-                            
-                            { 
-                                objectStorage.tenantsInfo.map((tentantInObject, index) => {
-                                    return (
-                                        <>
-                                            {
-                                                !tentantInObject.tentant.id ?
-                                                <>
-                                                    <FormControl sx={{ width: '100%' }}>
-                                                        <InputLabel id="select-label">Выбрать арендатора</InputLabel>
-                                                        <Select
-                                                            sx={{ width: '100%' }}
-                                                            className="w-full"
-                                                            open={isOpenSelect}
-                                                            id="select"
-                                                            onClick={e => {
-                                                                if(e.target.id === 'select') setIsOpenSelect(true);
-                                                            }}
-                                                            labelId="select-label"
-                                                        >
-                                                            {
-                                                                tentans.length > 0 ?
-                                                                <>
-                                                                    <MenuItem disabled value="">
-                                                                        <em>Выберете арендатора</em>
-                                                                    </MenuItem>
-                                                                    {
-                                                                        [...tentans].map(tentant => {
-                                                                            return (
-                                                                                <MenuItem
-                                                                                    onClick={e => clickSelectTentant(tentant, index)}
-                                                                                    key={tentant.id}
-                                                                                    value={tentant.id}
-                                                                                >
-                                                                                    {tentant.name}
-                                                                                </MenuItem>
-                                                                            )
-                                                                        })
-                                                                    }
-                                                                </>
-                                                                :
-                                                                <>
-                                                                    Сначала создайте арендаторов
-                                                                </>
-                                                            }
-                                                        </Select>
-                                                    </FormControl>
-                                                </>
-                                                :
-                                                <ListItem 
-                                                    sx={{ width: "100%" }}
-                                                    key={tentantInObject.tentant.id}
+        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+            {
+                objectStorageTentants.length > 0 ?
+                    <FormControl sx={{ width: '100%' }}>
+                        <InputLabel id="demo-multiple-chip-label">Выбрать арендатора</InputLabel>
+                        <Select
+                            sx={{ width: '100%' }}
+                            className="w-full"
+                            // value={isOpenSelect}
+                            open={isOpenSelect}
+                            id="select"
+                            onClick={e => {
+                                console.log(e);
+
+                            }}
+                            labelId="demo-multiple-chip-label"
+                        >
+                            {
+                                tentans.length > 0 ?
+                                <>
+                                    <MenuItem disabled value="">
+                                        <em>Выберете арендатора</em>
+                                    </MenuItem>
+                                    {
+                                        tentans.map(tentant => {
+                                            return (
+                                                <MenuItem
+                                                    onClick={e => clickSelectTentant(tentant)}
+                                                    key={tentant.id}
+                                                    value={tentant.id}
                                                 >
-                                                    <div className='flex flex-col'>
-                                                        <div className='flex items-center'>
-                                                            <ListItemAvatar>
-                                                                <img 
-                                                                    width="200" 
-                                                                    height="200" 
-                                                                    src={`http://79.174.82.17:8080/public/${tentantInObject.tentant.logo}`} 
-                                                                />
-                                                            </ListItemAvatar>
-                                                            <ListItemText 
-                                                                primary={tentantInObject.tentant.name}
-                                                                secondary={tentantInObject.tentant.category}
-                                                            />
-                                                        </div>
-                                                        
-                                                        <div className='flex gap-4 items-end'>
-                                                            <TextField
-                                                                variant="standard"
-                                                                label="Индексация"
-                                                                type="number"
-                                                                defaultValue={tentantInObject.indexation}
-                                                                onBlur={e => {
-                                                                    const newTentant = {
-                                                                        ...tentantInObject
-                                                                    }
-
-
-                                                                    newTentant.indexation = +e.target.value;
-
-                                                                    dispatch(setTentantData({ 
-                                                                        id: index, 
-                                                                        data: newTentant, 
-                                                                        type: !!tentantInObject.indexation ? 'update': 'create'  
-                                                                    }))
-                                                                }}
-                                                            />
-                                                            <TextField
-                                                                variant="standard"
-                                                                label="Договор"
-                                                                defaultValue={tentantInObject.contract}
-                                                                onBlur={e => {
-                                                                    const newTentant = {
-                                                                        ...tentantInObject
-                                                                    }
-
-                                                                    newTentant.contract = e.target.value;
-                                                                    dispatch(setTentantData({ 
-                                                                        id: index, 
-                                                                        data: newTentant,
-                                                                        type: !!tentantInObject.contract ? 'update': 'create'  
-                                                                    }))
-                                                                }}
-                                                            />
-                                                            <TextField
-                                                                variant="standard"
-                                                                label="Месячный арендный поток"
-                                                                type="number"
-                                                                defaultValue={!!tentantInObject.rentFlow.mount ? tentantInObject.rentFlow.mount: tentantInObject.rentFlow.mounth}
-                                                                onBlur={e => {
-                                                                    const newTentant = {
-                                                                        ...tentantInObject,
-                                                                        rentFlow: {
-                                                                            ...tentantInObject.rentFlow,
-                                                                        },
-                                                                    }
-
-                                                                    newTentant.rentFlow.mount = +e.target.value;
-
-                                                                    dispatch(setTentantData({ 
-                                                                        id: index, 
-                                                                        data: newTentant,
-                                                                        type: !!tentantInObject.rentFlow.mount || tentantInObject.rentFlow.mount === null  ? 'update': 'create' 
-                                                                    }))
-                                                                }}
-                                                            />
-                                                            <TextField
-                                                                variant="standard"
-                                                                label="Годовой арендный поток"
-                                                                type="number"
-                                                                defaultValue={tentantInObject.rentFlow.year}
-                                                                onBlur={e => {
-                                                                    const newTentant = {
-                                                                        ...tentantInObject,
-                                                                        rentFlow: {
-                                                                            ...tentantInObject.rentFlow,
-                                                                        },
-                                                                    }
-
-                                                                    newTentant.rentFlow.year = +e.target.value;
-                                                                    dispatch(setTentantData({ 
-                                                                        id: index, 
-                                                                        data: newTentant,
-                                                                        type: !!tentantInObject.rentFlow.year ? 'update': 'create' 
-                                                                    }))
-                                                                }}
-                                                            />
-                                                            <div>
-                                                                <em>Добавлять разные элементы через запятую</em>
-                                                                <TextField
-                                                                    label="Детализация"
-                                                                    variant="standard"
-                                                                    defaultValue={tentantInObject.detalization.join(",")}
-                                                                    onBlur={e => {
-                                                                        const newTentant = {
-                                                                            ...tentantInObject
-                                                                        }
-
-                                                                        newTentant.detalization = e.target.value.split(",");
-
-                                                                        dispatch(setTentantData({ 
-                                                                            id: index, 
-                                                                            data: newTentant,
-                                                                            type: tentantInObject.detalization.length > 0 ? 'update': 'create' 
-                                                                        }));
-                                                                    }}
-                                                                />
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </ListItem>
-                                            }
-                                        </>
-                                    )
-                                })
+                                                    {tentant.name}
+                                                </MenuItem>
+                                            )
+                                        })
+                                    }
+                                </>
+                                :
+                                <>
+                                    Сначала создайте арендаторов
+                                </>
                             }
-                            <Button onClick={() => clickAddNewTentant()}>
-                                Добавить нового арендатора
-                                <AddIcon/>
-                            </Button>
-                        </>
-                        :
-                        <>
-                            <Button onClick={() => clickAddNewTentant()}>
-                                Добавить нового арендатора
-                                <AddIcon/>
-                            </Button>
-                        </>
-                }
-            </List>
-
-            <Button onClick={() => clickSaveChanges()}>
-                Сохранить изменения!
-            </Button>
-        </>
+                        </Select>
+                    </FormControl>
+                    :
+                    <>
+                        <Button onClick={() => clickAddNewTentant()}>
+                            Добавить нового арендатора
+                            <AddIcon/>
+                        </Button>
+                    </>
+            }
+        </List>
     )
 }

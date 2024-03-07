@@ -2,11 +2,8 @@ import './App.css'
 import Card from "./components/Card.jsx";
 import ModalWindow from "./components/ModalWindow.jsx";
 import {useEffect, useState} from "react";
-
 import {getCards} from "./api/api.js";
 import {useDispatch, useSelector} from "react-redux";
-import {resetObject, setObject} from "./slices/tagSlice.jsx";
-import {setPopupWindow} from "./slices/popupSlice.jsx";
 import Popup from "./components/Popup.jsx";
 import {setStateWindow} from "./slices/modalSlice.jsx";
 import tentants, { getTentants } from "./slices/tentants.jsx";
@@ -22,7 +19,7 @@ export default function App() {
   // const [cards, setCards] = useState([])
 
     const [isLoading, setIsLoading] = useState(true)
-
+    const activeTab = useSelector(state => state.tabMore.value.activeTab)
   useEffect(() => {
     async function fetchData() {
       try {
@@ -44,39 +41,7 @@ export default function App() {
 
     }, [tentants.isLoading]);
 
-  // const cardsRequest = async () => {
-  //     const res = await  getCards()
-  //     dispatch(setStateWindow(res.data))
-  //     const cards = useSelector(state => state.modalWindow)
-  // }
-  //
-  // useEffect(() => {
-  //   console.log(tab)
-  //   cardsRequest()
-  // }, [tab]);
-  //
-  // const revalidateCard = () => {
-  //   cardsRequest()
-  // }
-  //
-  // const setOpenWindow = (card, createValue) => {
-  //   if (card === null) {
-  //     dispatch(setPopupWindow({
-  //       ['modalWindow']: true
-  //     }))
-  //     dispatch(resetObject())
-  //   } else {
-  //     dispatch(setObject(
-  //       card
-  //     ))
-  //     dispatch(setStateWindow({
-  //       ['modalWindow']: true
-  //     }))
-  //
-  //   }
-  //
-  //   setCreateWindow(createValue)
-  // }
+
   console.log(cards)
   return (
     <div className={' pt-[120px]  max-w-[1280px] mx-auto w-full flex gap-[20px] flex-col'}>
