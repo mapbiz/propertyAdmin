@@ -261,7 +261,7 @@ export default function TestPdf() {
                         {title()}
                         <View style={{...styles.pt120, display: "flex", flexDirection: 'row', gap: '40px'}}>
                             <View style={{maxWidth: '1020px'}}>
-                                <Image style={styles.imagePreview} src={card.images[0]}></Image>
+                                <Image style={styles.imagePreview} src={card.images[0].url}></Image>
                                 <Text style={{
                                     ...styles.textSale,
                                     width: '100%',
@@ -502,7 +502,7 @@ export default function TestPdf() {
                         </View>
                         {/*Карта*/}
                         <Link target={"_blank"} href={'https://yandex.ru/maps/-/CDFUvDNZ'}>
-                            <Image style={{paddingTop: '50px'}} src={cardMap}></Image>
+                            <Image style={{paddingTop: '50px'}} src={card.imageMap.url}></Image>
                         </Link>
                         {/*Карта*/}
                         {footer()}
@@ -712,15 +712,15 @@ export default function TestPdf() {
                                     card.layoutImages.map(item => {
                                         return (
                                             <Image
-                                                style={{maxWidth: '1010px', objectFit: 'contain'}}
-                                                src={item}></Image>
+                                                style={{maxWidth: '1010px', maxHeight: '700px', objectFit: 'contain'}}
+                                                src={item.url}></Image>
                                         )
                                     }) :
                                     card.layoutImages.map(item => {
                                         return (
                                             <Image
-                                                style={{maxHeight: '1200px', objectFit: 'contain', paddingTop: '200px'}}
-                                                src={item}></Image>
+                                                style={{maxHeight: '1200px',  objectFit: 'contain', paddingTop: '200px'}}
+                                                src={item.url}></Image>
                                         )
                                     })
                                 }
@@ -740,7 +740,7 @@ export default function TestPdf() {
                         }}>
                             {card.images.map(item => {
                                 return (
-                                    <Image style={{maxWidth: '1010px', objectFit: 'contain'}} src={item}>
+                                    <Image style={{maxWidth: '1010px', maxHeight: '700px', objectFit: 'contain'}} src={item.url}>
 
                                     </Image>
                                 )

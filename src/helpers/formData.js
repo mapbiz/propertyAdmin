@@ -8,9 +8,13 @@ export const objectToFormData = (object, formName) => {
   for(let prop in object) {
     const currentData = object[prop];
 
-    if(!currentData) continue
-
-    formData.set(prop, currentData);
+    if(typeof currentData === 'undefined' || currentData === null) continue;
+    if(Array.isArray(currentData)) {
+      currentData.forEach(currentDataNestedData => {
+        formData.append(prop, currentDataNestedData)
+      })
+    }
+    else formData.set(prop, currentData);
   }
 
   return formData;

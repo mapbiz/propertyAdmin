@@ -9,16 +9,19 @@ import {resetObject, setObject} from "./slices/tagSlice.jsx";
 import {setPopupWindow} from "./slices/popupSlice.jsx";
 import Popup from "./components/Popup.jsx";
 import {setStateWindow} from "./slices/modalSlice.jsx";
-
+import tentants, { getTentants } from "./slices/tentants.jsx";
 
 
 export default function App() {
-  const tab = useSelector((state) => state.tabMore.value.activeTab)
+  const tab = useSelector((state) => state.tabMore.value.activeTab),
+  tentantsStorage = useSelector(state => state.tentants);
+
   const cards = useSelector(state => state.modalWindow)
   const dispatch = useDispatch()
   const [isCreateWindow, setCreateWindow] = useState(false)
   // const [cards, setCards] = useState([])
 
+    const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     async function fetchData() {
@@ -29,9 +32,17 @@ export default function App() {
         console.error('Ошибка при загрузке данных:', error);
       }
     }
-    fetchData()
-  }, []);
+    fetchData();
 
+    dispatch(getTentants());
+
+  }, []);
+    useEffect(() => {
+        if(tentants.isLoading) return;
+
+        setIsLoading(false);
+
+    }, [tentants.isLoading]);
 
   // const cardsRequest = async () => {
   //     const res = await  getCards()
@@ -76,16 +87,24 @@ export default function App() {
               // setOpenWindow(null, true);
             }
           }
-          className={'text-[20px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}>Создать
-          объект
+          className={'text-[20px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}
+            >
+            Создать
+            объект
         </button>
       </div>
       <div className={'h-full relative flex flex-col gap-[20px]'}>
-        {
-         cards.data && cards.data.map((card, idx) => {
-            return <Card key={idx}   card={card}/>
-          })
-        }
+          { isLoading ?
+              <p> Подождите немного арендодаторы грузяться.... </p>
+              :
+            <>
+                {
+                     cards.data && cards.data.map((card, idx) => {
+                        return <Card key={idx}   card={card}/>
+                     })
+                }
+            </>
+          }
       </div>
       <ModalWindow isCreate={isCreateWindow}/>
       <Popup />

@@ -7,9 +7,15 @@ import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import {useDispatch, useSelector} from "react-redux";
-import {setArendators} from '../slices/tagSlice'
+import {
+    updateTenantContractById, updateTenantDetalization,
+    updateTenantIndex,
+    updateTenantRentFlowM,
+    updateTenantRentFlowY
+} from '../slices/tagSlice'
 import axios from "axios";
 import {useEffect, useState} from "react";
+import {TextField} from "@mui/material";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -32,7 +38,7 @@ export default function MultipleSelectCheckmarks() {
     const handleChange = (event) => {
         console.log(event)
         const {
-            target: { value },
+            target: {value},
         } = event;
         const findTentantToAdd = names.find(item => item.name === value)
 
@@ -49,8 +55,87 @@ export default function MultipleSelectCheckmarks() {
         getNames()
     }, []);
 
+    const handleChangeArendatorName = (e) => {
+        dispatch(updateTenantContractById(e))
+    }
+
     return (
         <div>
+            <div className={'flex flex-col gap-2.5'}>
+                {arendators.map((arendator) => {
+
+                    return (
+                        <div className={'flex flex-col gap-2.5'}>
+                            <TextField
+                                className={'w-full'}
+                                value={arendator.tentant.name}
+                                label={'Название'}
+                                variant="outlined"
+                            />
+                            <TextField
+                                onChange={(e) => {
+                                    handleChangeArendatorName({
+                                        newContract: e.target.value,
+                                        tenantId: arendator.tentant.id
+                                    })
+                                }}
+                                className={'w-full'}
+                                label={'contract'}
+                                value={arendator.contract}
+                            />
+                            <TextField
+                                onChange={(e) => {
+                                    dispatch(updateTenantIndex({
+                                        newIndex: e.target.value,
+                                        tenantId: arendator.tentant.id
+                                    }))
+                                }}
+                                // updateTenantIndex
+                                className={'w-full'}
+                                label={'Индексация'}
+                                value={arendator.indexation}
+                            />
+                            <TextField
+                                onChange={(e) => {
+                                    dispatch(updateTenantDetalization({
+                                        newText: e.target.value,
+                                        tenantId: arendator.tentant.id
+                                    }))
+                                }}
+                                // updateTenantIndex
+                                className={'w-full'}
+                                label={'Детализация арендного потока'}
+                                value={arendator.detalization.join('\\')}
+                            />
+
+                            <div className={'flex gap-2.5'}>
+                                <TextField
+                                    onChange={(e) => {
+                                        dispatch(updateTenantRentFlowM({
+                                            newRentFlowM: e.target.value,
+                                            tenantId: arendator.tentant.id
+                                        }))
+                                    }}
+                                    label={'Арендный поток месяц'}
+                                    value={arendator.rentFlow.mount}
+                                />
+                                <TextField
+                                    onChange={(e) => {
+                                        dispatch(updateTenantRentFlowY({
+                                            newRentFlowY: e.target.value,
+                                            tenantId: arendator.tentant.id
+                                        }))
+                                    }}
+                                    label={'Арендный поток год'}
+                                    value={arendator.rentFlow.year}
+                                />
+                            </div>
+                        </div>
+                    )
+                })}
+            </div>
+
+
             <FormControl sx={{ width: '100%' }}>
                 <InputLabel id="demo-multiple-checkbox-label">Арендатор</InputLabel>
                 <button onClick={names}>123</button>

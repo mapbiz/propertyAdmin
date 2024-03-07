@@ -6,7 +6,7 @@ import {
     removeCardImage,
     removeLayoutImage,
     resetObject,
-    setObject
+    setObject, updateCheckBox, updateRent
 } from "../slices/tagSlice.jsx";
 import {createCard, updateCard} from "../api/api.js";
 import {objectToFormData} from "../helpers/formData.js";
@@ -20,6 +20,10 @@ import {styled} from "@mui/material/styles";
 import {TextareaAutosize, TextField} from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import MultipleSelectCheckmarks from "./MultipleSelectCheckmarks.jsx";
+import axios from "axios";
+import Checkbox from "@mui/material/Checkbox";
+import Input from "./Input.jsx";
+import Tentants from "./Tentants.jsx";
 
 export default function ModalWindow({isCreate}) {
     const [isUpload, setUpload] = useState(false)
@@ -56,12 +60,15 @@ export default function ModalWindow({isCreate}) {
 
     }
 
-    const update = () => {
+    const update = async (id) => {
+        const res = await updateCard(id, object)
+        console.log(res)
         // imgToBlob()
         // console.log(images)
-        const data = objectToFormData(object, 'update')
-        updateCard(data, object['id'])
-        clickOutside()
+        // const data = objectToFormData(object, 'update')
+        // updateCard(data, object['id'])
+        // clickOutside()
+
     }
 
     const clickOutside = () => {
@@ -86,7 +93,10 @@ export default function ModalWindow({isCreate}) {
             const urlToUploadedFile = URL.createObjectURL(file);
 
             // Добавляем URL в redux
-            dispatch(addLayoutImage(urlToUploadedFile));
+            dispatch(addLayoutImage({
+                url: urlToUploadedFile,
+                file
+            }));
         }
     }
     const handleImagesChange = (event) => {
@@ -100,7 +110,10 @@ export default function ModalWindow({isCreate}) {
             const urlToUploadedFile = URL.createObjectURL(file);
 
             // Добавляем URL в redux
-            dispatch(addCardImage(urlToUploadedFile));
+            dispatch(addCardImage({
+                url: urlToUploadedFile,
+                file
+            }));
         }
     }
 
@@ -165,39 +178,36 @@ export default function ModalWindow({isCreate}) {
                         }
                     </div>
                     <div className={'pb-[20px]'}>
-                        <h2 className={''}>Координаты панорамы</h2>
+                        <h2 className={''}>ссылка панорамы</h2>
+                        <div className={'flex gap-[50px] '}>
+                            <Input
+                                label={"Ссылка на панораму"}
+                                inputType="input"
+                                path="panorama"
+                            />
+                            {/*<Tag*/}
+                            {/*    title={'ссылка панорамы'}*/}
+                            {/*    name={'panorama'}*/}
+                            {/*    className={'w-full'}*/}
+                            {/*    variant="outlined"*/}
+                            {/*/>*/}
+                        </div>
+                        <h2 className={''}>Координаты карты</h2>
                         <div className={'flex gap-[50px] '}>
                             <Tag
                                 subName={'lat'}
                                 title={'Координаты Lat'}
-                                name={'panorama'}
+                                name={'coordinates'}
                                 className={'w-full'}
                                 variant="outlined"
                             />
                             <Tag
                                 subName={'lon'}
                                 title={'Координаты Lon'}
-                                name={'panorama'}
+                                name={'coordinates'}
                                 className={'w-full'}
                                 variant="outlined"
                             />
-                        </div>
-                        <h2 className={''}>Координаты карты</h2>
-                        <div className={'flex gap-[50px] '}>
-                            {/*<Tag*/}
-                            {/*    subName={'lat'}*/}
-                            {/*    title={'Координаты Lat'}*/}
-                            {/*    name={'coordinates'}*/}
-                            {/*    className={'w-full'}*/}
-                            {/*    variant="outlined"*/}
-                            {/*/>*/}
-                            {/*<Tag*/}
-                            {/*    subName={'lon'}*/}
-                            {/*    title={'Координаты Lon'}*/}
-                            {/*    name={'coordinates'}*/}
-                            {/*    className={'w-full'}*/}
-                            {/*    variant="outlined"*/}
-                            {/*/>*/}
                         </div>
                     </div>
 
@@ -210,14 +220,46 @@ export default function ModalWindow({isCreate}) {
                         <Tag title={'Вход:'} subName={'enter'} name={'info'}/>
                         <Tag title={'Эл. мощность:'} subName={'force'} name={'info'}/>
                         <Tag title={'Отделка:'} name={'info'} subName={'finishing'}/>
-                        <Tag checkbox={true} title={'Вытяжка:'} subName={'hood'} name={'info'}/>
-                        <Tag checkbox={true} title={'Зона погрузки/разгрузки:'} name={'zone'}/>
+                        <Tag
+                            type={'number'}
+                            title={'Вознаграждение агента'}
+                            name={'agentRemuneration'}
+                        />
+                        <div className={'flex items-center'}>
+                            <p>Вытяжка</p>
+                            <Checkbox
+                                onClick={(e) => {
+                                    dispatch(updateCheckBox({
+                                        type: 'hood',
+                                        value: e.target.checked
+                                    }))
+                                }}
+                                value={object.info.hood}>
+                            </Checkbox>
+                        </div>
+                        <div className={'flex items-center'}>
+                            <p>Зона погрузки/разгрузки:</p>
+                            <Input
+                                inputType="checkbox"
+                                path="zone"
+                            />
+                            {/*<Checkbox*/}
+                            {/*    onClick={(e) => {*/}
+                            {/*        dispatch(updateCheckBox({*/}
+                            {/*            type: 'zone',*/}
+                            {/*            value: e.target.checked*/}
+                            {/*        }))*/}
+                            {/*    }}*/}
+                            {/*    value={object.info.zone}>*/}
+                            {/*</Checkbox>*/}
+                        </div>
                         {
                             stateWindow === 'sale-business' &&
                             <>
                                 <h2 className={'font-bold'}>Общий арендный поток</h2>
                                 <Tag title={'Месячный арендный поток:'} subName={'year'} name={'globalRentFlow'}/>
                                 <Tag title={'Годовой арендный поток:'} subName={'mouth'} name={'globalRentFlow'}/>
+                                <Tag name={'payback'} title={'Окупаемость в годах:'}></Tag>
                             </>
                         }
                         <h2 className={'font-bold'}>Коммерческие условия</h2>
@@ -225,10 +267,39 @@ export default function ModalWindow({isCreate}) {
                             {
                                 stateWindow === 'rent' &&
                                 <>
-                                    <Tag full={true} title={'Арендная ставка в мес:'} subName={'rent'}
-                                         sub3Name={'mouth'} name={'price'}/>
-                                    <Tag full={true} title={'Арендная ставка в год:'} subName={'rent'} sub3Name={'year'}
-                                         name={'price'}/>
+
+                                    <TextField
+                                        type={'number'}
+                                        className={'w-full'}
+                                        onChange={(e) => {
+                                            dispatch(updateRent({
+                                                type: 'mouth',
+                                                value: e.target.value
+                                            }))
+                                        }}
+                                        value={object.price.rent?.mouth}
+                                        label={'Аренда в месяц'}
+                                        variant="outlined"
+                                    />
+                                    {console.log()}
+                                    <TextField
+                                        type={'number'}
+                                        className={'w-full'}
+                                        onChange={(e) => {
+                                            dispatch(updateRent({
+                                                type: 'year',
+                                                value: e.target.value
+                                            }))
+                                        }}
+                                        value={object.price.rent?.year}
+                                        label={'Аренда в год'}
+                                        variant="outlined"
+                                    />
+
+                                    {/*<Tag type={'number'} full={true} title={'Арендная ставка в мес:'} subName={'rent'}*/}
+                                    {/*     sub3Name={'mouth'} name={'price'}/>*/}
+                                    {/*<Tag type={'number'} full={true} title={'Арендная ставка в год:'} subName={'rent'} sub3Name={'year'}*/}
+                                    {/*     name={'price'}/>*/}
                                 </>
                             }
 
@@ -238,16 +309,18 @@ export default function ModalWindow({isCreate}) {
                             <>
                                 {
                                     stateWindow === 'sale-business' &&
-                                    <Tag title={'Доходность:'} subName={'profitability'} name={'price'}/>
+                                    <Tag title={'Доходность:'} subName={'profitability'} name={'price'} />
                                 }
                             </>
                         }
 
                         {
-                            stateWindow === 'sale' || stateWindow === 'sale-business' &&
+                            stateWindow === 'sale-business' &&
                             <>
                                 <h2 className={'font-bold'}>Арендаторы</h2>
-                                <MultipleSelectCheckmarks/>
+
+                                <Tentants />
+                                {/*<MultipleSelectCheckmarks/>*/}
                             </>
                         }
 
@@ -324,7 +397,7 @@ export default function ModalWindow({isCreate}) {
                                             <div>
                                                 <img
                                                     className={'max-h-[150px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
-                                                    src={`${item}`}
+                                                    src={`${item.url}`}
                                                 />
                                                 <Button onClick={(e) => {
                                                     dispatch(removeCardImage(index));
@@ -375,7 +448,7 @@ export default function ModalWindow({isCreate}) {
                                     <div>
                                         <img
                                             className={'h-[200px] w-[200px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
-                                            src={item}
+                                            src={item.url}
                                             alt={''}/>
                                         <Button onClick={(e) => {
                                             dispatch(removeLayoutImage(index));
@@ -392,13 +465,14 @@ export default function ModalWindow({isCreate}) {
                     </div>
                     <div className={'flex gap-2'}>
                         <button
-                            onClick={() => {
+                            onClick={async () => {
                                 if (isCreate) {
                                     create()
-                                    revalidate()
+                                    // revalidate()
                                 } else {
-                                    update()
-                                    revalidate()
+                                    console.log('зашел')
+                                    await update(object.id)
+                                    // revalidate()
                                 }
                             }}
                             className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}>{isCreate ? 'Создать' : 'Редактировать'}</button>

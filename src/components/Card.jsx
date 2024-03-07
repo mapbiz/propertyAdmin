@@ -4,10 +4,13 @@ import {setStateWindow} from "../slices/modalSlice.jsx";
 import {setObject} from "../slices/tagSlice.jsx";
 
 export default function Card({card}) {
-    const deleteObject = () => {
+    const deleteObject = async () => {
         if (window.confirm(`Удалить карточку - ${card.title}`)) {
-            deleteCard(card.id)
-            alert('УДАЛИЛИ')
+            const resToDelete = await deleteCard(card.id);
+
+
+            resToDelete.status === 204 ? alert('УДАЛИЛИ'): alert("При удалении произошла ошибка!");
+
             revalidate()
         }
     }
@@ -21,15 +24,34 @@ export default function Card({card}) {
 
                 if(!currentCard.ok) return alert('ошибка загрузки карточки');
 
+                const reader = new FileReader();
+
                 if(currentCard.data.images.length > 0) currentCard.data.images = await  Promise.all(currentCard.data.images.map(async imgUrl => {
                     const getBlobOfImage = await reverseImageGet(imgUrl);
 
-
-                    return URL.createObjectURL(getBlobOfImage.data);
+                    return {
+                        url: URL.createObjectURL(getBlobOfImage.data),
+                        file: getBlobOfImage.data,
+                    }
                 }))
-                if(currentCard.data.layoutImages.length > 0) currentCard.data.layoutImages = await Promise.all(currentCard.data.layoutImages.map(async imgUrl => {
+                if(!!currentCard.data.imageMap) currentCard.data.imageMap = await (async () => {
+
+                    const getBlobOfImage = await reverseImageGet(currentCard.data.imageMap);
+
+                    return {
+                        url: URL.createObjectURL(getBlobOfImage.data),
+                        file: getBlobOfImage.data,
+                    }
+                })()
+                if(currentCard.data.layoutImages.length > 0) currentCard.data.layoutImages = await Promise.all(currentCard.data.layoutImages.map(async (imgUrl, index) => {
+
                     const getBlobOfImage = await reverseImageGet(imgUrl);
-                    return URL.createObjectURL(getBlobOfImage.data);
+
+
+                    return {
+                        url: URL.createObjectURL(getBlobOfImage.data),
+                        file: getBlobOfImage.data,
+                    }
                 }));
                 dispatch(setStateWindow({
                     modalWindow: true,
