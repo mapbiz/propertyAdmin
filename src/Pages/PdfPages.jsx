@@ -15,6 +15,13 @@ const images = [
     '../../public/object.jpg', '../../public/object2.jpg', '../../public/object3.jpg', '../../public/object4.jpg', '../../public/object5.jpg', '../../public/object6.jpg',
 ]
 
+const apiKey = '6e61e348-993d-4a11-924c-702a0f0279f5'; // Замените на свой API-ключ
+
+// const yandexStaticMapsUrl = `https://static-maps.yandex.ru/1.x/?ll=${card.coordinates.lon},${lat}&size=400,400&z=12&l=map&apikey=${apiKey}`
+
+// Используйте yandexStaticMapsUrl для загрузки изображения или вставьте его в ваше приложение.
+
+
 const arendators = [
     {
         logo: '../../public/logo.png',
@@ -37,7 +44,6 @@ const arendators = [
         detail: '4 % от РТО, но не менее: В ДДА прописана ставка аренды на каждый год БЕЗУСЛОВНО: 1-й год - 497 560 руб/мес 2-й год – 995 120 руб/мес 3-й год – 1 024 974 руб/мес 4-й год – 1 055 723 руб/мес 5-й год – 1 087 394 руб/мес 6-й год – 1 120 016 руб/мес 7-й год – 1 153 617 руб/мес 8-й год – 1 188 225 руб/мес 9-й год – 1 223 872 руб/мес 10-й год – 1 260 588 руб/мес'
     },
 ]
-
 
 
 Font.register({family: 'Inter', src: InterRegular});
@@ -220,7 +226,10 @@ export default function TestPdf() {
                         {title()}
                         <View style={{...styles.pt120, display: "flex", flexDirection: 'row', gap: '40px'}}>
                             <View style={{maxWidth: '1020px'}}>
-                                <Image style={styles.imagePreview} src={card.images[0].url}></Image>
+                                {card.images.length > 0
+                                    &&
+                                    <Image style={styles.imagePreview} src={card.images[0].url}></Image>
+                                }
                                 <Text style={{
                                     ...styles.textSale,
                                     width: '100%',
@@ -469,9 +478,18 @@ export default function TestPdf() {
 
                         </View>
                         {/*Карта*/}
-                        <Link target={"_blank"} href={'https://yandex.ru/maps/-/CDFUvDNZ'}>
-                            <Image style={{paddingTop: '50px'}} src={card.imageMap.url}></Image>
-                        </Link>
+                        <View style={{paddingTop: '150px'}}>
+                            <Link target={"_blank"}
+                                  href={`https://maps.yandex.ru/?text=${card.coordinates.lat}+${card.coordinates.lon}`}>
+                                {
+                                    // https://static-maps.yandex.ru/v1?lang=ru_RU&ll=28.98824,41.043451&z=9&size=200,200&apikey=YOUR_API_KEY
+                                    card.coordinates.lat &&
+                                    <Image style={{width: '2080px', height: '962px', objectFit: 'cover'}}
+                                           src={`https://static-maps.yandex.ru/v1?lang=ru_RU&ll=${card.coordinates.lon},${card.coordinates.lat}&size=650,450&apikey=6e61e348-993d-4a11-924c-702a0f0279f5&scale=1&z=15&pt=${card.coordinates.lon},${card.coordinates.lat},pm2dgm`}></Image>
+                                }
+                            </Link>
+                        </View>
+
                         {/*Карта*/}
                         {footer()}
                     </Page>
@@ -554,7 +572,7 @@ export default function TestPdf() {
                                             width: '100%',
                                             textAlign: "center"
                                         }}>
-                                            Срок договора
+                                            Договор
                                         </Text>
                                     </View>
                                     <View style={{
@@ -593,7 +611,7 @@ export default function TestPdf() {
                                 </View>
                             }
 
-                            {card.type !== 'rent' && arendators.map(item => {
+                            {card.type !== 'rent' && card.tenantsInfo.map(item => {
                                 return <View style={{
                                     display: "flex",
                                     flexDirection: "row",
@@ -609,7 +627,9 @@ export default function TestPdf() {
                                         alignItems: "center",
                                         borderRight: '1px solid #9E9E9E'
                                     }}>
-                                        <Image style={{width: '150px', height: '150px'}} src={item.logo}></Image>
+                                        {/*тут*/}
+                                        <Image style={{width: '150px', height: '150px'}}
+                                               src={`http://79.174.82.17:8080/public/${item.tentant.logo}`}></Image>
                                     </View>
                                     <View style={{
                                         width: '40%',
@@ -621,7 +641,7 @@ export default function TestPdf() {
                                         borderRight: '1px solid #9E9E9E'
                                     }}>
                                         <Text style={{fontSize: '36px', fontFamily: 'Inter', color: 'black'}}>
-                                            {item.map}
+                                            {item.rentFlow.month && item.rentFlow.month}
                                         </Text>
                                     </View>
                                     <View style={{
@@ -634,7 +654,7 @@ export default function TestPdf() {
                                         borderRight: '1px solid #9E9E9E'
                                     }}>
                                         <Text style={{fontSize: '36px', fontFamily: 'Inter', color: 'black'}}>
-                                            {item.gap}
+                                            {item.rentFlow.year && item.rentFlow.year}
                                         </Text>
                                     </View>
                                     <View style={{
@@ -647,7 +667,7 @@ export default function TestPdf() {
                                         borderRight: '1px solid #9E9E9E'
                                     }}>
                                         <Text style={{fontSize: '36px', fontFamily: 'Inter', color: 'black'}}>
-                                            {item.srok}
+                                            {item.contract}
                                         </Text>
                                     </View>
                                     <View style={{
@@ -660,7 +680,7 @@ export default function TestPdf() {
                                         borderRight: '1px solid #9E9E9E'
                                     }}>
                                         <Text style={{fontSize: '36px', fontFamily: 'Inter', color: 'black'}}>
-                                            {item.index}
+                                            {item.indexation}
                                         </Text>
                                     </View>
                                     <View style={{
@@ -673,12 +693,14 @@ export default function TestPdf() {
                                         borderRight: '1px solid #9E9E9E'
                                     }}>
                                         <Text style={{fontSize: '36px', fontFamily: 'Inter', color: 'black'}}>
-                                            {item.detail}
+                                            {item.detalization && item.detalization.map(detalization => {
+                                                return detalization
+                                            })}
                                         </Text>
                                     </View>
                                 </View>
                             })}
-                            <View style={{display: "flex", flexDirection: 'row', flexWrap: 'wrap'}}>
+                            <View style={{display: "flex", flexDirection: 'row', flexWrap: 'wrap', gap: '60px'}}>
                                 {card.layoutImages.length > 1 ?
                                     card.layoutImages.map(item => {
                                         return (
@@ -690,7 +712,7 @@ export default function TestPdf() {
                                     card.layoutImages.map(item => {
                                         return (
                                             <Image
-                                                style={{maxHeight: '1200px',  objectFit: 'contain', paddingTop: '200px'}}
+                                                style={{maxHeight: '1200px', objectFit: 'contain', paddingTop: '200px'}}
                                                 src={item.url}></Image>
                                         )
                                     })
@@ -711,7 +733,8 @@ export default function TestPdf() {
                         }}>
                             {card.images.map(item => {
                                 return (
-                                    <Image style={{maxWidth: '1010px', maxHeight: '700px', objectFit: 'contain'}} src={item.url}>
+                                    <Image style={{maxWidth: '1010px', maxHeight: '700px', objectFit: 'contain'}}
+                                           src={item.url}>
 
                                     </Image>
                                 )
