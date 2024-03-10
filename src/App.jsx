@@ -1,6 +1,8 @@
 import './App.css'
 import Card from "./components/Card.jsx";
 import ModalWindow from "./components/ModalWindow.jsx";
+import ModalCreateObject from './components/Modal/ModalCreateObject.jsx';
+
 import {useEffect, useState} from "react";
 import {getCards} from "./api/api.js";
 import {useDispatch, useSelector} from "react-redux";
@@ -15,7 +17,8 @@ export default function App() {
 
   const cards = useSelector(state => state.modalWindow)
   const dispatch = useDispatch()
-  const [isCreateWindow, setCreateWindow] = useState(false)
+  const [isCreateWindow, setCreateWindow] = useState(false),
+  [openCreateObjectModal, setOpenCreateObjectModal] = useState(false);
   // const [cards, setCards] = useState([])
 
     const [isLoading, setIsLoading] = useState(true)
@@ -41,23 +44,26 @@ export default function App() {
 
     }, [tentants.isLoading]);
 
-
-  console.log(cards)
   return (
     <div className={' pt-[120px]  max-w-[1280px] mx-auto w-full flex gap-[20px] flex-col'}>
       <div>
-        <button
-          onClick={
-            () => {
-              // setOpenWindow(null, true);
-            }
-          }
-          className={'text-[20px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}
-            >
-            Создать
-            объект
-        </button>
+        <ModalCreateObject  
+          Activator={({ toggleOpen }) => {
+
+            return (
+              <button
+                onClick={() => toggleOpen()}
+                className={'btn'}
+              >
+                Создать объект
+              </button>
+            )
+          }}
+        />
+
       </div>
+        
+
       <div className={'h-full relative flex flex-col gap-[20px]'}>
           { isLoading ?
               <p> Подождите немного арендодаторы грузяться.... </p>

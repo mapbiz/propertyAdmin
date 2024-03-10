@@ -5,8 +5,12 @@ import modalWindow from "./slices/modalSlice.jsx";
 import popupWindow from "./slices/popupSlice.jsx";
 import arendatorSlice from "./slices/arendatorsSlice.jsx";
 import tentantsSlice from "./slices/tentants.jsx";
+import createObjectSlice from './slices/createObjectSlice.jsx';
+
+
 export const store = configureStore({
   reducer: {
+    createObject: createObjectSlice,
     tentants: tentantsSlice,
     arendators: arendatorSlice,
     tagMore: tag,
@@ -14,4 +18,7 @@ export const store = configureStore({
     modalWindow: modalWindow,
     popupWindow: popupWindow,
   },
+  middleware: getDefaultMiddleware => getDefaultMiddleware({
+    serializableCheck: false,
+  })
 })

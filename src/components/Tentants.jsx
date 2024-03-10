@@ -47,7 +47,7 @@ export default function Tentants({
         const createNewTentantInObject = objectStorage.tenantsInfo.filter(tentant => tentant.type === 'create'),
         updateTentantInObject = objectStorage.tenantsInfo.filter(tentant => tentant.type === 'update');
 
-        createNewTentantInObject.length > 0 ? await createTentantsInCard(createNewTentantInObject.map(tentant => {
+        const responceToCreate = createNewTentantInObject.length > 0 ? await createTentantsInCard(createNewTentantInObject.map(tentant => {
             const newTentant = {
                 ...tentant,
             };
@@ -59,11 +59,10 @@ export default function Tentants({
             
 
             return newTentant;
-        }), objectStorage.id)
-        : 
-        null;
+        }), objectStorage.id) : null;
 
-        updateTentantInObject.length > 0 ? await updateTentantsInCard(updateTentantInObject.map(tentant => {
+
+        const responceToUpdate = updateTentantInObject.length > 0 ? await updateTentantsInCard(updateTentantInObject.map(tentant => {
             const newTentant = {
                 ...tentant,
                 rentFlow: {
@@ -72,19 +71,16 @@ export default function Tentants({
             };
 
             newTentant.tentantId = newTentant.tentant.id;
-            newTentant.rentFlow.mounth = newTentant.rentFlow.mouth;
 
 
             delete newTentant.rentFlow.mouth;
             delete newTentant.type;
             delete newTentant.tentant;
             
-
             return newTentant;
         }), objectStorage.id)
         : null;
 
-        console.log({ updateTentantInObject, createNewTentantInObject });
     };
 
     return (
@@ -101,7 +97,7 @@ export default function Tentants({
                                             {
                                                 !tentantInObject.tentant.id ?
                                                 <>
-                                                    <FormControl sx={{ width: '100%' }}>
+                                                    <FormControl sx={{ width: '100%', marginTop: 4, }}>
                                                         <InputLabel id="select-label">Выбрать арендатора</InputLabel>
                                                         <Select
                                                             sx={{ width: '100%' }}
@@ -110,6 +106,7 @@ export default function Tentants({
                                                             id="select"
                                                             onClick={e => {
                                                                 if(e.target.id === 'select') setIsOpenSelect(true);
+                                                                else setIsOpenSelect(false);
                                                             }}
                                                             labelId="select-label"
                                                         >
@@ -122,13 +119,21 @@ export default function Tentants({
                                                                     {
                                                                         [...tentans].map(tentant => {
                                                                             return (
-                                                                                <MenuItem
-                                                                                    onClick={e => clickSelectTentant(tentant, index)}
-                                                                                    key={tentant.id}
-                                                                                    value={tentant.id}
-                                                                                >
-                                                                                    {tentant.name}
-                                                                                </MenuItem>
+                                                                                <>
+                                                                                    { 
+                                                                                        objectStorage
+                                                                                        .tenantsInfo
+                                                                                        .findIndex(tentantInfo => tentantInfo.tentant.id === tentant.id) === -1 &&
+
+                                                                                        <MenuItem
+                                                                                            onClick={e => clickSelectTentant(tentant, index)}
+                                                                                            key={tentant.id}
+                                                                                            value={tentant.id}
+                                                                                        >
+                                                                                            {tentant.name}
+                                                                                        </MenuItem>
+                                                                                    }
+                                                                                </>
                                                                             )
                                                                         })
                                                                     }
@@ -177,8 +182,7 @@ export default function Tentants({
 
                                                                     dispatch(setTentantData({ 
                                                                         id: index, 
-                                                                        data: newTentant, 
-                                                                        type: !!tentantInObject.indexation ? 'update': 'create'  
+                                                                        data: newTentant,
                                                                     }))
                                                                 }}
                                                             />
@@ -194,8 +198,7 @@ export default function Tentants({
                                                                     newTentant.contract = e.target.value;
                                                                     dispatch(setTentantData({ 
                                                                         id: index, 
-                                                                        data: newTentant,
-                                                                        type: !!tentantInObject.contract ? 'update': 'create'  
+                                                                        data: newTentant, 
                                                                     }))
                                                                 }}
                                                             />
@@ -203,7 +206,7 @@ export default function Tentants({
                                                                 variant="standard"
                                                                 label="Месячный арендный поток"
                                                                 type="number"
-                                                                defaultValue={!!tentantInObject.rentFlow.mount ? tentantInObject.rentFlow.mount: tentantInObject.rentFlow.mounth}
+                                                                defaultValue={tentantInObject.rentFlow.month}
                                                                 onBlur={e => {
                                                                     const newTentant = {
                                                                         ...tentantInObject,
@@ -212,12 +215,11 @@ export default function Tentants({
                                                                         },
                                                                     }
 
-                                                                    newTentant.rentFlow.mount = +e.target.value;
+                                                                    newTentant.rentFlow.month = +e.target.value;
 
                                                                     dispatch(setTentantData({ 
                                                                         id: index, 
                                                                         data: newTentant,
-                                                                        type: !!tentantInObject.rentFlow.mount || tentantInObject.rentFlow.mount === null  ? 'update': 'create' 
                                                                     }))
                                                                 }}
                                                             />
@@ -238,7 +240,6 @@ export default function Tentants({
                                                                     dispatch(setTentantData({ 
                                                                         id: index, 
                                                                         data: newTentant,
-                                                                        type: !!tentantInObject.rentFlow.year ? 'update': 'create' 
                                                                     }))
                                                                 }}
                                                             />
@@ -257,8 +258,7 @@ export default function Tentants({
 
                                                                         dispatch(setTentantData({ 
                                                                             id: index, 
-                                                                            data: newTentant,
-                                                                            type: tentantInObject.detalization.length > 0 ? 'update': 'create' 
+                                                                            data: newTentant, 
                                                                         }));
                                                                     }}
                                                                 />

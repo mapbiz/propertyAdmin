@@ -174,7 +174,6 @@ export const tagSlice = createSlice({
                     ...tentant,
                 };
             })
-            console.log(newPayload);
 
             state.value = { ...state.value, ...newPayload }
         },
