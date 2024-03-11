@@ -1,11 +1,19 @@
 import Header from "./Header.jsx";
-import {Outlet} from "react-router-dom";
+import {Outlet, useLocation} from "react-router-dom";
+import Footer from "./Footer.jsx";
 
 export default function Layout() {
-  return (
-    <div>
-      <Header />
-        <Outlet />
-    </div>
-  )
+    const location = useLocation()
+    console.log(location)
+
+    return (
+        <div>
+            <Header/>
+            <Outlet/>
+            {
+                location.pathname !== '/pdf' &&
+                <Footer/>
+            }
+        </div>
+    )
 }

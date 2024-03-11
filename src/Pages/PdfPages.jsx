@@ -282,7 +282,7 @@ export default function TestPdf() {
                                             display: 'flex',
                                             gap: '8px'
                                         }}>
-                                            {card.price.global}
+                                            {card.price.global && (card.price.global).toLocaleString('ru')}
                                             <Text style={{color: '#144728', fontSize: '40px'}}>₽</Text>
                                         </Text>
                                     </View>
@@ -300,7 +300,7 @@ export default function TestPdf() {
                                             display: 'flex',
                                             gap: '8px'
                                         }}>
-                                            {card.price.square}
+                                            {card.price.square && (card.price.square).toLocaleString('ru')}
                                             <Text style={{color: '#144728', fontSize: '40px'}}>₽</Text>
                                         </Text>
                                     </View>
@@ -363,7 +363,7 @@ export default function TestPdf() {
                                                 </Text>
                                             </View>
                                             <Text style={{fontSize: '44px'}}>
-                                                {card.globalRentFlow.mouth && card.globalRentFlow.mouth}
+                                                {card.globalRentFlow.mouth && (card.globalRentFlow.mouth).toLocaleString('ru')}
                                             </Text>
                                         </View>
                                         }

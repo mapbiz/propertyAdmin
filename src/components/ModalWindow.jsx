@@ -61,13 +61,11 @@ export default function ModalWindow({isCreate}) {
     }
 
     const update = async (id) => {
-        const res = await updateCard(id, object)
-        console.log(res)
-        // imgToBlob()
-        // console.log(images)
-        // const data = objectToFormData(object, 'update')
-        // updateCard(data, object['id'])
-        // clickOutside()
+        const res = await updateCard(id, object).catch(err => {
+            alert(err.response.data.error.message)
+        })
+
+        if (res.data.ok) dispatch(setModalWindow({modalWindow: false}))
 
     }
 
@@ -172,6 +170,13 @@ export default function ModalWindow({isCreate}) {
                         />
                         <Tag title={'Цена:'} subName={'global'} name={'price'}/>
                         <Tag subName={'square'} title={'Цена за м²:'} name={'price'}/>
+                        <Tag
+                            title={'Этаж'}
+                            subName={'floor'}
+                            name={'info'}
+                            className={'w-full'}
+                            variant="outlined"
+                        />
                         {
                             stateWindow === 'sale-business' &&
                             <Tag title={'Окупаемость:'} name={'payback'}/>
@@ -309,7 +314,7 @@ export default function ModalWindow({isCreate}) {
                             <>
                                 {
                                     stateWindow === 'sale-business' &&
-                                    <Tag title={'Доходность:'} subName={'profitability'} name={'price'} />
+                                    <Tag title={'Доходность:'} subName={'profitability'} name={'price'}/>
                                 }
                             </>
                         }
@@ -319,7 +324,7 @@ export default function ModalWindow({isCreate}) {
                             <>
                                 <h2 className={'font-bold'}>Арендаторы</h2>
 
-                                <Tentants />
+                                <Tentants/>
                                 {/*<MultipleSelectCheckmarks/>*/}
                             </>
                         }
@@ -475,7 +480,7 @@ export default function ModalWindow({isCreate}) {
                                     // revalidate()
                                 }
                             }}
-                            className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}>{isCreate ? 'Создать' : 'Редактировать'}</button>
+                            className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}>{isCreate ? 'Создать' : 'Сохранить изменения'}</button>
                         <button
                             className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}
                             onClick={() => {
