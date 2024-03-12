@@ -31,6 +31,7 @@ export default function InputFile({
             multiple={type === 'files'}
             type={type === 'files' ? 'file': type}
          />
+
       </Button>
    );
 };

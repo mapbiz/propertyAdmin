@@ -12,3 +12,19 @@ export const countDuplicates = arrayWithDuplicates => {
 
   return Object.fromEntries(map);
 };
+
+/**
+ * 
+ * @param {string} keyField 
+ * @param {() => string | number} generateKeyValue 
+ * @param {unkown[]} array 
+ * @returns 
+ */
+export const addKeys = (array, keyField = "id", generateKeyValue = () => Math.ceil(Math.random() * Number.MAX_SAFE_INTEGER)) => {
+  return array.map(item => {
+    return {
+      ...item,
+      [keyField]: generateKeyValue(),
+    };
+  });
+};

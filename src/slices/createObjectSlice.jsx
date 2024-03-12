@@ -8,6 +8,17 @@ export const typesObject = {
    sale: "Продажа",
    'sale-business': "ГАБ",
 };
+export const stagesObject = {
+   beforeInput: 'beforeInput',
+   pickedType: 'pickedType',
+   input: 'input',
+   beforeValidate: 'beforeValidate',
+   validate: 'validate',
+   error: 'error',
+   beforeCreate: 'beforeCreate',
+   created: 'created',
+   createdSaleBusiness: 'createdSaleBusiness',
+};
 
 const initialState = {
    value: {
@@ -57,6 +68,7 @@ const initialState = {
       title: {
          input: "text",
          name: "Заголовок",
+         required: true,
       },
       description: {
          input: 'textarea',
@@ -72,7 +84,8 @@ const initialState = {
       },
       address: {
          input: 'text',
-         name: 'Адрес'
+         name: 'Адрес',
+         required: true,
       },
       metro: {
          input: 'text',
@@ -80,7 +93,8 @@ const initialState = {
       }, 
       payback: {
          input: 'number',
-         name: 'Окупаемость'
+         name: 'Окупаемость',
+         required: true,
       },
 
       // info
@@ -124,67 +138,79 @@ const initialState = {
       // price
       priceSquare: {
          input: 'number',
-         name: 'Цена/Аренданая ставка за м2'
+         name: 'Цена/Аренданая ставка за м2',
+         required: true,
       },
       priceProfitability: {
          input: 'number',
-         name: 'Окупаемость в годах'
+         name: 'Окупаемость в годах',
+         required: true,
       },
       priceGlobal: {
          input: 'number',
-         name: 'Цена/Арендная плата'
+         name: 'Цена/Арендная плата',
+         required: true,
       },
       priceRentYear: {
         input: 'number',
-        name: 'Арендная ставка в мес' 
+        name: 'Арендная ставка в мес',
+        required: true,
       },
       priceRentMouth: {
          input: 'number',
-         name: 'Арендная ставка в год'
+         name: 'Арендная ставка в год',
+         required: true,
       },
 
       // panorama
       panorama: {
          input: 'text',
-         name: 'Ссылка на панораму'
+         name: 'Ссылка на панораму',
+         required: true,
       },
 
       // images
       photos: {
          input: 'files',
-         name: 'Фотки обьекта'
+         name: 'Фотки обьекта',
+         required: true,
       },
       photosLayout: {
          input: 'files',
-         name: 'Фотки планировки'
+         name: 'Фотки планировки',
       },
       photoMap: {
          input: 'file',
-         name: 'Фотка карты (для формирования пдф)'
+         name: 'Фотка карты (для формирования пдф)',
       },
       
       // coordinates
       lat: {
          input: 'number',
-         name: 'Широта'
+         name: 'Широта',
+         required: true,
       },
       lon: {
          input: 'number',
-         name: 'Долгота' 
+         name: 'Долгота',
+         required: true,
       },
 
       // global rent flow
       globalRentFlowYear: {
          input: 'number',
-         name: "Общий арендный поток в год"
+         name: "Общий арендный поток в год",
+         required: true,
       },
       globalRentFlowMouth: {
          input: 'number',
-         name: 'Общий месячный арендный поток в год'
+         name: 'Общий месячный арендный поток в год',
+         required: true,
       },
    },
+   createdObject: null,
    type: null,
-   stage: 'simple',
+   stage: 'beforeInput',
    isLoading: false,
 }; 
 
@@ -205,6 +231,22 @@ export const createObjectSlice = createSlice({
          state = initialState;
       },
       
+      /** 
+       * @param {{ payload: { stage: 'beforeInput' | 'error' | 'input' | 'validate' | 'pickedType' | 'beforeCreate' | 'created' | 'createdSaleBusiness' } }} action 
+      */
+      pickObjectStage: (state, action) => {
+         const {
+            stage
+         } = action.payload;
+
+         const newObject = JSON.parse(JSON.stringify(state));
+
+         if(!stagesObject[stage]) console.error(`${stage} не существует такого этапа создания обьекта!`);
+         else newObject.stage = stage;
+
+         state = newObject;
+      },
+
       /**
        * 
        * @param {{ payload: { type: 'rent' | 'sale' | 'sale-business' } }} action 
@@ -237,6 +279,7 @@ export const createObjectSlice = createSlice({
          }
 
          newObject.type = type;
+         newObject.stage = stagesObject.pickedType;
          
          return state = newObject;
       },
@@ -253,9 +296,9 @@ export const createObjectSlice = createSlice({
 
          
          if(!field) return;
-         if(value === '' && value === ' ') return;
+         if(value.toString().length === 0) return;
 
-
+         // state.stage = stagesObject.input;
          state.value[field] = value;
       },
       /**
@@ -267,14 +310,109 @@ export const createObjectSlice = createSlice({
 
          delete state.value[field];
       }, 
+
+      /**
+       * @param {{ payload: { errors: string[], field: string } }} action 
+       */
+      setErrorsOnField: (state, action) => {
+         const {
+            errors,
+            field
+         } = action.payload;
+
+         state.fields[field].error = errors.join(", ");
+         state.stage = stagesObject.error;
+      },
+      /**
+       * @param {{ payload: { field: string } }} action 
+      */
+      clearErrorsOnField(state, action) {
+         const { field } = action.payload;
+
+         Reflect.deleteProperty(state.fields[field], 'error');
+
+         const newObject = JSON.parse(JSON.stringify(state));
+
+         const getRequiredFields = Object
+         .keys(newObject.value)
+         .map(objectField => {
+            if(!!newObject.fields[objectField]?.required) return {
+               fieldName: objectField,
+               field: newObject.fields[objectField],
+               value: newObject.value[objectField],
+            };
+         })
+         .filter(field => !!field);
+
+         const errorsFields = getRequiredFields.filter(objectField => !!objectField.field?.error);
+
+         newObject.stage = errorsFields.length === 0 ? stagesObject.beforeCreate: stagesObject.error;
+      
+         state = newObject;
+         state.stage = errorsFields.length === 0 ? stagesObject.beforeCreate: stagesObject.error;
+      },
+
+      validateFieldsObject: state => {
+         const newObject = JSON.parse(JSON.stringify(state));
+
+         state.stage = stagesObject.beforeValidate;
+
+         let requiredFields = Object
+         .keys(newObject.value)
+         .map(objectField => {
+            if(!!newObject.fields[objectField]?.required) return {
+               fieldName: objectField,
+               fieldInfo: newObject.fields[objectField],
+               value: newObject.value[objectField],
+            };
+         })
+         .filter(field => !!field);
+
+         requiredFields = requiredFields.map(requiredField => {
+            if(requiredField.value.toString().length === 0) return {
+               ...requiredField,
+               fieldInfo: {
+                  ...requiredField.fieldInfo,
+                  error: "Поле обязательно для заполнения",
+               },
+            };
+            return requiredField;
+         });
+
+         
+         const errorRequiredFields = requiredFields.filter(objectField => !!objectField.fieldInfo?.error);
+
+         if(errorRequiredFields.length > 0) {
+            newObject.stage = stagesObject.error;
+            
+            errorRequiredFields.forEach(errRequiredField => {
+               newObject.fields[errRequiredField.fieldName] = {
+                  ...errRequiredField.fieldInfo,
+               }
+            });
+
+         } 
+         else newObject.stage = stagesObject.validate;
+         
+         return state = newObject;
+      },
    },
    extraReducers: builder => {
       builder.addCase(createObject.pending, state => {
          state.isLoading = true;
       })
+      builder.addCase(createObject.rejected, (state, action) => {
+         console.log({ state, action });
+      });
       builder.addCase(createObject.fulfilled, (state, action) => {
 
-         if(state.type === 'sale-business') state.stage = 'create-sale-bussiness';
+         if(state.type === 'sale-business') {
+            state.stage = stagesObject.createdSaleBusiness;
+            state.createdObject = action.payload.data;
+         }
+         else {
+            state.stage = stagesObject.created;
+         };
 
          state.isLoading = false;
       });
@@ -283,10 +421,17 @@ export const createObjectSlice = createSlice({
 
 export const {
    pickObjectType,
+   pickObjectStage,
    resetCreateObject,
 
+   // object field
    changeObjectField,
    resetObjectField,
+
+   // error field
+   setErrorsOnField,
+   clearErrorsOnField,
+   validateFieldsObject,
 } = createObjectSlice.actions;
 
 export default createObjectSlice.reducer;

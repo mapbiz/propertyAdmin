@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useId } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 
 import { 
@@ -17,17 +17,29 @@ import {
    CardContent,
    TextField,
    FormControlLabel,
+   Typography,
 } from "@mui/material";
 import { visuallyHidden } from '@mui/utils';
 
 import { UploadFile } from "@mui/icons-material";
 import CloseIcon from '@mui/icons-material/Close';
 
-import { pickObjectType, typesObject, changeObjectField, resetObjectField, createObject } from "../../slices/createObjectSlice";
+import { 
+   pickObjectType, 
+   typesObject, 
+   changeObjectField, 
+   setErrorsOnField,
+   clearErrorsOnField,
+   resetObjectField, 
+   createObject, 
+   stagesObject,
+   validateFieldsObject,
+   pickObjectStage
+} from "../../slices/createObjectSlice";
 import { useDispatch, useSelector } from "react-redux";
 import InputFile from "../Input/InputFile";
 import Textarea from "../Input/Textarea";
-import { countDuplicates } from "../../helpers/array";
+import { countDuplicates, addKeys } from "../../helpers/array";
 
 export default function ModalCreateObject({
    onNextStep = step => {},
@@ -48,40 +60,12 @@ export default function ModalCreateObject({
 
    const [step, setStep] = useState(0),
    [maxSteps, setMaxSteps] = useState(1),
+   [touchedImagesInputs, setTouchedImagesInputs] = useState([]),
+   [validate, setValidate] = useState(true),
    [isFinish, setIsFinish] = useState(false);
 
    const objectCreate = useSelector(state => state.createObject),
    dispatch = useDispatch();
-
-   const enterTentant = async () => {
-      dispatch(createObject(objectCreate.value));
-   };
-
-   const nextStep = async () => {
-      if(objectCreate.type === 'sale-business' && step === 1) {
-         await enterTentant();
-      };
-      
-      setStep(step+1);
-   },
-   finishStep = () => {
-      console.log('finish');
-   },
-   prevStep = () => {
-      setStep(step-1);
-   };
-
-   const pickType = type => {
-      dispatch(pickObjectType({ type }));
-
-      if(type !== null && typesObject[type] !== undefined) nextStep();
-      if(type === 'sale-business') setMaxSteps(2);
-   };
-
-   const toggleOpen = () => {
-      setIsOpen(!isOpen);
-   };
-
 
    const sortObjectInputFields = useMemo(
       () => {
@@ -115,15 +99,116 @@ export default function ModalCreateObject({
             readyFieldArray.push(...objectCreateFieldsArr);
          });
 
-         return readyFieldArray.map(field => {
-            return {
-               ...field, 
-               id: Math.ceil(Math.random() * Number.MAX_SAFE_INTEGER),
-            }
-         });
+
+         return addKeys(readyFieldArray);
       },
       [objectCreate]
-   );
+   ),
+   getErrorsFields = useMemo(
+      () => {
+         return Object
+         .keys(objectCreate.value)
+         .map(fieldValue => {
+            return {
+               ...objectCreate.fields[fieldValue],
+               field: fieldValue,
+            }
+         })
+         .filter(field => !!field?.error);
+
+      },
+      [objectCreate.fields, objectCreate.value],
+   )
+
+   const enterTentant = async () => {
+      dispatch(createObject(objectCreate.value));
+   };
+
+   const validateInputs = () => {
+      // Фильтрация только на поля нужные к валидовке
+      const getRequiredFields = sortObjectInputFields
+      .filter(field => !!field?.required)
+      .map(field => {
+         if(objectCreate.value[field.field].toString().length === 0) {
+            return {
+               ...field,
+               value: objectCreate.value[field.field],
+            };
+         }
+      })
+      .filter(requiredField => !!requiredField);
+
+
+      // required validation
+      const validateArray = getRequiredFields.map(requiredField => {
+         dispatch(setErrorsOnField({
+            errors: ["Поле обязательно для заполнения"],
+            field: requiredField.field,
+         }));
+
+         return requiredField.field;
+      });
+
+
+      setValidate(validateArray.length === 0);
+   };
+
+   const nextStep = async () => {
+      if(!validate) return;
+
+      if(objectCreate.type === 'sale-business' && step === 1) {
+         await enterTentant();
+
+         return;
+      };
+      
+      setStep(step+1);
+   },
+   finishStep = () => {
+      if(getErrorsFields.length > 0) return;
+
+      dispatch(createObject(objectCreate.value));
+   },
+   prevStep = () => {
+      setStep(step-1);
+   };
+
+   const pickType = type => {
+      dispatch(pickObjectType({ type }));
+
+      if(type !== null && typesObject[type] !== undefined) nextStep();
+      if(type === 'sale-business') setMaxSteps(2);
+      else setMaxSteps(1);
+   };
+
+   const toggleOpen = () => {
+      setIsOpen(!isOpen);
+   }; 
+
+   // useEffect(() => {
+   //    console.log(objectCreate);
+
+   //    // Фильтрация только на поля нужные к валидовке
+   //    const getErroredRequiredFields = sortObjectInputFields
+   //    .filter(field => !!field?.required)
+   //    .map(field => {
+   //       if(objectCreate.value[field.field].toString().length === 0) {
+   //          return {
+   //             ...field,
+   //             value: objectCreate.value[field.field],
+   //          };
+   //       }
+   //    })
+   //    .filter(requiredField => !!requiredField);
+
+   //    if(getErroredRequiredFields.length > 0) dispatch(pickObjectStage(stagesObject.error));
+   //    else dispatch(pickObjectStage(stagesObject.beforeCreate));
+      
+   // }, [objectCreate.fields, objectCreate.value]);
+   // useEffect(() => {
+
+   //    if(objectCreate.stage === stagesObject.validate) validateInputs();
+   // }, [objectCreate.value, objectCreate.stage]);
 
    return (
       <>
@@ -187,12 +272,27 @@ export default function ModalCreateObject({
                                                       variant="outlined"
                                                       label={createInput.name}
                                                       defaultValue={createInputValue}
-                                                      onBlur={e => {
+                                                      onBlur={async e => {
                                                          dispatch(changeObjectField({
                                                             field: createInput.field,
                                                             value: e.target.value,
                                                          }));
+
+                                                         if((e.target.value.toString().length === 0 && !createInput?.error) && !!createInput?.required) {
+                                                            dispatch(setErrorsOnField({
+                                                               field: createField.field,
+                                                               errors: ["Поле обязательно для заполнения"],
+                                                            }))
+                                                         };
+
+                                                         if(!!createInput?.error && e.target.value.toString().length > 0) {
+                                                            dispatch(clearErrorsOnField({
+                                                               field: createInput.field,
+                                                            }));
+                                                         };
                                                       }}
+                                                      error={!!createInput?.error}
+                                                      helperText={createInput?.error}
                                                    />
                                                 </>
                                              );
@@ -208,15 +308,22 @@ export default function ModalCreateObject({
                                                          dispatch(changeObjectField({
                                                             field: createInput.field,
                                                             value: +e.target.value,
-                                                         }))
+                                                         }));
+
+                                                         if(!!createInput?.error && e.target.value.toString().length > 0) {
+                                                            dispatch(clearErrorsOnField({
+                                                               field: createInput.field,
+                                                            }));
+                                                         };
                                                       }}
+                                                      error={!!createInput?.error}
+                                                      helperText={createInput?.error}
                                                    />
                                                 </>
                                              );
                                              case "files":
                                              return (
-                                                <>
-                        
+                                                <div className="flex flex-col">
                                                    <InputFile
                                                       type="files"
                                                       textUploaded={
@@ -228,10 +335,26 @@ export default function ModalCreateObject({
                                                             field: createInput.field,
                                                             value: files,
                                                          }));
+
+                                                         if(!!createInput?.error) dispatch(clearErrorsOnField({
+                                                            field: createInput.field,
+                                                         }))
                                                       }}
                                                       label={createInput.name}
                                                    />
-                                                </>
+                                                   
+                                                   {
+                                                      !!createInput?.error &&
+                                                      <>
+                                                         <Typography
+                                                            color="error"
+                                                            variant="body"
+                                                         >
+                                                            {createInput.error}
+                                                         </Typography>
+                                                      </>
+                                                   }
+                                                </div>
                                              );
                                              case "file":
                                              return (
@@ -312,37 +435,50 @@ export default function ModalCreateObject({
                   </Step>
                   <Step 
                      sx={{ 
-                        display: objectCreate.type === 'sale-business' ? 'block': 'none'
+                        display: (objectCreate.type === 'sale-business') ? 'block': 'none'
                      }}
                   >
                      <StepLabel> Заполните арендаторов </StepLabel>
                      <StepContent>
                         <Card>
                            <CardContent>
-                              Арендаторы   
+                              <Button onClick={e => console.log(objectCreate)}>click</Button>   
                            </CardContent>
                         </Card>
                      </StepContent>
                   </Step>
                </Stepper>
 
-               <Box sx={{ marginTop: 4 }}>
-                  <Button
-                     variant="contained"
-                     onClick={() => {
-                        return step === maxSteps ? finishStep(): nextStep()
-                     }}
-                  >
-                     { step === maxSteps ? 'Закончить': 'Далее' }
-                  </Button>
-                  <Button
-                     onClick={() => {
-                        return prevStep();
-                     }}
-                  >
-                     Назад
-                  </Button>
-               </Box>
+               { step >= 1 &&
+                  <Box sx={{ marginTop: 4 }}>
+                     <Button
+                        variant="contained"
+                        disabled={getErrorsFields.length > 0}
+                        color={validate ? 'primary': 'error'}
+                        onClick={() => {
+                           dispatch(validateFieldsObject());
+
+                           if(getErrorsFields.length === 0) return step === maxSteps ? finishStep(): nextStep()
+                        }}
+                     >
+                        {
+                           getErrorsFields.length > 0 ?
+                           <> Решите ошибки </>
+                           :
+                           <>
+                              { step === maxSteps ? 'Закончить': 'Далее' }
+                           </>
+                        }
+                     </Button>
+                     <Button
+                        onClick={() => {
+                           return prevStep();
+                        }}
+                     >
+                        Назад
+                     </Button>
+                  </Box>
+               }
             </DialogContent>
          
          </Dialog>

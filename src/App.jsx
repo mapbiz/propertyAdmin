@@ -49,7 +49,6 @@ export default function App() {
       <div>
         <ModalCreateObject  
           Activator={({ toggleOpen }) => {
-
             return (
               <button
                 onClick={() => toggleOpen()}
