@@ -127,7 +127,7 @@ export const tagSlice = createSlice({
 
         },
         joinTentant: (state, action) => {
-            state.value.tenantsInfo[action.payload.index] = {
+            state.value.tenantsInfo.push({
                 type: "create",
                 tentant: action.payload.tentant,
                 detalization: [
@@ -139,7 +139,20 @@ export const tagSlice = createSlice({
                     mount: null,
                     year: null
                 },
-            };
+            });
+            // state.value.tenantsInfo[action.payload.index] = {
+                // type: "create",
+                // tentant: action.payload.tentant,
+                // detalization: [
+                //     ''
+                // ],
+                // indexation: null,
+                // contract: '',
+                // rentFlow: {
+                //     mount: null,
+                //     year: null
+                // },
+            // };
         },
 
         setArendators: (state, action) => {

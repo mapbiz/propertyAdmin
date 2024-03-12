@@ -1,7 +1,10 @@
+import deepObject from "object-path";
+
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import { createCard } from "../api/api";
+import { createCard, deleteCard } from "../api/api";
 import { objectToFormData } from "../helpers/formData";
+
 
 export const typesObject = {
    rent: "Аренда",
@@ -211,7 +214,7 @@ const initialState = {
    createdObject: null,
    type: null,
    stage: 'beforeInput',
-   isLoading: false,
+   isLoading: null,
 }; 
 
 export const createObject = createAsyncThunk(
@@ -219,8 +222,18 @@ export const createObject = createAsyncThunk(
    async objectData => {
       const responceCreateObject = await createCard(objectToFormData(objectData));
 
+      if(responceCreateObject.status > 300) return responceCreateObject;
+
       return responceCreateObject.data;
    },
+)
+export const deleteCreatedObject = createAsyncThunk(
+   'delete/created/object',
+   async createdObjectId => {
+      const responceDelete = await deleteCard(createdObjectId);
+      
+      return;  
+   }
 )
 
 export const createObjectSlice = createSlice({
@@ -296,7 +309,7 @@ export const createObjectSlice = createSlice({
 
          
          if(!field) return;
-         if(value.toString().length === 0) return;
+         // if(value.toString().length === 0) return;
 
          // state.stage = stagesObject.input;
          state.value[field] = value;
@@ -396,13 +409,53 @@ export const createObjectSlice = createSlice({
          
          return state = newObject;
       },
+
+      // tentant
+      /** 
+       * @param { { payload: { tentant: object } } } action 
+       */
+      joinNewTentant: (state, action) => {
+         if(state.createdObject === null) return;
+
+         state.createdObject.tenantsInfo.push({
+            type: 'create',
+            tentant: action.payload.tentant,
+            detalization: [
+               ''
+            ],
+            indexation: null,
+            contract: '',
+            rentFlow: {
+               mount: null,
+               year: null
+            },
+         })
+      },
+      /** 
+       * @param {{ payload: { field: string, value: unkown, tentantId: string } }} action 
+       */
+      setTentantData: (state, action) => {
+         const {
+            field,
+            value,
+            tentantId,
+         } = action.payload;
+
+         const findTentantInObject = state.createdObject.tenantsInfo.findIndex(tentantInObject => tentantInObject.tentant.id === tentantId);
+
+         if(findTentantInObject === -1) console.error("Ошибка такого арендатора нет!");
+         else {
+            deepObject.set(state.createdObject.tenantsInfo[findTentantInObject], field, value);
+         };
+      },
    },
    extraReducers: builder => {
       builder.addCase(createObject.pending, state => {
          state.isLoading = true;
       })
       builder.addCase(createObject.rejected, (state, action) => {
-         console.log({ state, action });
+         state.isLoading = false;
+         state.error = "Ошибка";
       });
       builder.addCase(createObject.fulfilled, (state, action) => {
 
@@ -415,6 +468,10 @@ export const createObjectSlice = createSlice({
          };
 
          state.isLoading = false;
+      });
+
+      builder.addCase(deleteCreatedObject.fulfilled, (state, action) => {
+         state.createdObject = null;
       });
    }
 });
@@ -432,6 +489,10 @@ export const {
    setErrorsOnField,
    clearErrorsOnField,
    validateFieldsObject,
+
+   // tentants
+   joinNewTentant,
+   setTentantData,
 } = createObjectSlice.actions;
 
 export default createObjectSlice.reducer;

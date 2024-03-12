@@ -28,18 +28,19 @@ import {
    pickObjectType, 
    typesObject, 
    changeObjectField, 
-   setErrorsOnField,
-   clearErrorsOnField,
-   resetObjectField, 
    createObject, 
    stagesObject,
-   validateFieldsObject,
-   pickObjectStage
+   resetCreateObject,
+   deleteCreatedObject,
 } from "../../slices/createObjectSlice";
 import { useDispatch, useSelector } from "react-redux";
 import InputFile from "../Input/InputFile";
 import Textarea from "../Input/Textarea";
 import { countDuplicates, addKeys } from "../../helpers/array";
+import { setObject } from "../../slices/tagSlice";
+import Tentants from "../Tentants";
+import ObjectTentant from "../Tentant/ObjectTentant";
+import { createTentantsInCard } from "../../api/api";
 
 export default function ModalCreateObject({
    onNextStep = step => {},
@@ -64,8 +65,139 @@ export default function ModalCreateObject({
    [validate, setValidate] = useState(true),
    [isFinish, setIsFinish] = useState(false);
 
+   const [isLoadingCreate, setIsLoadingCreate] = useState(true);
+
    const objectCreate = useSelector(state => state.createObject),
-   dispatch = useDispatch();
+   dispatch = useDispatch();  
+
+   const [stageForm, setStageForm] = useState("");
+
+   const [formError, setFormError] = useState("");
+
+   const [errorsFieldsValidate, setErrorsFields] = useState({}),
+   [errorsFieldsBeforeValidate, setErrorsFieldsBeforeValidate] = useState({});
+
+   useEffect(() => {
+      if(objectCreate.type === null) return;
+
+      const getObjectFieldsOfType = Object
+      .keys(objectCreate.value)
+      .map(objectField => {
+         return {
+            ...objectCreate.fields[objectField],
+            value: objectCreate.value[objectField],
+            fieldName: objectField,
+         };
+      }),
+      getRequiredFields = getObjectFieldsOfType.filter(objectField => !!objectField?.required)
+      
+
+
+      setErrorsFields(beforeErrorsFields => {
+         let errors = {};
+
+         getRequiredFields.forEach(requiredField => {
+            if(requiredField.value.toString().length === 0) errors[requiredField.fieldName] = {
+               form: `${requiredField.name}, обязательно для заполнения!`,
+            };
+         });
+
+         return errors;
+      });
+
+   }, [objectCreate, objectCreate.value, objectCreate.type, objectCreate.fields]);
+
+   // Если шаг стал 0, сбросить валидацию
+   useEffect(() => {
+      if(step === 0) {
+         // Сброс при выходе
+         setValidate(true);
+         setErrorsFields({});
+         setErrorsFieldsBeforeValidate({});
+      }; 
+      if(step === 2) {
+         setFormError('');
+      };
+
+
+   }, [step]);
+
+   useEffect(() => {
+      if(objectCreate.isLoading === null) return;
+
+      if(!objectCreate.isLoading && !!objectCreate?.error) {
+         setErrorsFields({});
+         setErrorsFieldsBeforeValidate({});
+         setStep(1);
+         setFormError("Поле Загловок должно быть уникальным");
+         setIsOpen(false);
+      };
+
+      // if(!objectCreate.isLoading && objectCreate.createdObject !== null) {
+      //    dispatch(setObject(objectCreate.createdObject));
+      // };
+
+      setIsLoadingCreate(objectCreate.isLoading);
+
+   }, [objectCreate.isLoading]);
+
+   const tryFieldValidate = (fieldName, fieldValue) => {
+      const getObjectFieldsOfType = Object
+      .keys(objectCreate.value)
+      .map(objectField => {
+         return {
+            ...objectCreate.fields[objectField],
+            value: objectCreate.value[objectField],
+            fieldName: objectField,
+         };
+      }),
+      getRequiredFields = getObjectFieldsOfType.filter(objectField => !!objectField?.required);
+
+      const findRequiredField = getRequiredFields.find(requiredField => requiredField.fieldName === fieldName);
+
+      if(!findRequiredField) return;
+      
+      setErrorsFieldsBeforeValidate(beforeErrorsFields => {
+         let newErrors = {
+            ...beforeErrorsFields,
+         };
+
+         if(fieldValue.toString().length === 0) newErrors[fieldName] = "Поле обзятельно для заполнения!";
+         else Reflect.deleteProperty(newErrors, fieldName);
+         
+         
+         return newErrors;
+      });
+   },
+   tryValidateForm = () => {
+      if(JSON.stringify(errorsFieldsValidate) === "{}") {
+         setValidate(true);
+
+         return true;
+      }
+      else {
+         setValidate(false);
+
+         Object
+         .keys(errorsFieldsValidate)
+         .map(errorField => {
+            setErrorsFieldsBeforeValidate(beforeErrorFields => {
+               const newErrorsField = {
+                  ...beforeErrorFields,
+               };
+
+
+               newErrorsField[errorField] = "Поле обязательно для заполнения";
+
+               return {
+                  ...newErrorsField,
+               }
+            });
+         });
+
+         return false;
+      }
+   };
 
    const sortObjectInputFields = useMemo(
       () => {
@@ -124,52 +256,86 @@ export default function ModalCreateObject({
       dispatch(createObject(objectCreate.value));
    };
 
-   const validateInputs = () => {
-      // Фильтрация только на поля нужные к валидовке
-      const getRequiredFields = sortObjectInputFields
-      .filter(field => !!field?.required)
-      .map(field => {
-         if(objectCreate.value[field.field].toString().length === 0) {
-            return {
-               ...field,
-               value: objectCreate.value[field.field],
-            };
-         }
-      })
-      .filter(requiredField => !!requiredField);
+   // const validateInputs = () => {
+   //    // Фильтрация только на поля нужные к валидовке
+   //    const getRequiredFields = sortObjectInputFields
+   //    .filter(field => !!field?.required)
+   //    .map(field => {
+   //       if(objectCreate.value[field.field].toString().length === 0) {
+   //          return {
+   //             ...field,
+   //             value: objectCreate.value[field.field],
+   //          };
+   //       }
+   //    })
+   //    .filter(requiredField => !!requiredField);
 
 
-      // required validation
-      const validateArray = getRequiredFields.map(requiredField => {
-         dispatch(setErrorsOnField({
-            errors: ["Поле обязательно для заполнения"],
-            field: requiredField.field,
-         }));
+   //    // required validation
+   //    const validateArray = getRequiredFields.map(requiredField => {
+   //       dispatch(setErrorsOnField({
+   //          errors: ["Поле обязательно для заполнения"],
+   //          field: requiredField.field,
+   //       }));
 
-         return requiredField.field;
-      });
+   //       return requiredField.field;
+   //    });
 
 
-      setValidate(validateArray.length === 0);
-   };
+   //    setValidate(validateArray.length === 0);
+   // };
 
    const nextStep = async () => {
-      if(!validate) return;
-
       if(objectCreate.type === 'sale-business' && step === 1) {
          await enterTentant();
-
-         return;
       };
       
       setStep(step+1);
    },
-   finishStep = () => {
+   finishStep = async () => {
       if(getErrorsFields.length > 0) return;
 
-      dispatch(createObject(objectCreate.value));
+      if(objectCreate.type !== 'sale-business') dispatch(createObject(objectCreate.value));
+      if(objectCreate.type === 'sale-business') {
+         if(objectCreate.createdObject?.tenantsInfo?.length > 0) {
+            const createTentant = objectCreate.createdObject?.tenantsInfo?.filter(tentant => tentant.type === 'create');
+
+            // console.log(createTentant, );
+
+            console.log(objectCreate.createdObject);
+
+            await createTentantsInCard(createTentant.map(tentant => {
+               const newTentant = {
+                  ...tentant,
+               };
+
+               newTentant.tentantId = newTentant.tentant.id;
+
+               delete newTentant.type;
+               delete newTentant.tentant;
+               
+
+               return newTentant;
+            }), objectCreate.createdObject?.id);
+         }
+      };
+      
+      dispatch(resetCreateObject());
+      setValidate(true);
+      setErrorsFields({});
+      setErrorsFieldsBeforeValidate({});
+      setStep(0);
+      setMaxSteps(1);
+      setIsOpen(false);
    },
    prevStep = () => {
+      if(stageForm === 'objectCreated' && objectCreate.type === 'sale-business') {
+         const confirmExit = confirm(`Вы уверены что хотите выйти?
+         Обьект будет сброшен, и все настроенные арендаторы тоже`);
+
+         return confirmExit ? setStep(step-1): null;
+      };
+
       setStep(step-1);
    };
 
@@ -185,30 +351,25 @@ export default function ModalCreateObject({
       setIsOpen(!isOpen);
    }; 
 
-   // useEffect(() => {
-   //    console.log(objectCreate);
+   const close = () => {
+      if(objectCreate.createdObject !== null) {
+         const confirmDelete = confirm("Если вы закроете данные будут удалены, вы уверены?");
 
-   //    // Фильтрация только на поля нужные к валидовке
-   //    const getErroredRequiredFields = sortObjectInputFields
-   //    .filter(field => !!field?.required)
-   //    .map(field => {
-   //       if(objectCreate.value[field.field].toString().length === 0) {
-   //          return {
-   //             ...field,
-   //             value: objectCreate.value[field.field],
-   //          };
-   //       }
-   //    })
-   //    .filter(requiredField => !!requiredField);
 
-   //    if(getErroredRequiredFields.length > 0) dispatch(pickObjectStage(stagesObject.error));
-   //    else dispatch(pickObjectStage(stagesObject.beforeCreate));
-      
-   // }, [objectCreate.fields, objectCreate.value]);
-   // useEffect(() => {
 
-   //    if(objectCreate.stage === stagesObject.validate) validateInputs();
-   // }, [objectCreate.value, objectCreate.stage]);
+         if(confirmDelete) dispatch(deleteCreatedObject(objectCreate.createdObject.id));
+         if(!confirmDelete) return;
+      };
+
+      dispatch(resetCreateObject());
+      setValidate(true);
+      setErrorsFields({});
+      setErrorsFieldsBeforeValidate({});
+      setStep(0);
+      setMaxSteps(1);
+      setIsOpen(false);
+      return;
+   };
 
    return (
       <>
@@ -222,7 +383,7 @@ export default function ModalCreateObject({
             <div className="flex px-[24px]">
                <DialogTitle sx={{ paddingX: 0, flex: '1'  }}> Создание обьекта </DialogTitle>
 
-               <IconButton onClick={() => setIsOpen(false)}>
+               <IconButton onClick={() => close()}>
                   <CloseIcon />
                </IconButton>
             </div>
@@ -277,22 +438,16 @@ export default function ModalCreateObject({
                                                             field: createInput.field,
                                                             value: e.target.value,
                                                          }));
+                                                         
+                                                         tryFieldValidate(createInput.field, e.target.value);
 
-                                                         if((e.target.value.toString().length === 0 && !createInput?.error) && !!createInput?.required) {
-                                                            dispatch(setErrorsOnField({
-                                                               field: createField.field,
-                                                               errors: ["Поле обязательно для заполнения"],
-                                                            }))
-                                                         };
-
-                                                         if(!!createInput?.error && e.target.value.toString().length > 0) {
-                                                            dispatch(clearErrorsOnField({
-                                                               field: createInput.field,
-                                                            }));
-                                                         };
+                                                         console.log({ errorsFieldsBeforeValidate });
                                                       }}
-                                                      error={!!createInput?.error}
-                                                      helperText={createInput?.error}
+                                                      error={!!errorsFieldsBeforeValidate[createInput.field]}
+                                                      helperText={
+                                                         !!errorsFieldsBeforeValidate[createInput.field] ? 
+                                                         errorsFieldsBeforeValidate[createInput.field]: false
+                                                      }
                                                    />
                                                 </>
                                              );
@@ -310,14 +465,13 @@ export default function ModalCreateObject({
                                                             value: +e.target.value,
                                                          }));
 
-                                                         if(!!createInput?.error && e.target.value.toString().length > 0) {
-                                                            dispatch(clearErrorsOnField({
-                                                               field: createInput.field,
-                                                            }));
-                                                         };
+                                                         tryFieldValidate(createInput.field, e.target.value);
                                                       }}
-                                                      error={!!createInput?.error}
-                                                      helperText={createInput?.error}
+                                                      error={!!errorsFieldsBeforeValidate[createInput.field]}
+                                                      helperText={
+                                                         !!errorsFieldsBeforeValidate[createInput.field] ? 
+                                                         errorsFieldsBeforeValidate[createInput.field]: false
+                                                      }
                                                    />
                                                 </>
                                              );
@@ -336,9 +490,9 @@ export default function ModalCreateObject({
                                                             value: files,
                                                          }));
 
-                                                         if(!!createInput?.error) dispatch(clearErrorsOnField({
-                                                            field: createInput.field,
-                                                         }))
+                                                         // if(!!createInput?.error) dispatch(clearErrorsOnField({
+                                                         //    field: createInput.field,
+                                                         // }))
                                                       }}
                                                       label={createInput.name}
                                                    />
@@ -398,8 +552,7 @@ export default function ModalCreateObject({
                                                          <Checkbox
                                                             defaultValue={createInputValue}
                                                             onChange={e => {
-                                                               console.log(e);
-
+                                                               
                                                                dispatch(changeObjectField({
                                                                   field: createInput.field,
                                                                   value: e.target.checked,
@@ -440,11 +593,19 @@ export default function ModalCreateObject({
                   >
                      <StepLabel> Заполните арендаторов </StepLabel>
                      <StepContent>
-                        <Card>
-                           <CardContent>
-                              <Button onClick={e => console.log(objectCreate)}>click</Button>   
-                           </CardContent>
-                        </Card>
+                        {
+                           isLoadingCreate ?
+                           <> Подождите загружается... </>
+                           :
+                           <Card>
+                              <CardContent>
+                                 {/* <Tentants /> */}
+                                 <ObjectTentant
+                                    
+                                 />
+                              </CardContent>
+                           </Card>
+                        }
                      </StepContent>
                   </Step>
                </Stepper>
@@ -453,16 +614,17 @@ export default function ModalCreateObject({
                   <Box sx={{ marginTop: 4 }}>
                      <Button
                         variant="contained"
-                        disabled={getErrorsFields.length > 0}
+                        disabled={!validate}
                         color={validate ? 'primary': 'error'}
                         onClick={() => {
-                           dispatch(validateFieldsObject());
+                           const valid = tryValidateForm();
 
-                           if(getErrorsFields.length === 0) return step === maxSteps ? finishStep(): nextStep()
+                           if(valid) return step === maxSteps ? finishStep(): nextStep();
+
                         }}
                      >
                         {
-                           getErrorsFields.length > 0 ?
+                           !validate ?
                            <> Решите ошибки </>
                            :
                            <>
@@ -478,6 +640,13 @@ export default function ModalCreateObject({
                         Назад
                      </Button>
                   </Box>
+               }
+               {
+                  formError.length > 0 &&
+                  <Typography
+                     color="error"
+                     variant="body"
+                  >{formError}</Typography>
                }
             </DialogContent>
          

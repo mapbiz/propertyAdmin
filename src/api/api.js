@@ -3,25 +3,23 @@ import {objectToFormData} from "../helpers/formData.js";
 
 
 const instancePublic = axios.create({
-        baseURL: "http://79.174.82.17:8080/public"
-    }),
-    instance = axios.create({
-        baseURL: "/api",
-        withCredentials: true,
-        headers: {
-            "Access-Control-Allow-Methods": "GET,HEAD,POST,PUT,PATCH,DELETE"
-        }
-    })
+    baseURL: "http://79.174.82.17:8080/public"
+}),
+instance = axios.create({
+    baseURL: "/api",
+    withCredentials: true,
+    headers: {
+        "Access-Control-Allow-Methods": "GET,HEAD,POST,PUT,PATCH,DELETE"
+    }
+})
 
 
 export const getCards = async (slug) => {
     return await axios.get(` http://79.174.82.17:8080/api/v1/objects`)
 }
 
-/**
- * @returns { {data: { id: string, title: string, price: number, cellingHeight: number | { from: number, to: number } } }
- * */
-export const createCard = async data => await axios.post('http://79.174.82.17:8080/api/v1/objectT', data)
+
+export const createCard = async data => await axios.post('http://79.174.82.17:8080/api/v1/object', data)
 
 // export const deleteCard = async (id) => {
 //     return await axios.delete(`https://65d32fb7522627d50108390b.mockapi.io/cards/${id}`)
