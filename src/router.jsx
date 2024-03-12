@@ -18,10 +18,13 @@ const router = createBrowserRouter([
     path: "/",
     element: <Layout />,
     children: [
-        {
-          index: true,
-          element: <App />
+      {
+        index: true,
+        action() {
+          console.log('test');
         },
+        element: <App />
+      },
       {
         path: '/pdf',
         element: <PdfPages />

@@ -15,8 +15,11 @@ instance = axios.create({
 
 
 export const getCards = async (slug) => {
-    return await axios.get(` http://79.174.82.17:8080/api/v1/objects`)
+    return await axios.get(`http://79.174.82.17:8080/api/v1/objects`)
 }
+
+export const authUser = async (login, password) => await axios.post('/login', { login, password }, { withCredentials: true }),
+authMe = async () => await axios.get('/auth/me', { withCredentials: true });
 
 
 export const createCard = async data => await axios.post('http://79.174.82.17:8080/api/v1/object', data)

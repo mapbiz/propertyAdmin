@@ -6,14 +6,29 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
+      '/login': {
+        target: "http://79.174.82.17:8080/auth/login",
+        changeOrigin: true,
+        ws: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/login/, ''),
+        // configure: (proxy) => {
+        //   proxy.on('proxyReq', t => {
+        //     console.log(t);
+        //   })
+        // }
+      },
+      "^/auth/.*": {
+        target: "http://79.174.82.17:8080/auth",
+        changeOrigin: true,
+        ws: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/auth/, ''),
+      },
       "^/api/.*": {
         target: "http://79.174.82.17:8080/api/v1/",
         changeOrigin: true,
-        configure: (proxy, options) => {
-          proxy.on("proxyRes", (proxyRes, req, _res) => {
-            console.log({ _res });
-          })
-        },
+        secure: false,
         rewrite: (path) => path.replace(/^\/api/, ''),
         // secure: false,
         // configure: (proxy, _options) => {
