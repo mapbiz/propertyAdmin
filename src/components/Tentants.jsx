@@ -10,16 +10,16 @@ import { useEffect, useState } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 
-import { createTentantsInCard, updateTentantsInCard } from '../api/api.js';
+import { createTentantsInCard, removeTentantOfObject, updateTentantsInCard } from '../api/api.js';
 
-import { addNewTentant, joinTentant, setTentantData } from "../slices/tagSlice.jsx";
+import { addNewTentant, joinTentant, setTentantData, deleteTenant } from "../slices/tagSlice.jsx";
 import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
-import { ListItemAvatar, ListItemText, TextField } from '@mui/material';
-
+import { ListItemAvatar, ListItemText, TextField, Menu } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function Tentants({
 
@@ -35,6 +35,29 @@ export default function Tentants({
     const clickAddNewTentant = () => {
         dispatch(addNewTentant());
     };
+
+    const [joinedTentant, setJoinedTentant] = useState([]);
+
+   const [anchorEl, setAnchorEl] = useState(null);
+   const open = Boolean(anchorEl);
+      
+
+   const handleMenuClick = e => {
+      setAnchorEl(e.currentTarget);
+   };
+
+   const handleClose = () => {
+      setAnchorEl(null);
+   },
+   handleCloseItem = tentant => {
+      console.log({ tentant });
+
+        dispatch(joinTentant({
+            tentant,
+        }));
+
+      return handleClose();
+   };
 
     const clickSelectTentant = (tentant, index) => {
         clickAddNewTentant();
@@ -83,6 +106,12 @@ export default function Tentants({
         }), objectStorage.id)
         : null;
 
+    };
+
+    const onClickDeleteJoinTentant = async tentant => {
+        dispatch(deleteTenant(tentant.id));
+
+        await removeTentantOfObject([{ tenatantId: tentant.id }], objectStorage.id);
     };
 
     return (
@@ -167,6 +196,16 @@ export default function Tentants({
                                                                     primary={tentantInObject.tentant.name}
                                                                     secondary={tentantInObject.tentant.category}
                                                                 />
+                                                                <Button 
+                                                                    color="error"
+                                                                    onClick={() => {
+                                                                        if(tentantInObject.type === 'update') 
+                                                                        return onClickDeleteJoinTentant(tentantInObject.tentant);
+                                                                        else dispatch(deleteTenant(tentantInObject.tentant.id));
+                                                                    }}
+                                                                >
+                                                                    <DeleteIcon />
+                                                                </Button>
                                                             </div>
                                                             
                                                             <div className='flex gap-4 items-end'>
@@ -180,7 +219,7 @@ export default function Tentants({
                                                                             ...tentantInObject
                                                                         }
 
-
+                                                                        console.log(typeof +e.target.value); 
                                                                         newTentant.indexation = +e.target.value;
 
                                                                         dispatch(setTentantData({ 
@@ -218,7 +257,7 @@ export default function Tentants({
                                                                             },
                                                                         }
 
-                                                                        newTentant.rentFlow.month = +e.target.value;
+                                                                        newTentant.rentFlow.month = e.target.value;
 
                                                                         dispatch(setTentantData({ 
                                                                             id: index, 
@@ -277,7 +316,7 @@ export default function Tentants({
                                 })
                             }
                             <>
-                                <FormControl sx={{ width: '100%', marginTop: 4, }}>
+                                {/* <FormControl sx={{ width: '100%', marginTop: 4, }}>
                                     <InputLabel id="select-label">Выбрать арендатора</InputLabel>
                                     <Select
                                         sx={{ width: '100%' }}
@@ -324,7 +363,41 @@ export default function Tentants({
                                             </>
                                         }
                                     </Select>
-                                </FormControl>
+                                </FormControl> */}
+                                <Button
+                                    id="menu"
+                                    onClick={handleMenuClick}
+                                > Добавить Арендодатора </Button>
+                                <Menu
+                                    id="tentant-menu"
+                                    anchorEl={anchorEl}
+                                    open={open}
+                                    onClose={handleClose}
+                                    MenuListProps={{
+                                    'aria-labelledby': 'menu',
+                                    }}
+                                >
+                                    {
+                                        tentans.map(tentant => {
+                                            return (
+                                                <>
+                                                    { 
+                                                        objectStorage
+                                                        .tenantsInfo
+                                                        .findIndex(tentantInfo => tentantInfo.tentant.id === tentant.id) === -1 &&
+                                                        <MenuItem 
+                                                            key={tentant.id}
+                                                            value={tentant.id}
+                                                            onClick={() => handleCloseItem(tentant)}
+                                                        >
+                                                            {tentant.name}
+                                                        </MenuItem>
+                                                    }
+                                                </>
+                                            );
+                                        })
+                                    }
+                                </Menu>
                             </>
                             {/* <Button onClick={() => clickAddNewTentant()}>
                                 Добавить нового арендатора

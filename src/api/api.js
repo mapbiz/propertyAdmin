@@ -46,6 +46,10 @@ export const reverseImageGet = async imgUrl => {
     return reverseResponce;
 }
 
+export const removeTentantOfObject = async (tentantsId, objectId) => await axios.delete(`http://79.174.82.17:8080/api/v1/object/remove-tentant/${objectId}`, {
+    data: tentantsId
+});
+
 export const getTentants = async () => await axios.get("http://79.174.82.17:8080/api/v1/tentants");
 
 export const deleteCard = async id => await axios.delete(`http://79.174.82.17:8080/api/v1/object/${id}`);

@@ -126,6 +126,9 @@ export const tagSlice = createSlice({
             };
 
         },
+        deleteTenant: (state, action) => {
+            state.value.tenantsInfo.splice(state.value.tenantsInfo.findIndex(tentantInObject => tentantInObject.tentant.id === action.payload), 1);
+        },
         joinTentant: (state, action) => {
             state.value.tenantsInfo.push({
                 type: "create",
@@ -140,19 +143,6 @@ export const tagSlice = createSlice({
                     year: null
                 },
             });
-            // state.value.tenantsInfo[action.payload.index] = {
-                // type: "create",
-                // tentant: action.payload.tentant,
-                // detalization: [
-                //     ''
-                // ],
-                // indexation: null,
-                // contract: '',
-                // rentFlow: {
-                //     mount: null,
-                //     year: null
-                // },
-            // };
         },
 
         setArendators: (state, action) => {
@@ -263,6 +253,7 @@ export const {
     updateCheckBox,
     addNewTentant,
     joinTentant,
+    deleteTenant,
     setTentantData,
 } = tagSlice.actions
 

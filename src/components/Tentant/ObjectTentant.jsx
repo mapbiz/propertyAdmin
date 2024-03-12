@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 
-import { joinNewTentant, setTentantData } from "../../slices/createObjectSlice";
+import { joinNewTentant, setTentantData, removeTentant } from "../../slices/createObjectSlice";
 import { FormControl, InputLabel, Menu, MenuItem, Button, Card, CardContent, CardMedia, Typography, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 
@@ -16,18 +16,6 @@ export default function ObjectTentant({
    const [anchorEl, setAnchorEl] = useState(null);
    const open = Boolean(anchorEl);
       
-   
-   const handleSelectChange = e => {
-      console.log(e.target.value);
-
-      dispatch(joinNewTentant({
-         tentant: tentants.find(tentant => tentant.id === e.target.value),
-      }));
-
-      setJoinedTentant(before =>{
-         return [...before, e.target.value];
-      });
-   };
 
    const handleMenuClick = e => {
       setAnchorEl(e.currentTarget);
@@ -58,6 +46,14 @@ export default function ObjectTentant({
                            sx={{ height: 250, width: 250 }}
                         />
                         <CardContent>
+                           <Button 
+                              color="error"
+                              onClick={() => {
+                                 dispatch(removeTentant(tentantInObject.tentant.id))
+                              }}
+                           >
+                              Удалить арендатора
+                           </Button>
                            <div className="flex flex-col">
                               <div>
                                  <Typography variant="h5"> { tentantInObject.tentant.name } </Typography>
@@ -72,7 +68,7 @@ export default function ObjectTentant({
                                     onChange={e => {
                                        dispatch(setTentantData({
                                           field: 'indexation',
-                                          value: e.target.value,
+                                          value: +e.target.value,
                                           tentantId: tentantInObject.tentant.id,
                                        }))
                                     }}
@@ -102,11 +98,11 @@ export default function ObjectTentant({
                                  <TextField 
                                     label="Месячный арендный поток" 
                                     type="number"
-                                    defaultValue={tentantInObject.rentFlow.mount}
+                                    defaultValue={tentantInObject.rentFlow.month}
                                     onChange={e => {
                                        dispatch(setTentantData({
-                                          field: 'rentFlow.mount',
-                                          value: e.target.value,
+                                          field: 'rentFlow.month',
+                                          value: +e.target.value,
                                           tentantId: tentantInObject.tentant.id,
                                        }));
                                     }}
@@ -118,7 +114,7 @@ export default function ObjectTentant({
                                     onChange={e => {
                                        dispatch(setTentantData({
                                           field: 'rentFlow.year',
-                                          value: e.target.value,
+                                          value: +e.target.value,
                                           tentantId: tentantInObject.tentant.id,
                                        }));
                                     }}
@@ -131,9 +127,6 @@ export default function ObjectTentant({
                )
             })
          }
-         <>
-
-         </>
          <Button
             id="menu"
             onClick={handleMenuClick}

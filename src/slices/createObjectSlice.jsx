@@ -141,7 +141,7 @@ const initialState = {
       // price
       priceSquare: {
          input: 'number',
-         name: 'Цена/Аренданая ставка за м2',
+         name: 'Цена/Арендная ставка за м2',
          required: true,
       },
       priceProfitability: {
@@ -409,7 +409,9 @@ export const createObjectSlice = createSlice({
          
          return state = newObject;
       },
-
+      removeTentant: (state, action) => {
+         state.createdObject.tenantsInfo.splice(state.createdObject.tenantsInfo.findIndex(tentantInObject => tentantInObject.tentant.id === action.payload), 1);
+      },
       // tentant
       /** 
        * @param { { payload: { tentant: object } } } action 
@@ -493,6 +495,7 @@ export const {
    // tentants
    joinNewTentant,
    setTentantData,
+   removeTentant
 } = createObjectSlice.actions;
 
 export default createObjectSlice.reducer;
