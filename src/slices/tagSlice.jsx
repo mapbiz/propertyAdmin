@@ -168,12 +168,16 @@ export const tagSlice = createSlice({
                 ...action.payload,
             };
 
-            newPayload.tenantsInfo = newPayload.tenantsInfo.map(tentant => {
-                return {
-                    type: 'update',
-                    ...tentant,
-                };
-            })
+            console.log(newPayload)
+            if(newPayload.tenantsInfo && newPayload.tenantsInfo.length > 0) {
+                newPayload.tenantsInfo = newPayload.tenantsInfo.map(tentant => {
+                    return {
+                        type: 'update',
+                        ...tentant,
+                    };
+                })
+            }
+
 
             state.value = { ...state.value, ...newPayload }
         },

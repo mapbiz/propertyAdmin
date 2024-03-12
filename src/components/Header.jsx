@@ -20,23 +20,6 @@ export default function Header() {
                 }} className={'cursor-pointer max-h-[60px]'} src="/property.png" alt=""/>
                 <nav
                     className={` flex gap-[40px]`}>
-                    {/*<NavLink className={({isActive, isPending}) => {*/}
-                    {/*  return  isPending ? "text-red-700" : isActive ? "text-green-500 underline underline-offset-4" : ""*/}
-
-                    {/*}} to={'/'}>*/}
-                    {/*    Все объекты*/}
-                    {/*</NavLink>*/}
-
-                    {/*<NavLink*/}
-                    {/*    className={({isActive, isPending}) => {*/}
-                    {/*        return  isPending ? "text-red-700" : isActive ? "text-green-500 underline underline-offset-4" : ""*/}
-                    {/*    }}*/}
-                    {/*    to={'/sale'}>Продажа</NavLink>*/}
-                    {/*<button*/}
-                    {/*    className={({isActive, isPending}) => {*/}
-                    {/*        return  isPending ? "text-red-700" : isActive ? "text-green-500 underline underline-offset-4" : ""*/}
-                    {/*    }}*/}
-                    {/*    to={'/rent'}>Аренда</button>*/}
                     <HeaderBtn change={(e) => {
                         dispatch(setTab({
                             ['activeTab']: 'all'
@@ -50,9 +33,9 @@ export default function Header() {
                     }} state={'rent'} active={selector}  text={'АРЕНДА'}/>
                     <HeaderBtn change={(e) => {
                         dispatch(setTab({
-                            ['activeTab']: 'sell'
+                            ['activeTab']: 'sale'
                         }))
-                    }}  state={'sell'} active={selector}  text={'ПРОДАЖА'}/>
+                    }}  state={'sale'} active={selector}  text={'ПРОДАЖА'}/>
                 </nav>
 
             </div>
