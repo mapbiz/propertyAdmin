@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/login': {
-        target: "https://develop-mapbiz.ru/auth/login",
+        target: "https://prop-test.ru/server/auth/login",
         changeOrigin: true,
         ws: true,
         secure: false,
@@ -19,14 +19,14 @@ export default defineConfig({
         // }
       },
       "^/auth/.*": {
-        target: "https://develop-mapbiz.ru/auth",
+        target: "https://prop-test.ru/server/auth",
         changeOrigin: true,
         ws: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/auth/, ''),
       },
       "^/api/.*": {
-        target: "https://develop-mapbiz.ru/api/v1/",
+        target: "https://prop-test.ru/server/api/v1/",
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ''),

@@ -629,7 +629,7 @@ export default function TestPdf() {
                                     }}>
                                         {/*тут*/}
                                         <Image style={{width: '150px', height: '150px'}}
-                                               src={`https://develop-mapbiz.ru/public/${item.tentant.logo}`}></Image>
+                                               src={`https://prop-test.ru/server/public/${item.tentant.logo}`}></Image>
                                     </View>
                                     <View style={{
                                         width: '40%',

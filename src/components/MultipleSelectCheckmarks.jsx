@@ -49,7 +49,7 @@ export default function MultipleSelectCheckmarks() {
 
     useEffect(() => {
         const getNames = async () => {
-            const arendators = (await axios.get('https://develop-mapbiz.ru/api/v1/tentants')).data
+            const arendators = (await axios.get('https://prop-test.ru/server/api/v1/tentants')).data
             setNames(arendators.data)
         }
         getNames()
