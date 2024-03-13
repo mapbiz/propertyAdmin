@@ -18,8 +18,22 @@ export default function Header() {
                 <img  onClick={() => {
                     navigate('/')
                 }} className={'cursor-pointer max-h-[60px]'} src="/property.png" alt=""/>
-                <nav
-                    className={` flex gap-[40px]`}>
+                
+                <div className="flex gap-4">
+                    <HeaderBtn
+                        change={e => {
+                            navigate('/arendators');
+                        }}
+                        text="Арендаторы"
+                    />
+                    <HeaderBtn
+                        change={e => {
+                            navigate('/');
+                        }}
+                        text="Обьекты"
+                    />
+                </div>
+                <nav className={` flex gap-[40px]`}>
                     <HeaderBtn change={(e) => {
                         dispatch(setTab({
                             ['activeTab']: 'all'

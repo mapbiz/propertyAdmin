@@ -29,7 +29,31 @@ export const tentantsSlice = createSlice({
     name: "tentants",
     initialState,
     reducers: {
+        addNewTentant: (state, action) => {
+            state.value.push(action.payload);
+        },
+        editTentant: (state, action) => {
+            const {
+                id,
+                name,
+                category,
+                logo,
+            } = action.payload;
 
+            state.value[state.value.findIndex(tenant => tenant.id === id)] = {
+                ...state.value[state.value.findIndex(tenant => tenant.id === id)],
+                name,
+                category,
+                logo,
+            };
+        },
+        deleteTentantOfStorage: (state, action) => {
+            const {
+                id
+            } = action.payload;
+
+            state.value.splice(state.value.findIndex(tentant => tentant.id === id), 1);
+        },
     },
     extraReducers: builder => {
         builder.addCase(getTentants.pending, state => {
@@ -43,4 +67,11 @@ export const tentantsSlice = createSlice({
         });
     }
 });
+
+export const {
+    editTentant, 
+    deleteTentantOfStorage,
+    addNewTentant,
+} = tentantsSlice.actions;
+
 export default tentantsSlice.reducer;

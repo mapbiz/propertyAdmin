@@ -22,6 +22,22 @@ const instancePublic = axios.create({
 //     }
 // })
 
+export const editTentant = async ({
+    id,
+    name,
+    category,
+    logo,
+}) => await instanceApi.patchForm(`/tentant/${id}`, { name, category, logo });
+export const deleteTentant = async id => await instanceApi.delete(`/tentant/${id}`);
+export const addTentant = async ({
+    name,
+    category,
+    logo,
+}) => await instanceApi.postForm(`/tentant`, {
+    name,
+    category, 
+    logo,
+});
 
 export const authUser = async (login, password) => await axios.post(`/auth/login`, { login, password }, {
     withCredentials: true,
