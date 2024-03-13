@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/login': {
-        target: "http://79.174.82.17:8080/auth/login",
+        target: "https://develop-mapbiz.ru/auth/login",
         changeOrigin: true,
         ws: true,
         secure: false,
@@ -19,14 +19,14 @@ export default defineConfig({
         // }
       },
       "^/auth/.*": {
-        target: "http://79.174.82.17:8080/auth",
+        target: "https://develop-mapbiz.ru/auth",
         changeOrigin: true,
         ws: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/auth/, ''),
       },
       "^/api/.*": {
-        target: "http://79.174.82.17:8080/api/v1/",
+        target: "https://develop-mapbiz.ru/api/v1/",
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ''),

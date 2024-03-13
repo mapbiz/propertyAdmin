@@ -6,7 +6,7 @@ var vite_config_default = defineConfig({
   server: {
     proxy: {
       "/api*": {
-        target: "http://79.174.82.17:8080/api/v1/*",
+        target: "https://develop-mapbiz.ru/api/v1/*",
         rewrite: (path) => path.replace(/^\/api/, ""),
         changeOrigin: true
         // secure: false,

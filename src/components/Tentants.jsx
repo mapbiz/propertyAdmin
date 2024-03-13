@@ -189,7 +189,7 @@ export default function Tentants({
                                                                     <img 
                                                                         width="200" 
                                                                         height="200" 
-                                                                        src={`http://79.174.82.17:8080/public/${tentantInObject.tentant.logo}`} 
+                                                                        src={`https://develop-mapbiz.ru/public/${tentantInObject.tentant.logo}`} 
                                                                     />
                                                                 </ListItemAvatar>
                                                                 <ListItemText 

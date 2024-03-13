@@ -42,7 +42,7 @@ export default function ObjectTentant({
                   <>
                      <Card sx={{ display: 'flex', flexDirection: 'column' }}>
                         <CardMedia
-                           image={`http://79.174.82.17:8080/public/${tentantInObject.tentant.logo}`} 
+                           image={`https://develop-mapbiz.ru/public/${tentantInObject.tentant.logo}`} 
                            sx={{ height: 250, width: 250 }}
                         />
                         <CardContent>

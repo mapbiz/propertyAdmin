@@ -3,7 +3,7 @@ import {objectToFormData} from "../helpers/formData.js";
 
 
 const instancePublic = axios.create({
-    baseURL: "http://79.174.82.17:8080/public"
+    baseURL: "https://develop-mapbiz.ru/public"
 }),
 instance = axios.create({
     baseURL: "/api",
@@ -15,25 +15,25 @@ instance = axios.create({
 
 
 export const getCards = async (slug) => {
-    return await axios.get(`http://79.174.82.17:8080/api/v1/objects`)
+    return await axios.get(`https://develop-mapbiz.ru/api/v1/objects`)
 }
 
 export const authUser = async (login, password) => await axios.post('/login', { login, password }, { withCredentials: true }),
 authMe = async () => await axios.get('/auth/me', { withCredentials: true });
 
 
-export const createCard = async data => await axios.post('http://79.174.82.17:8080/api/v1/object', data)
+export const createCard = async data => await axios.post('https://develop-mapbiz.ru/api/v1/object', data, {withCredentials: true})
 
 // export const deleteCard = async (id) => {
 //     return await axios.delete(`https://65d32fb7522627d50108390b.mockapi.io/cards/${id}`)
 // }
 
 export const getArendators = async () => {
-    return (await axios.get('http://79.174.82.17:8080/api/v1/tentants/')).data
+    return (await axios.get('https://develop-mapbiz.ru/api/v1/tentants/')).data
 }
 
 export const getCurrentCard = async (slug) => {
-    return (await axios.get(`http://79.174.82.17:8080/api/v1/object/${slug}`)).data
+    return (await axios.get(`https://develop-mapbiz.ru/api/v1/object/${slug}`)).data
 }
 
 /**
@@ -49,19 +49,20 @@ export const reverseImageGet = async imgUrl => {
     return reverseResponce;
 }
 
-export const removeTentantOfObject = async (tentantsId, objectId) => await axios.delete(`http://79.174.82.17:8080/api/v1/object/remove-tentant/${objectId}`, {
-    data: tentantsId
+export const removeTentantOfObject = async (tentantsId, objectId) => await axios.delete(`https://develop-mapbiz.ru/api/v1/object/remove-tentant/${objectId}`, {
+    data: tentantsId,
+    withCredentials: true
 });
 
-export const getTentants = async () => await axios.get("http://79.174.82.17:8080/api/v1/tentants");
+export const getTentants = async () => await axios.get("https://develop-mapbiz.ru/api/v1/tentants");
 
-export const deleteCard = async id => await axios.delete(`http://79.174.82.17:8080/api/v1/object/${id}`);
+export const deleteCard = async id => await axios.delete(`https://develop-mapbiz.ru/api/v1/object/${id}`, {withCredentials: true});
 
-export const createTentantsInCard = async (tenstantsInfo, id) => await axios.post(`http://79.174.82.17:8080/api/v1/object/add-tentant/${id}`, {
+export const createTentantsInCard = async (tenstantsInfo, id) => await axios.post(`https://develop-mapbiz.ru/api/v1/object/add-tentant/${id}`, {
     tentants: tenstantsInfo,
-});
-export const updateTentantsInCard = async (tenstantsInfo, id) => await axios.put(`http://79.174.82.17:8080/api/v1/object/update-tentant/${id}`, 
-    [...tenstantsInfo]
+}, {withCredentials: true});
+export const updateTentantsInCard = async (tenstantsInfo, id) => await axios.put(`https://develop-mapbiz.ru/api/v1/object/update-tentant/${id}`,
+    [...tenstantsInfo], {withCredentials: true}
 );
 
 export const updateCard = async (id, data) => {
