@@ -219,7 +219,7 @@ export default function TestPdf() {
         'sale-business': 'ГАБ'
     }
     return (
-        <div className={'pt-[300px] max-w-[1280px] mx-auto'}>
+        <div className={'pt-[300px] '}>
             <PDFViewer className={'h-screen w-full'}>
                 <Document>
                     <Page size={{width: 2480, height: 3508,}} style={styles.page}>
@@ -341,89 +341,263 @@ export default function TestPdf() {
                                     <Text style={styles.titleBlack}>
                                         Коммерческие условия
                                     </Text>
-
-                                    <View style={{border: '3px solid #DDEEE4', marginTop: '20px'}}>
-                                        {
-                                            card.globalRentFlow.mouth && 
-                                            <View style={{
-                                                display: "flex",
-                                                justifyContent: 'space-between',
-                                                flexDirection: 'row',
-                                                padding: '20px',
-                                                borderBottom: '2px solid #DDEEE4'
-                                            }}>
+                                    {card.type === 'rent'
+                                        &&
+                                        <View style={{border: '3px solid #DDEEE4', marginTop: '20px'}}>
+                                            {
+                                                card.price.rent.mouth &&
                                                 <View style={{
-                                                    display: 'flex',
+                                                    display: "flex",
+                                                    justifyContent: 'space-between',
                                                     flexDirection: 'row',
-                                                    gap: '6.5px',
-                                                    alignItems: 'center'
+                                                    padding: '20px',
+                                                    borderBottom: '2px solid #DDEEE4'
                                                 }}>
-                                                    <Image style={{width: '40px', height: '40px'}}
-                                                        src={specifications}></Image>
-                                                    <Text style={{fontSize: '44px', color: '#144728'}}>
-                                                        МАП:
+                                                    <View style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        gap: '6.5px',
+                                                        alignItems: 'center'
+                                                    }}>
+                                                        <Image style={{width: '40px', height: '40px'}}
+                                                               src={specifications}></Image>
+                                                        <Text style={{fontSize: '44px', color: '#144728'}}>
+                                                            Арендная ставка в месяц:
+                                                        </Text>
+                                                    </View>
+                                                    <Text style={{fontSize: '44px'}}>
+                                                        {card.price.rent.mouth && (card.price.rent.mouth).toLocaleString('ru')}
                                                     </Text>
                                                 </View>
-                                                <Text style={{fontSize: '44px'}}>
-                                                    {card.globalRentFlow.mouth && (card.globalRentFlow.mouth).toLocaleString('ru')}
-                                                </Text>
-                                            </View>
-                                        }
+                                            }
 
-                                        {
-                                            card.globalRentFlow.year &&
-                                            <View style={{
-                                                display: "flex",
-                                                justifyContent: 'space-between',
-                                                flexDirection: 'row',
-                                                padding: '20px',
-                                                borderBottom: '2px solid #DDEEE4'
-                                            }}>
+                                            {
+                                                card.price.rent.year &&
                                                 <View style={{
-                                                    display: 'flex',
+                                                    display: "flex",
+                                                    justifyContent: 'space-between',
                                                     flexDirection: 'row',
-                                                    gap: '6.5px',
-                                                    alignItems: 'center'
+                                                    padding: '20px',
+                                                    borderBottom: '2px solid #DDEEE4'
                                                 }}>
-                                                    <Image style={{width: '40px', height: '40px'}}
-                                                           src={specifications}></Image>
-                                                    <Text style={{fontSize: '44px', color: '#144728'}}>
-                                                        ГАП:
+                                                    <View style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        gap: '6.5px',
+                                                        alignItems: 'center'
+                                                    }}>
+                                                        <Image style={{width: '40px', height: '40px'}}
+                                                               src={specifications}></Image>
+                                                        <Text style={{fontSize: '44px', color: '#144728'}}>
+                                                            Арендная ставка в год:
+                                                        </Text>
+                                                    </View>
+                                                    <Text style={{fontSize: '44px'}}>
+                                                        {card.price.rent.year && card.price.rent.year}
                                                     </Text>
                                                 </View>
-                                                <Text style={{fontSize: '44px'}}>
-                                                    {card.globalRentFlow.year && card.globalRentFlow.year}
-                                                </Text>
-                                            </View>
-                                        }
-                                        {
-                                            card.payback &&
-                                            <View style={{
-                                                display: "flex",
-                                                justifyContent: 'space-between',
-                                                flexDirection: 'row',
-                                                padding: '20px'
-                                            }}>
+                                            }
+                                            {
+                                                card.payback &&
                                                 <View style={{
-                                                    display: 'flex',
+                                                    display: "flex",
+                                                    justifyContent: 'space-between',
                                                     flexDirection: 'row',
-                                                    gap: '6.5px',
-                                                    alignItems: 'center'
+                                                    padding: '20px'
                                                 }}>
-                                                    <Image style={{width: '40px', height: '40px'}}
-                                                           src={specifications}></Image>
-                                                    <Text style={{fontSize: '44px', color: '#144728'}}>
-                                                        Окупаемость:
+                                                    <View style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        gap: '6.5px',
+                                                        alignItems: 'center'
+                                                    }}>
+                                                        <Image style={{width: '40px', height: '40px'}}
+                                                               src={specifications}></Image>
+                                                        <Text style={{fontSize: '44px', color: '#144728'}}>
+                                                            Окупаемость:
+                                                        </Text>
+                                                    </View>
+
+                                                    <Text style={{fontSize: '44px'}}>
+                                                        {card.payback && card.payback} лет
                                                     </Text>
                                                 </View>
+                                            }
 
-                                                <Text style={{fontSize: '44px'}}>
-                                                    {card.payback && card.payback} лет
-                                                </Text>
-                                            </View>
-                                        }
+                                        </View>
+                                    }
+                                    {
+                                        card.type === 'sale'
+                                        &&
+                                        <View style={{border: '3px solid #DDEEE4', marginTop: '20px'}}>
+                                            {
+                                                card.price.global &&
+                                                <View style={{
+                                                    display: "flex",
+                                                    justifyContent: 'space-between',
+                                                    flexDirection: 'row',
+                                                    padding: '20px',
+                                                    borderBottom: '2px solid #DDEEE4'
+                                                }}>
+                                                    <View style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        gap: '6.5px',
+                                                        alignItems: 'center'
+                                                    }}>
+                                                        <Image style={{width: '40px', height: '40px'}}
+                                                               src={specifications}></Image>
+                                                        <Text style={{fontSize: '44px', color: '#144728'}}>
+                                                            Общая стоимость:
+                                                        </Text>
+                                                    </View>
+                                                    <Text style={{fontSize: '44px'}}>
+                                                        {card.price.global && (card.price.global).toLocaleString('ru')}
+                                                    </Text>
+                                                </View>
+                                            }
 
-                                    </View>
+                                            {
+                                                card.price.square &&
+                                                <View style={{
+                                                    display: "flex",
+                                                    justifyContent: 'space-between',
+                                                    flexDirection: 'row',
+                                                    padding: '20px',
+                                                    borderBottom: '2px solid #DDEEE4'
+                                                }}>
+                                                    <View style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        gap: '6.5px',
+                                                        alignItems: 'center'
+                                                    }}>
+                                                        <Image style={{width: '40px', height: '40px'}}
+                                                               src={specifications}></Image>
+                                                        <Text style={{fontSize: '44px', color: '#144728'}}>
+                                                            Цена за м²:
+                                                        </Text>
+                                                    </View>
+                                                    <Text style={{fontSize: '44px'}}>
+                                                        {card.price.square && card.price.square}
+                                                    </Text>
+                                                </View>
+                                            }
+                                            {
+                                                card.payback &&
+                                                <View style={{
+                                                    display: "flex",
+                                                    justifyContent: 'space-between',
+                                                    flexDirection: 'row',
+                                                    padding: '20px'
+                                                }}>
+                                                    <View style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        gap: '6.5px',
+                                                        alignItems: 'center'
+                                                    }}>
+                                                        <Image style={{width: '40px', height: '40px'}}
+                                                               src={specifications}></Image>
+                                                        <Text style={{fontSize: '44px', color: '#144728'}}>
+                                                            Окупаемость:
+                                                        </Text>
+                                                    </View>
+
+                                                    <Text style={{fontSize: '44px'}}>
+                                                        {card.payback && card.payback} лет
+                                                    </Text>
+                                                </View>
+                                            }
+
+                                        </View>
+
+                                    }
+                                    {card.type === 'sale-business' &&
+                                        <View style={{border: '3px solid #DDEEE4', marginTop: '20px'}}>
+                                            {
+                                                card.globalRentFlow.mouth &&
+                                                <View style={{
+                                                    display: "flex",
+                                                    justifyContent: 'space-between',
+                                                    flexDirection: 'row',
+                                                    padding: '20px',
+                                                    borderBottom: '2px solid #DDEEE4'
+                                                }}>
+                                                    <View style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        gap: '6.5px',
+                                                        alignItems: 'center'
+                                                    }}>
+                                                        <Image style={{width: '40px', height: '40px'}}
+                                                               src={specifications}></Image>
+                                                        <Text style={{fontSize: '44px', color: '#144728'}}>
+                                                            МАП:
+                                                        </Text>
+                                                    </View>
+                                                    <Text style={{fontSize: '44px'}}>
+                                                        {card.globalRentFlow.mouth && (card.globalRentFlow.mouth).toLocaleString('ru')}
+                                                    </Text>
+                                                </View>
+                                            }
+
+                                            {
+                                                card.globalRentFlow.year &&
+                                                <View style={{
+                                                    display: "flex",
+                                                    justifyContent: 'space-between',
+                                                    flexDirection: 'row',
+                                                    padding: '20px',
+                                                    borderBottom: '2px solid #DDEEE4'
+                                                }}>
+                                                    <View style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        gap: '6.5px',
+                                                        alignItems: 'center'
+                                                    }}>
+                                                        <Image style={{width: '40px', height: '40px'}}
+                                                               src={specifications}></Image>
+                                                        <Text style={{fontSize: '44px', color: '#144728'}}>
+                                                            ГАП:
+                                                        </Text>
+                                                    </View>
+                                                    <Text style={{fontSize: '44px'}}>
+                                                        {card.globalRentFlow.year && card.globalRentFlow.year}
+                                                    </Text>
+                                                </View>
+                                            }
+                                            {
+                                                card.payback &&
+                                                <View style={{
+                                                    display: "flex",
+                                                    justifyContent: 'space-between',
+                                                    flexDirection: 'row',
+                                                    padding: '20px'
+                                                }}>
+                                                    <View style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        gap: '6.5px',
+                                                        alignItems: 'center'
+                                                    }}>
+                                                        <Image style={{width: '40px', height: '40px'}}
+                                                               src={specifications}></Image>
+                                                        <Text style={{fontSize: '44px', color: '#144728'}}>
+                                                            Окупаемость:
+                                                        </Text>
+                                                    </View>
+
+                                                    <Text style={{fontSize: '44px'}}>
+                                                        {card.payback && card.payback} лет
+                                                    </Text>
+                                                </View>
+                                            }
+
+                                        </View>
+                                    }
+
                                 </View>
                                 {/*Коммерческие условия*/}
                                 {/*Технические хар-ки*/}
