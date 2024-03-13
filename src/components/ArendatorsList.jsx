@@ -115,7 +115,7 @@ export default function ArendatorsList() {
                 :
                 <div className="flex flex-col justify-center items-center gap-y-2">
                     {
-                        tentants.value.length > 0 ?
+                        tentants.value?.length > 0 ?
                         tentants.value.map(item => {
                             return (
                                 <ArendatorItem 
