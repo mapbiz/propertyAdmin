@@ -13,6 +13,7 @@ import PdfPages from "./Pages/PdfPages.jsx";
 import ArendatorsList from "./components/ArendatorsList.jsx";
 import Sale from "./Pages/Sale.jsx";
 
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -48,7 +49,7 @@ const router = createBrowserRouter([
     element: <Auth />
   },
 
-], {basename: '/admin'});
+], {basename: import.meta.env.VITE_APP_BASE });
 
 export default function MyRouter() {
   return <RouterProvider router={router}/>

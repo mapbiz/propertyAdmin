@@ -2,38 +2,55 @@ import axios from "axios";
 import {objectToFormData} from "../helpers/formData.js";
 
 
-const instancePublic = axios.create({
-    baseURL: "https://prop-test.ru/server/public"
+
+const instanceApi = axios.create({
+    baseURL: `/api`,
+    withCredentials: true,
 }),
 instance = axios.create({
-    baseURL: "/api",
+    baseURL: `/public`
+});
+
+const instancePublic = axios.create({
+    baseURL: "https://prop-test.ru/server/public"
+});
+// instance = axios.create({
+//     baseURL: "/api",
+//     withCredentials: true,
+//     headers: {
+//         "Access-Control-Allow-Methods": "GET,HEAD,POST,PUT,PATCH,DELETE"
+//     }
+// })
+
+
+export const authUser = async (login, password) => await axios.post(`/auth/login`, { login, password }, {
     withCredentials: true,
-    headers: {
-        "Access-Control-Allow-Methods": "GET,HEAD,POST,PUT,PATCH,DELETE"
-    }
-})
+});
+export const authMe = async () => await axios.get(`/auth/me`, { withCredentials: true });
+
+export const getCards = async slug => await instanceApi.get('/objects');
+
+// export const getCards = async (slug) => {
+//     return await axios.get(`https://prop-test.ru/server/api/v1/objects`)
+// }
+
+// export const authUser = async (login, password) => await axios.post('/admin/login', { login, password }, { withCredentials: true }),
+// authMe = async () => await axios.get('/admin/auth/me', { withCredentials: true });
 
 
-export const getCards = async (slug) => {
-    return await axios.get(`https://prop-test.ru/server/api/v1/objects`)
-}
-
-export const authUser = async (login, password) => await axios.post('/admin/login', { login, password }, { withCredentials: true }),
-authMe = async () => await axios.get('/admin/auth/me', { withCredentials: true });
-
-
-export const createCard = async data => await axios.post('https://prop-test.ru/server/api/v1/object', data, {withCredentials: true})
+export const createCard = async data => await instanceApi.post('/object', data);
 
 // export const deleteCard = async (id) => {
 //     return await axios.delete(`https://65d32fb7522627d50108390b.mockapi.io/cards/${id}`)
 // }
 
-export const getArendators = async () => {
-    return (await axios.get('https://prop-test.ru/server/api/v1/tentants/')).data
-}
+export const getArendators = async () => (await instanceApi.get('/tentants')).data;
+// export const getArendators = async () => {
+//     return (await axios.get('https://prop-test.ru/server/api/v1/tentants/')).data
+// }
 
 export const getCurrentCard = async (slug) => {
-    return (await axios.get(`https://prop-test.ru/server/api/v1/object/${slug}`)).data
+    return (await instanceApi.get(`/object/${slug}`)).data
 }
 
 /**
@@ -42,32 +59,48 @@ export const getCurrentCard = async (slug) => {
  */
 
 export const reverseImageGet = async imgUrl => {
-    const reverseResponce = await instancePublic.get(`/${imgUrl}`, {
+    const reverseResponce = await instance.get(`${imgUrl}`, {
         responseType: "blob",
     });
 
     return reverseResponce;
 }
 
-export const removeTentantOfObject = async (tentantsId, objectId) => await axios.delete(`https://prop-test.ru/server/api/v1/object/remove-tentant/${objectId}`, {
-    data: tentantsId,
-    withCredentials: true
-});
+export const removeTentantOfObject = async (tentantsId, objectId) => await instanceApi(
+    `/object/remove-tentant/${objectId}`,
+    {
+        data: tentantsId,
+    }
+);
+// export const removeTentantOfObject = async (tentantsId, objectId) => await axios.delete(`https://prop-test.ru/server/api/v1/object/remove-tentant/${objectId}`, {
+//     data: tentantsId,
+//     withCredentials: true
+// });
 
-export const getTentants = async () => await axios.get("https://prop-test.ru/server/api/v1/tentants");
+export const getTentants = async () => await instanceApi.get('/tentants');
 
-export const deleteCard = async id => await axios.delete(`https://prop-test.ru/server/api/v1/object/${id}`, {withCredentials: true});
+export const deleteCard = async id => await instanceApi.delete(`/object/${id}`);
+//export const deleteCard = async id => await axios.delete(`https://prop-test.ru/server/api/v1/object/${id}`, {withCredentials: true});
 
-export const createTentantsInCard = async (tenstantsInfo, id) => await axios.post(`https://prop-test.ru/server/api/v1/object/add-tentant/${id}`, {
-    tentants: tenstantsInfo,
-}, {withCredentials: true});
-export const updateTentantsInCard = async (tenstantsInfo, id) => await axios.put(`https://prop-test.ru/server/api/v1/object/update-tentant/${id}`,
-    [...tenstantsInfo], {withCredentials: true}
+export const createTentantsInCard = async (tenstantsInfo, id) => await instanceApi.post(
+    `/object/add-tentant/${id}`,
+    {
+        tentants: tenstantsInfo, 
+    },
+);
+export const updateTentantsInCard = async (tenstantsInfo, id) => await instanceApi.put(
+    `/object/update-tentant/${id}`,
+    [...tenstantsInfo],
 );
 
-export const updateCard = async (id, data) => {
-    console.log({ agentRemuneration: data.agentRemuneration });
+// export const createTentantsInCard = async (tenstantsInfo, id) => await axios.post(`https://prop-test.ru/server/api/v1/object/add-tentant/${id}`, {
+//     tentants: tenstantsInfo,
+// }, {withCredentials: true});
+// export const updateTentantsInCard = async (tenstantsInfo, id) => await axios.put(`https://prop-test.ru/server/api/v1/object/update-tentant/${id}`,
+//     [...tenstantsInfo], {withCredentials: true}
+// );
 
+export const updateCard = async (id, data) => {
     const formUpdate = objectToFormData({
         title: data.title,
         description: data.description,
@@ -104,5 +137,5 @@ export const updateCard = async (id, data) => {
         globalRentFlowMouth: data.globalRentFlow.mouth,
     })
 
-    return await axios.put(`/api/object/${id}`, formUpdate, { withCredentials: true })
+    return await instanceApi.put(`/object/${id}`, formUpdate);
 }

@@ -1,48 +1,44 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+import "dotenv/config";
+
+import { resolve } from "path";
+
+
+console.log(process.env.VITE_API_URL);
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: (process.env.APP_BASE).toString().length > 0 ? process.env.APP_BASE: '/',
+  publicDir: resolve('./public'),
   server: {
     proxy: {
-      '/login': {
-        target: "https://prop-test.ru/server/auth/login",
+      '^/public/.*': {
+        target: `${process.env.VITE_SERVER_URL}/public`,
         changeOrigin: true,
-        ws: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/login/, ''),
-        // configure: (proxy) => {
-        //   proxy.on('proxyReq', t => {
-        //     console.log(t);
-        //   })
-        // }
+        ws: true,
+        rewrite: (path) => path.replace(/^\/public/, ''),
       },
-      "^/auth/.*": {
-        target: "https://prop-test.ru/server/auth",
+      '^/auth/.*': {
+        target: `${process.env.VITE_SERVER_URL}/auth`,
         changeOrigin: true,
         ws: true,
         secure: false,
+        configure: proxy => {
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            console.log('req.headers.cookie', req.headers.cookie, req.url);
+          });
+        },
         rewrite: (path) => path.replace(/^\/auth/, ''),
       },
       "^/api/.*": {
-        target: "https://prop-test.ru/server/api/v1/",
+        target: `${process.env.VITE_API_URL}`,
         changeOrigin: true,
+        ws: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ''),
-        // secure: false,
-        // configure: (proxy, _options) => {
-        //   proxy.on('error', (err, _req, _res) => {
-        //     console.log('proxy error', err);
-        //   });
-        //   proxy.on('proxyReq', (proxyReq, req, _res) => {
-        //     console.log("test")
-        //     console.log('Sending Request to the Target:', proxyReq);
-        //   });
-        //   proxy.on('proxyRes', (proxyRes, req, _res) => {
-        //     console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
-        //   });
-        // },
       }
     },
     
@@ -50,6 +46,7 @@ export default defineConfig({
       origin: "*",
       methods: "*",
       credentials: true,
+      
     }
   }
 })
