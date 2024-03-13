@@ -48,7 +48,7 @@ const router = createBrowserRouter([
     element: <Auth />
   },
 
-]);
+], {basename: '/admin'});
 
 export default function MyRouter() {
   return <RouterProvider router={router}/>
