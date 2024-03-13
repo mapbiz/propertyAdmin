@@ -31,7 +31,7 @@ export default function Layout() {
     }, []);
 
     return (
-        <div>
+        <div className="w-full h-full flex flex-col">
             <Header/>
             <Outlet/>
             {

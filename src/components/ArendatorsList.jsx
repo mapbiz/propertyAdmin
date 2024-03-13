@@ -27,13 +27,13 @@ export default function ArendatorsList() {
     },[dispatch])
 
     return (
-        <div className={'pt-[150px]'}>
+        <main className={'pt-[150px] flex-1'}>
             {arendators.map(item => {
                 return (
                     <ArendatorItem name={item.name} object={item.object} category={item.category} id={item.id} logo={item.logo} key={item.id} />
                 )
             })}
 
-        </div>
+        </main>
     )
 }

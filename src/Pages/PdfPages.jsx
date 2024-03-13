@@ -343,29 +343,31 @@ export default function TestPdf() {
                                     </Text>
 
                                     <View style={{border: '3px solid #DDEEE4', marginTop: '20px'}}>
-                                        {card.globalRentFlow.mouth && <View style={{
-                                            display: "flex",
-                                            justifyContent: 'space-between',
-                                            flexDirection: 'row',
-                                            padding: '20px',
-                                            borderBottom: '2px solid #DDEEE4'
-                                        }}>
+                                        {
+                                            card.globalRentFlow.mouth && 
                                             <View style={{
-                                                display: 'flex',
+                                                display: "flex",
+                                                justifyContent: 'space-between',
                                                 flexDirection: 'row',
-                                                gap: '6.5px',
-                                                alignItems: 'center'
+                                                padding: '20px',
+                                                borderBottom: '2px solid #DDEEE4'
                                             }}>
-                                                <Image style={{width: '40px', height: '40px'}}
-                                                       src={specifications}></Image>
-                                                <Text style={{fontSize: '44px', color: '#144728'}}>
-                                                    МАП:
+                                                <View style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    gap: '6.5px',
+                                                    alignItems: 'center'
+                                                }}>
+                                                    <Image style={{width: '40px', height: '40px'}}
+                                                        src={specifications}></Image>
+                                                    <Text style={{fontSize: '44px', color: '#144728'}}>
+                                                        МАП:
+                                                    </Text>
+                                                </View>
+                                                <Text style={{fontSize: '44px'}}>
+                                                    {card.globalRentFlow.mouth && (card.globalRentFlow.mouth).toLocaleString('ru')}
                                                 </Text>
                                             </View>
-                                            <Text style={{fontSize: '44px'}}>
-                                                {card.globalRentFlow.mouth && (card.globalRentFlow.mouth).toLocaleString('ru')}
-                                            </Text>
-                                        </View>
                                         }
 
                                         {

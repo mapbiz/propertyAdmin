@@ -5,7 +5,14 @@
 @layer components {
    [role='button'] {
       @apply cursor-pointer;
-   };
-};
+   }
+   #root {
+      @apply w-full h-full;
+   }
+}
 
-
+@layer base {
+   body, html {
+      @apply w-full h-full;
+   }
+}

@@ -13,6 +13,7 @@ export default defineConfig({
   base: (process.env.APP_BASE).toString().length > 0 ? process.env.APP_BASE: '/',
   publicDir: resolve('./public'),
   server: {
+    port: process.env.APP_PORT,
     proxy: {
       '^/public/.*': {
         target: `${process.env.VITE_SERVER_URL}/public`,
