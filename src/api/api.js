@@ -18,8 +18,8 @@ export const getCards = async (slug) => {
     return await axios.get(`https://prop-test.ru/server/api/v1/objects`)
 }
 
-export const authUser = async (login, password) => await axios.post('/login', { login, password }, { withCredentials: true }),
-authMe = async () => await axios.get('/auth/me', { withCredentials: true });
+export const authUser = async (login, password) => await axios.post('/admin/login', { login, password }, { withCredentials: true }),
+authMe = async () => await axios.get('/admin/auth/me', { withCredentials: true });
 
 
 export const createCard = async data => await axios.post('https://prop-test.ru/server/api/v1/object', data, {withCredentials: true})
