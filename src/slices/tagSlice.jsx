@@ -173,7 +173,9 @@ export const tagSlice = createSlice({
 
             console.log(newPayload)
             if(newPayload.tenantsInfo && newPayload.tenantsInfo.length > 0) {
-                newPayload.tenantsInfo = newPayload.tenantsInfo.map(tentant => {
+                newPayload.tenantsInfo = newPayload.tenantsInfo.filter(tentantInObject => {
+                    return !!tentantInObject?.tentant
+                }).map(tentant => {
                     return {
                         type: 'update',
                         ...tentant,

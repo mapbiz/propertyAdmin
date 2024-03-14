@@ -114,6 +114,8 @@ export default function Tentants({
         await removeTentantOfObject([{ tenatantId: tentant.id }], objectStorage.id);
     };
 
+
+
     return (
         <>
             <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
