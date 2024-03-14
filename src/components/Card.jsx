@@ -71,7 +71,7 @@ export default function Card({card}) {
                 //     alert('ошибка загрузки карточки')
                 // }
             }}
-            className={'w-full cursor-pointer c min-h-[120px] gap-[50px] items-center hover:shadow-lg transition-all duration-300 flex px-[32px]'}>
+            className={'w-full cursor-pointer border border-2 min-h-[120px] gap-[50px] items-center hover:shadow-lg transition-all duration-300 flex px-[32px]'}>
             <img className={'max-h-[100px]'} src={`${import.meta.env.VITE_SERVER_URL}public/${card.images[0]}`} alt={''}/>
             <div className={'whitespace-nowrap text-ellipsis overflow-hidden text-start w-full max-w-[300px]'}>{card.title}</div>
             <div className={'whitespace-nowrap text-end w-full'}>{card.price.global}</div>

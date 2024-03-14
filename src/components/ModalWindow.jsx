@@ -131,6 +131,11 @@ export default function ModalWindow({isCreate}) {
     });
 
     //стилизация кнопок загрузки
+    const infoProject = {
+        sale: 'Объект продажи',
+        rent: 'Объект Аренды',
+        'sale-business': 'Объект ГАБ'
+    }
 
     return (
         <>
@@ -142,7 +147,7 @@ export default function ModalWindow({isCreate}) {
                 className={`${isOpen ? 'block' : 'hidden'} left-[50%] translate-x-[-50%] fixed h-max w-max flex items-center justify-center`}>
                 <div className={'bg-white w-[1000px] h-[700px] px-[32px]  overflow-y-auto'}>
                     <div className={'pt-[40px] flex flex-col gap-4 pb-[20px]'}>
-                        <p>{object.type}</p>
+                        <p className={'font-bold text-red-700 text-center text-3xl'}>{infoProject[object.type]}</p>
                         <h2 className={'font-bold'}>Основная информация</h2>
                         <Tag
                             title={'Название:'}
