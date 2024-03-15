@@ -186,7 +186,7 @@ export default function Tentants({
                                                         key={tentantInObject.tentant.id}
                                                     >
                                                         <div className='flex flex-col'>
-                                                            <div className='flex items-center'>
+                                                            <div className='flex items-center gap-2.5'>
                                                                 <ListItemAvatar>
                                                                     <img 
                                                                         width="200" 
@@ -210,8 +210,9 @@ export default function Tentants({
                                                                 </Button>
                                                             </div>
                                                             
-                                                            <div className='flex gap-4 items-end'>
+                                                            <div className='flex flex-col gap-4 items-end'>
                                                                 <TextField
+                                                                    className={'w-full'}
                                                                     variant="standard"
                                                                     label="Индексация"
                                                                     type="number"
@@ -231,6 +232,7 @@ export default function Tentants({
                                                                     }}
                                                                 />
                                                                 <TextField
+                                                                    className={'w-full'}
                                                                     variant="standard"
                                                                     label="Договор"
                                                                     defaultValue={tentantInObject.contract}
@@ -247,6 +249,7 @@ export default function Tentants({
                                                                     }}
                                                                 />
                                                                 <TextField
+                                                                    className={'w-full'}
                                                                     variant="standard"
                                                                     label="Месячный арендный поток"
                                                                     type="number"
@@ -268,6 +271,7 @@ export default function Tentants({
                                                                     }}
                                                                 />
                                                                 <TextField
+                                                                    className={'w-full'}
                                                                     variant="standard"
                                                                     label="Годовой арендный поток"
                                                                     type="number"
@@ -287,8 +291,8 @@ export default function Tentants({
                                                                         }))
                                                                     }}
                                                                 />
-                                                                <div>
-                                                                    <em>Добавлять разные элементы через запятую</em>
+                                                                <div className={'flex flex-col w-full'}>
+                                                                    <em className={'text-green-500'}>Новая строка начинается через ,</em>
                                                                     <TextField
                                                                         label="Детализация"
                                                                         variant="standard"

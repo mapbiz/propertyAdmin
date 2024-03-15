@@ -155,40 +155,50 @@ export default function ModalWindow({isCreate}) {
                             className={'w-full'}
                             variant="outlined"
                         />
+                        <div className={'flex gap-2.5'}>
+                            <Tag
+                                title={'Адрес'}
+                                name={'address'}
+                                className={'w-full'}
+                                variant="outlined"
+                            />
+                            <Tag
+                                title={'Адрес метро'}
+                                name={'metro'}
+                                className={'w-full'}
+                                variant="outlined"
+                            />
+                        </div>
+
+                        {console.log(object)}
                         <Tag
-                            title={'Адрес'}
-                            name={'address'}
-                            className={'w-full'}
-                            variant="outlined"
-                        />
-                        <Tag
-                            title={'Адрес метро'}
-                            name={'metro'}
-                            className={'w-full'}
-                            variant="outlined"
-                        />
-                        <Tag
+                            type={'textarea'}
                             title={'Описание'}
                             name={'description'}
                             className={'w-full'}
                             variant="outlined"
                         />
-                        <Tag title={'Цена:'} subName={'global'} name={'price'}/>
-                        <Tag subName={'square'} title={'Цена за м²:'} name={'price'}/>
-                        <Tag
-                            title={'Этаж'}
-                            subName={'floor'}
-                            name={'info'}
-                            className={'w-full'}
-                            variant="outlined"
-                        />
-                        {
-                            stateWindow === 'sale-business' &&
-                            <Tag title={'Окупаемость:'} name={'payback'}/>
-                        }
+                        <div className={'flex gap-2.5'}>
+                            <Tag title={`${object.type === 'rent' ? 'Арендная ставка': 'Цена:'}`} subName={'global'} name={'price'}/>
+                            <Tag subName={'square'} title={`${object.type === 'rent' ? 'Арендная ставка в месяц': 'Цена за м²:'}`} name={'price'}/>
+                        </div>
+                        <div className={'flex gap-2.5'}>
+                            <Tag
+                                title={'Этаж'}
+                                subName={'floor'}
+                                name={'info'}
+                                className={'w-full'}
+                                variant="outlined"
+                            />
+                            {
+                                stateWindow === 'sale-business' &&
+                                <Tag title={'Окупаемость:'} name={'payback'}/>
+                            }
+                        </div>
+
                     </div>
                     <div className={'pb-[20px]'}>
-                        <h2 className={''}>ссылка панорамы</h2>
+                        <h2 className={'font-bold'}>ссылка панорамы</h2>
                         <div className={'flex gap-[50px] '}>
                             <Input
                                 label={"Ссылка на панораму"}
@@ -202,8 +212,8 @@ export default function ModalWindow({isCreate}) {
                             {/*    variant="outlined"*/}
                             {/*/>*/}
                         </div>
-                        <h2 className={''}>Координаты карты</h2>
-                        <div className={'flex gap-[50px] '}>
+                        <h2 className={'pt-2.5 pb-2.5 font-bold'}>Координаты карты</h2>
+                        <div className={'flex gap-2.5 '}>
                             <Tag
                                 subName={'lat'}
                                 title={'Координаты Lat'}
@@ -223,18 +233,27 @@ export default function ModalWindow({isCreate}) {
 
                     <div className={'flex flex-col w-full gap-4'}>
                         <h2 className={'font-bold'}>Информация об объекте</h2>
-                        <Tag title={'Площадь:'} subName={'square'} name={'info'}/>
-                        <Tag title={'Тип окон:'} subName={'typeWindow'} name={'info'}/>
-                        <Tag title={'Планировка:'} name={'info'} subName={'layout'}/>
-                        <Tag title={'Высота потолков:'} name={'info'} subName={'ceilingHeight'}/>
-                        <Tag title={'Вход:'} subName={'enter'} name={'info'}/>
-                        <Tag title={'Эл. мощность:'} subName={'force'} name={'info'}/>
-                        <Tag title={'Отделка:'} name={'info'} subName={'finishing'}/>
-                        <Tag
-                            type={'number'}
-                            title={'Вознаграждение агента'}
-                            name={'agentRemuneration'}
-                        />
+                        <div className={'flex gap-2.5'}>
+                            <Tag title={'Планировка:'} name={'info'} subName={'layout'}/>
+                            <Tag title={'Высота потолков:'} name={'info'} subName={'ceilingHeight'}/>
+                        </div>
+                        <div className={'flex gap-2.5'}>
+                            <Tag title={'Вход:'} subName={'enter'} name={'info'}/>
+                            <Tag title={'Эл. мощность:'} subName={'force'} name={'info'}/>
+                        </div>
+                        <div className={'flex gap-2.5'}>
+                            <Tag title={'Отделка:'} name={'info'} subName={'finishing'}/>
+                            <Tag
+                                type={'number'}
+                                title={'Вознаграждение агента'}
+                                name={'agentRemuneration'}
+                            />
+                        </div>
+                        <div className={'flex gap-2.5'}>
+
+                        </div>
+
+
                         <div className={'flex items-center'}>
                             <p>Вытяжка</p>
                             <Checkbox
@@ -253,15 +272,7 @@ export default function ModalWindow({isCreate}) {
                                 inputType="checkbox"
                                 path="zone"
                             />
-                            {/*<Checkbox*/}
-                            {/*    onClick={(e) => {*/}
-                            {/*        dispatch(updateCheckBox({*/}
-                            {/*            type: 'zone',*/}
-                            {/*            value: e.target.checked*/}
-                            {/*        }))*/}
-                            {/*    }}*/}
-                            {/*    value={object.info.zone}>*/}
-                            {/*</Checkbox>*/}
+
                         </div>
                         {
                             stateWindow === 'sale-business' &&
@@ -273,7 +284,7 @@ export default function ModalWindow({isCreate}) {
                             </>
                         }
                         <h2 className={'font-bold'}>Коммерческие условия</h2>
-                        <div className={'pt-[20px] flex flex-col gap-4'}>
+                        <div className={'flex flex-col gap-2.5'}>
                             {
                                 stateWindow === 'rent' &&
                                 <>
@@ -291,7 +302,6 @@ export default function ModalWindow({isCreate}) {
                                         label={'Аренда в месяц'}
                                         variant="outlined"
                                     />
-                                    {console.log()}
                                     <TextField
                                         type={'number'}
                                         className={'w-full'}
@@ -328,9 +338,7 @@ export default function ModalWindow({isCreate}) {
                             stateWindow === 'sale-business' &&
                             <>
                                 <h2 className={'font-bold'}>Арендаторы</h2>
-
                                 <Tentants/>
-                                {/*<MultipleSelectCheckmarks/>*/}
                             </>
                         }
 
@@ -344,59 +352,12 @@ export default function ModalWindow({isCreate}) {
                             tabIndex={-1}
                             startIcon={<CloudUploadIcon/>}
                         >
-                            Загрузить фотографии планировки
+                            Загрузить фотографии объекта
                             <VisuallyHiddenInput multiple
                                                  onChange={handleImagesChange}
                                                  type="file"/>
                         </Button>
-                        {/*<div className="flex flex-wrap gap-2 pt-4">*/}
-                        {/*  {images.length > 0 && images.map((imgUrl, index) => {*/}
-                        {/*    return (*/}
-                        {/*      <div*/}
-                        {/*        key={index * 1000}*/}
-                        {/*        className={'flex flex-col relative'}*/}
-                        {/*      >*/}
-                        {/*        <img*/}
-                        {/*          onClick={() => {*/}
-                        {/*            const swappedArray = images;*/}
 
-                        {/*            swapElements(swappedArray, index, index + 1)*/}
-
-                        {/*            setImages([...swappedArray]);*/}
-                        {/*          }}*/}
-                        {/*          src={'./arrowLeft.svg'}*/}
-                        {/*          className={`absolute top-[100px] right-[10px] cursor-pointer ${index === images.length - 1 ? 'hidden' : ''}`}*/}
-                        {/*        />*/}
-                        {/*        <img*/}
-                        {/*          src={'./arrowRight.svg'}*/}
-                        {/*          className={`absolute top-[100px] left-[10px] cursor-pointer ${index === 0 ? 'hidden' : ''}`}*/}
-                        {/*          onClick={() => {*/}
-                        {/*            const swappedArray = images;*/}
-
-                        {/*            swapElements(swappedArray, index, index - 1)*/}
-
-                        {/*            setImages([...swappedArray]);*/}
-                        {/*          }}*/}
-                        {/*        />*/}
-
-                        {/*        <img*/}
-                        {/*          className={'max-h-[200px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}*/}
-                        {/*          src={imgUrl.url}*/}
-                        {/*        />*/}
-
-                        {/*        <button*/}
-                        {/*          onClick={() => {*/}
-                        {/*            setImages(images.filter((img) => img.url !== imgUrl.url))*/}
-                        {/*          }}*/}
-                        {/*          className={'py-[12px] shadow-lg rounded-br-[5px] rounded-bl-[5px] flex justify-center w-full md:hover:bg-red-800 transition-all duration-300 bg-red-700'}*/}
-                        {/*        >*/}
-                        {/*          Удалить*/}
-                        {/*        </button>*/}
-                        {/*      </div>*/}
-
-                        {/*    )*/}
-                        {/*  })}*/}
-                        {/*</div>*/}
                         <div className="flex flex-wrap gap-2 pt-4 ">
                             <div
                                 className={'flex flex-col relative '}

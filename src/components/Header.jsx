@@ -35,7 +35,7 @@ export default function Header() {
                 }
 
                 {
-                    location.pathname !== '/'
+                    (location.pathname !== '/' && location.pathname !== '/pdf')
                     &&
                     <button onClick={(e) => {
                         navigate('/');
@@ -46,16 +46,19 @@ export default function Header() {
                 {location.pathname !== '/arendators' &&
                     <>
                         <HeaderBtn change={(e) => {
+                            navigate('/')
                             dispatch(setTab({
                                 ['activeTab']: 'all'
                             }))
                         }} state={'all'} active={selector}  text={'ВСЕ ОБЪЕКТЫ'}/>
                         <HeaderBtn change={(e) => {
+                            navigate('/')
                             dispatch(setTab({
                                 ['activeTab']: 'rent'
                             }))
                         }} state={'rent'} active={selector}  text={'АРЕНДА'}/>
                         <HeaderBtn change={(e) => {
+                            navigate('/')
                             dispatch(setTab({
                                 ['activeTab']: 'sale'
                             }))

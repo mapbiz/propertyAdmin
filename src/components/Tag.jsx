@@ -4,6 +4,7 @@ import {useEffect, useMemo, useRef, useState} from "react";
 import {TextField} from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import {Label} from "@mui/icons-material";
+import Textarea from "./Input/Textarea.jsx";
 
 export default function Tag({name, full, title, subName = null, checkbox = false, sub3Name = null, type = 'text'}) {
     const field = useRef("");
@@ -57,15 +58,18 @@ export default function Tag({name, full, title, subName = null, checkbox = false
             <div className={'text-[18px]'}>
             </div>
             {/*object[name]?.[subName] || object[name] || ''*/}
-            {!checkbox ?
-                <TextField
-                    type={type}
-                    className={'w-full'}
-                    onChange={handleChange}
-                    value={tagDisplayValue}
-                    label={title && title}
-                    variant="outlined"
-                />
+            {(!checkbox)  ?
+                <>
+                    <TextField
+                        type={type}
+                        className={'w-full'}
+                        onChange={handleChange}
+                        value={tagDisplayValue}
+                        label={title && title}
+                        multiline={type === 'textarea'}
+                        variant="outlined"
+                    />
+                </>
                 :
                 <div className={'flex justify-center items-center'}>
                     <p>{title}</p>

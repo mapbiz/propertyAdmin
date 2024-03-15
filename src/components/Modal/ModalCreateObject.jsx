@@ -625,7 +625,7 @@ export default function ModalCreateObject({
                      >
                         {
                            !validate ?
-                           <> Решите ошибки </>
+                           <>Решите ошибки</>
                            :
                            <>
                               { step === maxSteps ? 'Закончить': 'Далее' }

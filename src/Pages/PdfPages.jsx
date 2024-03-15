@@ -9,6 +9,7 @@ import specifications from '../../public/specifications.png'
 import cardMap from '../../public/mapCard.jpg'
 import propertyLogo from '../../public/property.png'
 import {useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
 
 
 const images = [
@@ -218,8 +219,16 @@ export default function TestPdf() {
         rent: 'Аренда торговой площади',
         'sale-business': 'ГАБ'
     }
+    const navigate = useNavigate()
     return (
-        <div className={'pt-[300px] '}>
+        <div className={'pt-[150px] flex flex-col justify-center w-full'}>
+            <div className={'w-full flex justify-center mb-20'}>
+                <button className={'btn'} onClick={() => {
+                    navigate('/')
+                }}>Вернуться назад
+                </button>
+            </div>
+
             <PDFViewer className={'h-screen w-full'}>
                 <Document>
                     <Page size={{width: 2480, height: 3508,}} style={styles.page}>
@@ -316,24 +325,20 @@ export default function TestPdf() {
                                     flexDirection: "row",
                                     justifyContent: "space-between"
                                 }}>
-                                    {card.type !== 'rent' ?
-                                        <>
-                                            <Text style={styles.text64}>
-                                                {typeOfCard[card.type]}
-                                            </Text>
-                                            <Text style={styles.text64}>
-                                                “ДИКСИ”
-                                            </Text>
-                                            <Text style={styles.text64}>
-                                                {card.payback} лет
-                                            </Text>
-                                        </>
-                                        :
+                                    {
+                                        (card.type === 'rent') &&
+
                                         <Text style={styles.text64}>
                                             Аренда
                                         </Text>
                                     }
+                                    {
+                                        (card.type === 'sale') &&
 
+                                        <Text style={styles.text64}>
+                                            Продажа торговой площади
+                                        </Text>
+                                    }
                                 </View>
                                 {/*блок зеленый*/}
                                 {/*Коммерческие условия*/}
@@ -672,7 +677,7 @@ export default function TestPdf() {
                     <Page size={{width: 2480, height: 3508}} style={styles.page}>
                         {title()}
                         <View style={{paddingTop: '200px'}}>
-                            {card.type !== 'rent' &&
+                            {(card.type !== 'rent' && card.type !== 'sale') &&
                                 <View style={{
                                     flexDirection: "row",
                                     display: 'flex',

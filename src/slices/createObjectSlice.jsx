@@ -175,16 +175,16 @@ const initialState = {
       // images
       photos: {
          input: 'files',
-         name: 'Фотки обьекта',
+         name: 'Фотографии объекта',
          required: true,
       },
       photosLayout: {
          input: 'files',
-         name: 'Фотки планировки',
+         name: 'Фотографии планировки',
       },
       photoMap: {
          input: 'file',
-         name: 'Фотка карты (для формирования пдф)',
+         name: 'Фото карты (для формирования пдф)',
       },
       
       // coordinates
