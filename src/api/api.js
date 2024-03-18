@@ -82,7 +82,7 @@ export const reverseImageGet = async imgUrl => {
     return reverseResponce;
 }
 
-export const removeTentantOfObject = async (tentantsId, objectId) => await instanceApi(
+export const removeTentantOfObject = async (tentantsId, objectId) => await instanceApi.delete(
     `/object/remove-tentant/${objectId}`,
     {
         data: tentantsId,
