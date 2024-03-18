@@ -110,7 +110,6 @@ export default function Tentants({
 
     const onClickDeleteJoinTentant = async tentant => {
         dispatch(deleteTenant(tentant.id));
-
         await removeTentantOfObject([{ tenatantId: tentant.id }], objectStorage.id);
     };
 
@@ -118,259 +117,166 @@ export default function Tentants({
 
     return (
         <>
-            <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+            <List className={'bg-red-700'} sx={{ width: '100%', bgcolor: 'background.paper'}}>
                 {
                     objectStorage.tenantsInfo.length > 0 ?
-                        <>
-                            
-                            { 
-                                objectStorage.tenantsInfo.map((tentantInObject, index) => {
-                                    return (
-                                        <>
-                                            {
-                                                !tentantInObject.tentant.id ?
-                                                <>
-                                                    {/* <FormControl sx={{ width: '100%', marginTop: 4, }}>
-                                                        <InputLabel id="select-label">Выбрать арендатора</InputLabel>
-                                                        <Select
-                                                            sx={{ width: '100%' }}
-                                                            className="w-full"
-                                                            open={isOpenSelect}
-                                                            id="select"
-                                                            onClick={e => {
-                                                                if(e.target.id === 'select') setIsOpenSelect(true);
-                                                                else setIsOpenSelect(false);
-                                                            }}
-                                                            labelId="select-label"
-                                                        >
-                                                            {
-                                                                tentans.length > 0 ?
-                                                                <>
-                                                                    <MenuItem disabled value="">
-                                                                        <em>Выберете арендатора</em>
-                                                                    </MenuItem>
-                                                                    {
-                                                                        [...tentans].map(tentant => {
-                                                                            return (
-                                                                                <>
-                                                                                    { 
-                                                                                        objectStorage
-                                                                                        .tenantsInfo
-                                                                                        .findIndex(tentantInfo => tentantInfo.tentant.id === tentant.id) === -1 &&
 
-                                                                                        <MenuItem
-                                                                                            onClick={e => clickSelectTentant(tentant, index)}
-                                                                                            key={tentant.id}
-                                                                                            value={tentant.id}
-                                                                                        >
-                                                                                            {tentant.name}
-                                                                                        </MenuItem>
-                                                                                    }
-                                                                                </>
-                                                                            )
-                                                                        })
-                                                                    }
-                                                                </>
-                                                                :
-                                                                <>
-                                                                    Сначала создайте арендаторов
-                                                                </>
-                                                            }
-                                                        </Select>
-                                                    </FormControl> */}
-                                                </>
-                                                :
-                                                <>
-                                                    <ListItem 
-                                                        sx={{ width: "100%" }}
-                                                        key={tentantInObject.tentant.id}
-                                                    >
-                                                        <div className='flex flex-col'>
-                                                            <div className='flex items-center gap-2.5'>
-                                                                <ListItemAvatar>
-                                                                    <img 
-                                                                        width="200" 
-                                                                        height="200" 
-                                                                        src={`https://prop-test.ru/server/public/${tentantInObject.tentant.logo}`} 
-                                                                    />
-                                                                </ListItemAvatar>
-                                                                <ListItemText 
-                                                                    primary={tentantInObject.tentant.name}
-                                                                    secondary={tentantInObject.tentant.category}
-                                                                />
-                                                                <Button 
-                                                                    color="error"
-                                                                    onClick={() => {
-                                                                        if(tentantInObject.type === 'update') 
-                                                                        return onClickDeleteJoinTentant(tentantInObject.tentant);
-                                                                        else dispatch(deleteTenant(tentantInObject.tentant.id));
-                                                                    }}
-                                                                >
-                                                                    <DeleteIcon />
-                                                                </Button>
-                                                            </div>
-                                                            
-                                                            <div className='flex flex-col gap-4 items-end'>
-                                                                <TextField
-                                                                    className={'w-full'}
-                                                                    variant="standard"
-                                                                    label="Индексация"
-                                                                    type="number"
-                                                                    defaultValue={tentantInObject.indexation}
-                                                                    onBlur={e => {
-                                                                        const newTentant = {
-                                                                            ...tentantInObject
-                                                                        }
-
-                                                                        console.log(typeof +e.target.value); 
-                                                                        newTentant.indexation = +e.target.value;
-
-                                                                        dispatch(setTentantData({ 
-                                                                            id: index, 
-                                                                            data: newTentant,
-                                                                        }))
-                                                                    }}
-                                                                />
-                                                                <TextField
-                                                                    className={'w-full'}
-                                                                    variant="standard"
-                                                                    label="Договор"
-                                                                    defaultValue={tentantInObject.contract}
-                                                                    onBlur={e => {
-                                                                        const newTentant = {
-                                                                            ...tentantInObject
-                                                                        }
-
-                                                                        newTentant.contract = e.target.value;
-                                                                        dispatch(setTentantData({ 
-                                                                            id: index, 
-                                                                            data: newTentant, 
-                                                                        }))
-                                                                    }}
-                                                                />
-                                                                <TextField
-                                                                    className={'w-full'}
-                                                                    variant="standard"
-                                                                    label="Месячный арендный поток"
-                                                                    type="number"
-                                                                    defaultValue={tentantInObject.rentFlow.month}
-                                                                    onBlur={e => {
-                                                                        const newTentant = {
-                                                                            ...tentantInObject,
-                                                                            rentFlow: {
-                                                                                ...tentantInObject.rentFlow,
-                                                                            },
-                                                                        }
-
-                                                                        newTentant.rentFlow.month = +e.target.value;
-
-                                                                        dispatch(setTentantData({ 
-                                                                            id: index, 
-                                                                            data: newTentant,
-                                                                        }))
-                                                                    }}
-                                                                />
-                                                                <TextField
-                                                                    className={'w-full'}
-                                                                    variant="standard"
-                                                                    label="Годовой арендный поток"
-                                                                    type="number"
-                                                                    defaultValue={tentantInObject.rentFlow.year}
-                                                                    onBlur={e => {
-                                                                        const newTentant = {
-                                                                            ...tentantInObject,
-                                                                            rentFlow: {
-                                                                                ...tentantInObject.rentFlow,
-                                                                            },
-                                                                        }
-
-                                                                        newTentant.rentFlow.year = +e.target.value;
-                                                                        dispatch(setTentantData({ 
-                                                                            id: index, 
-                                                                            data: newTentant,
-                                                                        }))
-                                                                    }}
-                                                                />
-                                                                <div className={'flex flex-col w-full'}>
-                                                                    <em className={'text-green-500'}>Новая строка начинается через ,</em>
-                                                                    <TextField
-                                                                        label="Детализация"
-                                                                        variant="standard"
-                                                                        defaultValue={tentantInObject.detalization.join(",")}
-                                                                        onBlur={e => {
-                                                                            const newTentant = {
-                                                                                ...tentantInObject
-                                                                            }
-
-                                                                            newTentant.detalization = e.target.value.split(",");
-
-                                                                            dispatch(setTentantData({ 
-                                                                                id: index, 
-                                                                                data: newTentant, 
-                                                                            }));
-                                                                        }}
-                                                                    />
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                    </ListItem>
-                                                </>
-                                            }
-                                        </>
-                                    )
-                                })
-                            }
-                            <>
-                                {/* <FormControl sx={{ width: '100%', marginTop: 4, }}>
-                                    <InputLabel id="select-label">Выбрать арендатора</InputLabel>
-                                    <Select
-                                        sx={{ width: '100%' }}
-                                        className="w-full"
-                                        open={isOpenSelect}
-                                        id="select"
-                                        onClick={e => {
-                                            if(e.target.id === 'select') setIsOpenSelect(true);
-                                            else setIsOpenSelect(false);
-                                        }}
-                                        labelId="select-label"
-                                    >
-                                        {
-                                            tentans.length > 0 ?
-                                            <>
-                                                <MenuItem disabled value="">
-                                                    <em>Выберете арендатора</em>
-                                                </MenuItem>
+                        <div className={'flex flex-col items-center justify-center'}>
+                            <div className={'flex flex-wrap gap-10'}>
+                                {
+                                    objectStorage.tenantsInfo.map((tentantInObject, index) => {
+                                        return (
+                                            <div className={''}>
                                                 {
-                                                    [...tentans].map((tentant, index) => {
-                                                        return (
-                                                            <>
-                                                                { 
-                                                                    objectStorage
-                                                                    .tenantsInfo
-                                                                    .findIndex(tentantInfo => tentantInfo.tentant.id === tentant.id) === -1 &&
+                                                    !tentantInObject.tentant.id ?
+                                                        <>
+                                                        </>
+                                                        :
+                                                        <>
+                                                            <ListItem
+                                                                sx={{maxWidth: '250px', width: "100%", border: '1px solid'}}
+                                                                key={tentantInObject.tentant.id}
+                                                            >
+                                                                <div className='flex flex-col'>
+                                                                    <div className='flex items-center gap-2.5'>
+                                                                        <ListItemAvatar>
+                                                                            <img
+                                                                                width="50"
+                                                                                height="50"
+                                                                                src={`https://prop-test.ru/server/public/${tentantInObject.tentant.logo}`}
+                                                                            />
+                                                                        </ListItemAvatar>
+                                                                        <ListItemText
+                                                                            primary={tentantInObject.tentant.name}
+                                                                            secondary={tentantInObject.tentant.category}
+                                                                        />
+                                                                        <Button
+                                                                            color="error"
+                                                                            onClick={() => {
+                                                                                if(tentantInObject.type === 'update')
+                                                                                    return onClickDeleteJoinTentant(tentantInObject.tentant);
+                                                                                else dispatch(deleteTenant(tentantInObject.tentant.id));
+                                                                            }}
+                                                                        >
+                                                                            <DeleteIcon />
+                                                                        </Button>
+                                                                    </div>
 
-                                                                    <MenuItem
-                                                                        onClick={e => clickSelectTentant(tentant, index)}
-                                                                        key={tentant.id}
-                                                                        value={tentant.id}
-                                                                    >
-                                                                        {tentant.name}
-                                                                    </MenuItem>
-                                                                }
-                                                            </>
-                                                        )
-                                                    })
+                                                                    <div className='flex flex-col gap-4 items-end'>
+                                                                        <TextField
+                                                                            className={'w-full'}
+                                                                            variant="standard"
+                                                                            label="Индексация"
+                                                                            type="number"
+                                                                            defaultValue={tentantInObject.indexation}
+                                                                            onBlur={e => {
+                                                                                const newTentant = {
+                                                                                    ...tentantInObject
+                                                                                }
+
+                                                                                console.log(typeof +e.target.value);
+                                                                                newTentant.indexation = +e.target.value;
+
+                                                                                dispatch(setTentantData({
+                                                                                    id: index,
+                                                                                    data: newTentant,
+                                                                                }))
+                                                                            }}
+                                                                        />
+                                                                        <TextField
+                                                                            className={'w-full'}
+                                                                            variant="standard"
+                                                                            label="Договор"
+                                                                            defaultValue={tentantInObject.contract}
+                                                                            onBlur={e => {
+                                                                                const newTentant = {
+                                                                                    ...tentantInObject
+                                                                                }
+
+                                                                                newTentant.contract = e.target.value;
+                                                                                dispatch(setTentantData({
+                                                                                    id: index,
+                                                                                    data: newTentant,
+                                                                                }))
+                                                                            }}
+                                                                        />
+                                                                        <TextField
+                                                                            className={'w-full'}
+                                                                            variant="standard"
+                                                                            label="Месячный арендный поток"
+                                                                            type="number"
+                                                                            defaultValue={tentantInObject.rentFlow.month}
+                                                                            onBlur={e => {
+                                                                                const newTentant = {
+                                                                                    ...tentantInObject,
+                                                                                    rentFlow: {
+                                                                                        ...tentantInObject.rentFlow,
+                                                                                    },
+                                                                                }
+
+                                                                                newTentant.rentFlow.month = +e.target.value;
+
+                                                                                dispatch(setTentantData({
+                                                                                    id: index,
+                                                                                    data: newTentant,
+                                                                                }))
+                                                                            }}
+                                                                        />
+                                                                        <TextField
+                                                                            className={'w-full'}
+                                                                            variant="standard"
+                                                                            label="Годовой арендный поток"
+                                                                            type="number"
+                                                                            defaultValue={tentantInObject.rentFlow.year}
+                                                                            onBlur={e => {
+                                                                                const newTentant = {
+                                                                                    ...tentantInObject,
+                                                                                    rentFlow: {
+                                                                                        ...tentantInObject.rentFlow,
+                                                                                    },
+                                                                                }
+
+                                                                                newTentant.rentFlow.year = +e.target.value;
+                                                                                dispatch(setTentantData({
+                                                                                    id: index,
+                                                                                    data: newTentant,
+                                                                                }))
+                                                                            }}
+                                                                        />
+                                                                        <div className={'flex flex-col w-full'}>
+                                                                            <em className={'text-green-500'}>Новая строка начинается через ,</em>
+                                                                            <TextField
+                                                                                label="Детализация"
+                                                                                variant="standard"
+                                                                                defaultValue={tentantInObject.detalization.join(",")}
+                                                                                onBlur={e => {
+                                                                                    const newTentant = {
+                                                                                        ...tentantInObject
+                                                                                    }
+
+                                                                                    newTentant.detalization = e.target.value.split(",");
+
+                                                                                    dispatch(setTentantData({
+                                                                                        id: index,
+                                                                                        data: newTentant,
+                                                                                    }));
+                                                                                }}
+                                                                            />
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </ListItem>
+                                                        </>
                                                 }
-                                            </>
-                                            :
-                                            <>
-                                                Сначала создайте арендаторов
-                                            </>
-                                        }
-                                    </Select>
-                                </FormControl> */}
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div>
+                            <>
                                 <Button
+                                    sx={{marginTop: '50px'}}
                                     id="menu"
                                     onClick={handleMenuClick}
                                 > Добавить Арендодатора </Button>
@@ -387,11 +293,11 @@ export default function Tentants({
                                         tentans.map(tentant => {
                                             return (
                                                 <>
-                                                    { 
+                                                    {
                                                         objectStorage
                                                         .tenantsInfo
                                                         .findIndex(tentantInfo => tentantInfo.tentant.id === tentant.id) === -1 &&
-                                                        <MenuItem 
+                                                        <MenuItem
                                                             key={tentant.id}
                                                             value={tentant.id}
                                                             onClick={() => handleCloseItem(tentant)}
@@ -405,11 +311,7 @@ export default function Tentants({
                                     }
                                 </Menu>
                             </>
-                            {/* <Button onClick={() => clickAddNewTentant()}>
-                                Добавить нового арендатора
-                                <AddIcon/>
-                            </Button> */}
-                        </>
+                        </div>
                         :
                         <>
                             <Button onClick={() => clickAddNewTentant()}>
@@ -419,10 +321,12 @@ export default function Tentants({
                         </>
                 }
             </List>
+            <div className={'flex justify-center'}>
+                <Button onClick={() => clickSaveChanges()}>
+                    Сохранить изменения!
+                </Button>
+            </div>
 
-            <Button onClick={() => clickSaveChanges()}>
-                Сохранить изменения!
-            </Button>
         </>
     )
 }
