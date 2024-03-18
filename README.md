@@ -1,6 +1,10 @@
 # Содержание
 - [Разворот](#разворот)
 - [helpers](#helpers)
+   - [Маленькие функции](#маленькие-функции)
+      - [array](#array)
+      - [formData](#formdata)
+      - [object](#object)
   - [Кастомные хуки](#кастомные-хуки)
     - [useCopyFile](#usecopyfile)
   
