@@ -262,7 +262,7 @@ export default function Tentants({
                                                                             },
                                                                         }
 
-                                                                        newTentant.rentFlow.month = e.target.value;
+                                                                        newTentant.rentFlow.month = +e.target.value;
 
                                                                         dispatch(setTentantData({ 
                                                                             id: index, 

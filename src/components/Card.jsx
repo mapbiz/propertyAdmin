@@ -7,11 +7,7 @@ export default function Card({card}) {
     const deleteObject = async () => {
         if (window.confirm(`Удалить карточку - ${card.title}`)) {
             const resToDelete = await deleteCard(card.id);
-
-
             resToDelete.status === 204 ? alert('УДАЛИЛИ'): alert("При удалении произошла ошибка!");
-
-            revalidate()
         }
     }
 

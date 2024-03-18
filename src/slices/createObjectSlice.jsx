@@ -57,7 +57,7 @@ const initialState = {
       // images
       photos: [],
       photosLayout: [],
-      photoMap: '',
+      // photoMap: '',
 
       // coordinates
       lat: '',
@@ -182,10 +182,10 @@ const initialState = {
          input: 'files',
          name: 'Фотографии планировки',
       },
-      photoMap: {
-         input: 'file',
-         name: 'Фото карты (для формирования пдф)',
-      },
+      // photoMap: {
+      //    input: 'file',
+      //    name: 'Фото карты (для формирования пдф)',
+      // },
       
       // coordinates
       lat: {

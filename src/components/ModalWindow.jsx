@@ -205,12 +205,7 @@ export default function ModalWindow({isCreate}) {
                                 inputType="input"
                                 path="panorama"
                             />
-                            {/*<Tag*/}
-                            {/*    title={'ссылка панорамы'}*/}
-                            {/*    name={'panorama'}*/}
-                            {/*    className={'w-full'}*/}
-                            {/*    variant="outlined"*/}
-                            {/*/>*/}
+
                         </div>
                         <h2 className={'pt-2.5 pb-2.5 font-bold'}>Координаты карты</h2>
                         <div className={'flex gap-2.5 '}>
@@ -256,19 +251,24 @@ export default function ModalWindow({isCreate}) {
 
                         <div className={'flex items-center'}>
                             <p>Вытяжка</p>
-                            <Checkbox
-                                onClick={(e) => {
-                                    dispatch(updateCheckBox({
-                                        type: 'hood',
-                                        value: e.target.checked
-                                    }))
-                                }}
-                                value={object.info.hood}>
-                            </Checkbox>
+                            <Input
+                                inputType="checkbox"
+                                path="info.hood"
+                            />
+                            {/*<Checkbox*/}
+                            {/*    onClick={(e) => {*/}
+                            {/*        dispatch(updateCheckBox({*/}
+                            {/*            type: 'hood',*/}
+                            {/*            value: e.target.checked*/}
+                            {/*        }))*/}
+                            {/*    }}*/}
+                            {/*    value={object.info.hood}>*/}
+                            {/*</Checkbox>*/}
                         </div>
                         <div className={'flex items-center'}>
                             <p>Зона погрузки/разгрузки:</p>
                             <Input
+
                                 inputType="checkbox"
                                 path="zone"
                             />
@@ -278,9 +278,9 @@ export default function ModalWindow({isCreate}) {
                             stateWindow === 'sale-business' &&
                             <>
                                 <h2 className={'font-bold'}>Общий арендный поток</h2>
-                                <Tag title={'Месячный арендный поток:'} subName={'year'} name={'globalRentFlow'}/>
-                                <Tag title={'Годовой арендный поток:'} subName={'mouth'} name={'globalRentFlow'}/>
-                                <Tag name={'payback'} title={'Окупаемость в годах:'}></Tag>
+                                <Tag type={'number'} title={'Месячный арендный поток:'} subName={'year'} name={'globalRentFlow'}/>
+                                <Tag type={'number'} title={'Годовой арендный поток:'} subName={'mouth'} name={'globalRentFlow'}/>
+                                <Tag type={'number'} name={'payback'} title={'Окупаемость в годах:'}></Tag>
                             </>
                         }
                         <h2 className={'font-bold'}>Коммерческие условия</h2>

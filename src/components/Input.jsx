@@ -1,6 +1,6 @@
 import { TextField, Checkbox } from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
-import {setObject, updateCheckBox} from "../slices/tagSlice.jsx";
+import {setObject, setObjectField} from "../slices/tagSlice.jsx";
 import {useEffect, useMemo, useRef, useState} from "react";
 import deepObject from "object-path";
 
@@ -15,9 +15,7 @@ export default function Input({
 
 
     const setInObjectStorage = (path, value) => {
-        const copyStorageObject = {
-            ...objectStorage
-        };
+        const copyStorageObject = {};
 
         deepObject.set(copyStorageObject, path, value);
 
@@ -31,19 +29,14 @@ export default function Input({
     const onBlur = e => {
         const changedValue = setInObjectStorage(path, e.target.value);
 
-
         return dispatch(setObject(changedValue));
     },
     onClick = e => {},
     onChecked = e => {
-        //console.log(path, e.target.checked)
-
-        const changedValue = setInObjectStorage(path, e.target.checked);
+        // const changedValue = setInObjectStorage(path, e.target.checked);
 
 
-        //console.log(changedValue)
-
-        return dispatch(setObject(changedValue));
+        return dispatch(setObjectField({ fieldPath: path, value: e.target.checked }));
     };
 
 

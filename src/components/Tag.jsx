@@ -34,15 +34,15 @@ export default function Tag({name, full, title, subName = null, checkbox = false
         }
         const updatedObject = {...object};
 
-        if (subName === null) updatedObject[name] = e.target.value;
+        if (subName === null) updatedObject[name] = type === 'number' ? +e.target.value  : e.target.value;
         else if (sub3Name !== null && subName !== null) {
             updatedObject[name] = {
                 [subName]: {
                     ...updatedObject[subName],
-                    [sub3Name]: e.target.value
+                    [sub3Name]: type === 'number' ? +e.target.value  : e.target.value
                 }
             }
-        } else updatedObject[name] = {...updatedObject[name], [subName]: e.target.value};
+        } else updatedObject[name] = {...updatedObject[name], [subName]: type === 'number' ? +e.target.value  : e.target.value};
 
         dispatch(setObject(updatedObject));
     };

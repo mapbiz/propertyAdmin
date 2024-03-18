@@ -144,7 +144,7 @@ export const updateCard = async (id, data) => {
         lat: data.coordinates.lat,
         lon: data.coordinates.lon,
         panorama: data.panorama,
-        photoMap: data.imageMap.file,
+        // photoMap: data.imageMap.file,
         photos: data.images.map(img => img.file),
         photosLayout: data.layoutImages.map(img => {
             return img.file
@@ -152,6 +152,8 @@ export const updateCard = async (id, data) => {
         globalRentFlowYear: data.globalRentFlow.year,
         globalRentFlowMouth: data.globalRentFlow.mouth,
     })
+
+
 
     return await instanceApi.put(`/object/${id}`, formUpdate);
 }

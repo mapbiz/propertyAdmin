@@ -1,5 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit'
 
+import deepObject from "object-path";
+
 const initialState = {
     value: {
         images: [
@@ -166,12 +168,21 @@ export const tagSlice = createSlice({
         removeCardImage: (state, action) => {
             state.value.images.splice(action.payload, 1);
         },
+        setObjectField: (state, action) => {
+            const {
+                fieldPath,
+                value
+            } = action.payload;
+
+            deepObject.set(state.value, fieldPath, value);
+
+            console.log(state.value)
+        },
         setObject: (state, action) => {
             const newPayload = {
                 ...action.payload,
             };
 
-            console.log(newPayload)
             if(newPayload.tenantsInfo && newPayload.tenantsInfo.length > 0) {
                 newPayload.tenantsInfo = newPayload.tenantsInfo.filter(tentantInObject => {
                     return !!tentantInObject?.tentant
@@ -182,7 +193,6 @@ export const tagSlice = createSlice({
                     };
                 })
             }
-
 
             state.value = { ...state.value, ...newPayload }
         },
@@ -257,6 +267,7 @@ export const {
     joinTentant,
     deleteTenant,
     setTentantData,
+    setObjectField,
 } = tagSlice.actions
 
 export default tagSlice.reducer
