@@ -547,8 +547,6 @@ export default function ModalCreateObject({
                                                                      [createInput.field]: e.target.checked,
                                                                   };
                                                                })
-
-                                                               console.log(checkboxes, checkboxes[createInput.field]);
                                                                dispatch(changeObjectField({
                                                                   field: createInput.field,
                                                                   value: e.target.checked,
