@@ -5,6 +5,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { createCard, deleteCard } from "../api/api";
 import { objectToFormData } from "../helpers/formData";
 
+import { objectValidationFactory } from "../helpers/ValidationInput";
 
 export const typesObject = {
    rent: "Аренда",
@@ -96,7 +97,7 @@ const initialState = {
       }, 
       payback: {
          input: 'number',
-         name: 'Окупаемость',
+         name: 'Окупаемость в годах',
          required: true,
       },
 
@@ -146,7 +147,7 @@ const initialState = {
       },
       priceProfitability: {
          input: 'number',
-         name: 'Окупаемость в годах',
+         name: 'Доходность в % годовых',
          required: true,
       },
       priceGlobal: {

@@ -41,6 +41,8 @@ import { setObject } from "../../slices/tagSlice";
 import Tentants from "../Tentants";
 import ObjectTentant from "../Tentant/ObjectTentant";
 import { createTentantsInCard } from "../../api/api";
+import { objectIsEmpty } from "../../helpers/object";
+import useCopyFile from "../../helpers/useCopyFile";
 
 export default function ModalCreateObject({
    onNextStep = step => {},
@@ -71,6 +73,8 @@ export default function ModalCreateObject({
    dispatch = useDispatch();  
 
    const [stageForm, setStageForm] = useState("");
+
+   const [checkboxes, setCheckboxes] = useState({});
 
    const [formError, setFormError] = useState("");
 
@@ -106,6 +110,12 @@ export default function ModalCreateObject({
       });
 
    }, [objectCreate, objectCreate.value, objectCreate.type, objectCreate.fields]);
+
+   useEffect(() => {
+
+      setValidate(objectIsEmpty(errorsFieldsBeforeValidate));
+      console.log(objectIsEmpty(errorsFieldsBeforeValidate), errorsFieldsBeforeValidate);
+   }, [errorsFieldsBeforeValidate]);
 
    // Если шаг стал 0, сбросить валидацию
    useEffect(() => {
@@ -160,6 +170,11 @@ export default function ModalCreateObject({
       setErrorsFieldsBeforeValidate(beforeErrorsFields => {
          let newErrors = {
             ...beforeErrorsFields,
+         };
+
+         if(fieldValue instanceof FileList) {
+            Reflect.deleteProperty(newErrors, fieldName);
+            return newErrors;
          };
 
          if(fieldValue.toString().length === 0) newErrors[fieldName] = "Поле обзятельно для заполнения!";
@@ -256,34 +271,6 @@ export default function ModalCreateObject({
       dispatch(createObject(objectCreate.value));
    };
 
-   // const validateInputs = () => {
-   //    // Фильтрация только на поля нужные к валидовке
-   //    const getRequiredFields = sortObjectInputFields
-   //    .filter(field => !!field?.required)
-   //    .map(field => {
-   //       if(objectCreate.value[field.field].toString().length === 0) {
-   //          return {
-   //             ...field,
-   //             value: objectCreate.value[field.field],
-   //          };
-   //       }
-   //    })
-   //    .filter(requiredField => !!requiredField);
-
-
-   //    // required validation
-   //    const validateArray = getRequiredFields.map(requiredField => {
-   //       dispatch(setErrorsOnField({
-   //          errors: ["Поле обязательно для заполнения"],
-   //          field: requiredField.field,
-   //       }));
-
-   //       return requiredField.field;
-   //    });
-
-
-   //    setValidate(validateArray.length === 0);
-   // };
 
    const nextStep = async () => {
       if(objectCreate.type === 'sale-business' && step === 1) {
@@ -440,8 +427,6 @@ export default function ModalCreateObject({
                                                          }));
                                                          
                                                          tryFieldValidate(createInput.field, e.target.value);
-
-                                                         console.log({ errorsFieldsBeforeValidate });
                                                       }}
                                                       error={!!errorsFieldsBeforeValidate[createInput.field]}
                                                       helperText={
@@ -485,11 +470,15 @@ export default function ModalCreateObject({
                                                          Array.from(createInputValue).map(file => file.name.split(".")[0]).join(","): ''
                                                       }
                                                       onUpload={files => {
+                                                         const copiedFiles = useCopyFile({files});
+
                                                          dispatch(changeObjectField({
                                                             field: createInput.field,
-                                                            value: files,
+                                                            value: copiedFiles.files,
                                                          }));
 
+
+                                                         tryFieldValidate(createInput.field, copiedFiles.copiedFiles)
                                                          // if(!!createInput?.error) dispatch(clearErrorsOnField({
                                                          //    field: createInput.field,
                                                          // }))
@@ -550,9 +539,16 @@ export default function ModalCreateObject({
                                                    <FormControlLabel
                                                       control={
                                                          <Checkbox
-                                                            defaultValue={createInputValue}
-                                                            onChange={e => {
-                                                               
+                                                            checked={checkboxes[createInput.field]}
+                                                            onClick={e => {
+                                                               setCheckboxes(beforeCheck => {
+                                                                  return {
+                                                                     ...beforeCheck,
+                                                                     [createInput.field]: e.target.checked,
+                                                                  };
+                                                               })
+
+                                                               console.log(checkboxes, checkboxes[createInput.field]);
                                                                dispatch(changeObjectField({
                                                                   field: createInput.field,
                                                                   value: e.target.checked,
