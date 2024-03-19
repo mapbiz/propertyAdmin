@@ -183,12 +183,9 @@ const initialState = {
       photosLayout: {
          input: 'files',
          name: 'Фотографии планировки',
+         required: true,
       },
-      // photoMap: {
-      //    input: 'file',
-      //    name: 'Фото карты (для формирования пдф)',
-      // },
-      
+
       // coordinates
       lat: {
          input: 'number',
