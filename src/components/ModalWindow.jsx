@@ -366,7 +366,7 @@ export default function ModalWindow({isCreate}) {
                                 <div className={'flex gap-2.5'}>
                                     {object.images && object.images.map((item, index) => {
                                         return (
-                                            <div>
+                                            <div className={'flex flex-col'}>
                                                 <img
                                                     className={'max-h-[150px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
                                                     src={`${item.url}`}
@@ -374,6 +374,7 @@ export default function ModalWindow({isCreate}) {
                                                 <Button onClick={(e) => {
                                                     dispatch(removeCardImage(index));
                                                 }}
+                                                        color={'error'}
                                                         variant={"contained"}>
                                                     Удалить
                                                 </Button>
@@ -386,21 +387,7 @@ export default function ModalWindow({isCreate}) {
                     </div>
 
                     <div className={'pt-[20px]'}>
-                        {/*    ({target: {files}}) => {*/}
-                        {/*    setUpload(true)*/}
-                        {/*    if (files.length <= 0) {*/}
-                        {/*    return alert('Файлов нет!')*/}
-                        {/*}*/}
-                        {/*    for (let file of Array.from(files)) {*/}
-                        {/*    const fileUrl = URL.createObjectURL(file);*/}
 
-                        {/*    setImages(prevState => {*/}
-                        {/*    prevState.push({url: fileUrl, file: file});*/}
-                        {/*    setUpload(false)*/}
-                        {/*    return prevState;*/}
-                        {/*})*/}
-                        {/*}*/}
-                        {/*}*/}
                         <Button
                             component="label"
                             role={undefined}
@@ -417,14 +404,15 @@ export default function ModalWindow({isCreate}) {
                         <div className="flex flex-wrap gap-2 pt-4 ">
                             {object.layoutImages && object.layoutImages.map((item, index) => {
                                 return (
-                                    <div>
+                                    <div className={'flex flex-col'}>
                                         <img
-                                            className={'h-[200px] w-[200px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
+                                            className={'max-h-[150px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
                                             src={item.url}
                                             alt={''}/>
                                         <Button onClick={(e) => {
                                             dispatch(removeLayoutImage(index));
                                         }}
+                                                color={'error'}
                                                 variant={"contained"}>
                                             Удалить
                                         </Button>

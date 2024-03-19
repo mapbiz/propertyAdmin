@@ -44,7 +44,7 @@ export default function App() {
     }, [tentants.isLoading]);
     console.log({cards: activeTab})
   return (
-    <div className={'min-h-screen pt-[120px]  max-w-[1280px] mx-auto w-full flex gap-[20px] flex-col'}>
+    <div className={'h-auto pt-[120px]  max-w-[1280px] flex-1  mx-auto w-full flex gap-[20px] flex-col'}>
       <div className={'flex w-full justify-end'}>
         <ModalCreateObject  
           Activator={({ toggleOpen }) => {
