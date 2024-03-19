@@ -55,11 +55,11 @@ export default function TestPdf() {
     const title = () => {
         return (
             <View style={styles.titleObject}>
-                <View style={{...styles.flexRow, ...styles.gap}}>
+                <View style={{...styles.flexRow, ...styles.gap, }}>
                     <Image style={{width: '38px', height: '38px'}} src={map}></Image>
-                    <Text style={styles.text}>{card.title}</Text>
+                    <Text style={styles.text}>{card.address}</Text>
                 </View>
-                <View style={styles.flexRow}>
+                <View style={{...styles.flexRow, ...styles.gap}}>
                     <Image style={{width: '38px', height: '38px'}} src={metro}></Image>
                     <Text style={styles.text}>{card.metro}</Text>
                 </View>
@@ -153,19 +153,20 @@ export default function TestPdf() {
             width: '100%',
         },
         text: {
+            maxWidth: '1976px',
             fontFamily: 'Inter',
             display: "flex",
         },
         titleObject: {
+            paddingLeft: '24px',
             fontSize: '38px',
             paddingVertical: '34px',
             gap: '31px',
-            alignItems: 'center',
+            alignItems: 'flex-start',
             display: "flex",
             width: '100%',
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
             backgroundColor: '#DDEEE4'
         },
         flexRow: {

@@ -40,9 +40,10 @@ import { countDuplicates, addKeys } from "../../helpers/array";
 import { setObject } from "../../slices/tagSlice";
 import Tentants from "../Tentants";
 import ObjectTentant from "../Tentant/ObjectTentant";
-import { createTentantsInCard } from "../../api/api";
+import {createTentantsInCard, getCards} from "../../api/api";
 import { objectIsEmpty } from "../../helpers/object";
 import useCopyFile from "../../helpers/useCopyFile";
+import {setStateWindow} from "../../slices/modalSlice.jsx";
 
 export default function ModalCreateObject({
    onNextStep = step => {},
@@ -340,8 +341,6 @@ export default function ModalCreateObject({
       if(objectCreate.createdObject !== null) {
          const confirmDelete = confirm("Если вы закроете данные будут удалены, вы уверены?");
 
-
-
          if(confirmDelete) dispatch(deleteCreatedObject(objectCreate.createdObject.id));
          if(!confirmDelete) return;
       };
@@ -619,7 +618,7 @@ export default function ModalCreateObject({
                         onClick={() => {
                            const valid = tryValidateForm();
 
-                           if(valid) return step === maxSteps ? finishStep(): nextStep();
+                           if(valid) return step === maxSteps ? finishStep() : nextStep();
 
                         }}
                      >

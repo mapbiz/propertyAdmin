@@ -8,12 +8,12 @@ import {
     resetObject,
     setObject, updateCheckBox, updateRent
 } from "../slices/tagSlice.jsx";
-import {createCard, updateCard} from "../api/api.js";
+import {createCard, getCards, updateCard} from "../api/api.js";
 import {objectToFormData} from "../helpers/formData.js";
 import {useNavigate} from "react-router-dom";
 import {useState, useEffect} from "react";
 import {swapElements} from "../helpers/array.js";
-import {setModalWindow} from "../slices/modalSlice.jsx";
+import {setModalWindow, setStateWindow} from "../slices/modalSlice.jsx";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload.js";
 import Button from "@mui/material/Button";
 import {styled} from "@mui/material/styles";
@@ -428,11 +428,13 @@ export default function ModalWindow({isCreate}) {
                             onClick={async () => {
                                 if (isCreate) {
                                     create()
-                                    // revalidate()
                                 } else {
-                                    console.log('зашел')
-                                    await update(object.id)
+                                    await update(object.id).finally(async () => {
+                                        const res = await getCards()
+                                        dispatch(setStateWindow(res.data))
+                                    })
                                     // revalidate()
+
                                 }
                             }}
                             className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}>{isCreate ? 'Создать' : 'Сохранить изменения'}</button>

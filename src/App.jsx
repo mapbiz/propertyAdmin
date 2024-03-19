@@ -32,7 +32,6 @@ export default function App() {
       }
     }
     fetchData();
-
     dispatch(getTentants());
 
   }, []);
@@ -66,12 +65,6 @@ export default function App() {
               <p> Подождите немного арендаторы загружаются.... </p>
               :
             <>
-                {/*{*/}
-
-                {/*     cards.data && cards.data.map((card, idx) => {*/}
-                {/*        return <Card key={idx}   card={card}/>*/}
-                {/*     })*/}
-                {/*}*/}
                 {
                     cards.data && cards.data //card.type.match(activeTab) || card !== 'rent'
                         .filter(card => activeTab === 'all' ? card: card.type.match(activeTab.split("-")[0]))

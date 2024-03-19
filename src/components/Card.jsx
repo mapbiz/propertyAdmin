@@ -1,4 +1,4 @@
-import {deleteCard, getCurrentCard, reverseImageGet} from "../api/api.js";
+import {deleteCard, getCards, getCurrentCard, reverseImageGet} from "../api/api.js";
 import {useDispatch} from "react-redux";
 import {setStateWindow} from "../slices/modalSlice.jsx";
 import {setObject} from "../slices/tagSlice.jsx";
@@ -7,8 +7,11 @@ import {typesObject} from "../slices/createObjectSlice.jsx";
 export default function Card({card}) {
     const deleteObject = async () => {
         if (window.confirm(`Удалить карточку - ${card.title}`)) {
-            const resToDelete = await deleteCard(card.id);
-            resToDelete.status === 204 ? alert('УДАЛИЛИ') : alert("При удалении произошла ошибка!");
+            const resToDelete = await deleteCard(card.id).finally(async () => {
+                const res = await getCards()
+                dispatch(setStateWindow(res.data))
+            });
+          resToDelete()
         }
     }
 
