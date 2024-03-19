@@ -9,6 +9,7 @@ import {useDispatch, useSelector} from "react-redux";
 import Popup from "./components/Popup.jsx";
 import {setStateWindow} from "./slices/modalSlice.jsx";
 import tentants, { getTentants } from "./slices/tentants.jsx";
+import NotificationCreateObject from "./components/Notification/NotificationCreateObject.jsx";
 
 export default function App() {
   const tab = useSelector((state) => state.tabMore.value.activeTab),
@@ -77,6 +78,7 @@ export default function App() {
       </div>
       <ModalWindow isCreate={isCreateWindow}/>
       <Popup />
+        <NotificationCreateObject/>
     </div>
   )
 

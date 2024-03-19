@@ -6,7 +6,7 @@ import popupWindow from "./slices/popupSlice.jsx";
 import arendatorSlice from "./slices/arendatorsSlice.jsx";
 import tentantsSlice from "./slices/tentants.jsx";
 import createObjectSlice from './slices/createObjectSlice.jsx';
-
+import notificationSlice from './slices/notificationSlice.jsx';
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +15,7 @@ export const store = configureStore({
     arendators: arendatorSlice,
     tagMore: tag,
     tabMore: tab,
+    notification: notificationSlice,
     modalWindow: modalWindow,
     popupWindow: popupWindow,
   },

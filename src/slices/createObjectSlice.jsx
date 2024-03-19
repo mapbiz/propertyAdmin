@@ -222,7 +222,10 @@ export const createObject = createAsyncThunk(
       const copyPhotos = useCopyFile({ files: objectData.photos }),
           copyPhotosLayout = useCopyFile({ files: objectData.photosLayout });
 
+      console.log(objectData);
+
       const readyObjectData = objectToFormData(objectFilterEmpty(objectData));
+
 
       readyObjectData.delete('photos');
       readyObjectData.delete('photosLayout');

@@ -44,6 +44,7 @@ import {createTentantsInCard, getCards} from "../../api/api";
 import { objectIsEmpty } from "../../helpers/object";
 import useCopyFile from "../../helpers/useCopyFile";
 import {setStateWindow} from "../../slices/modalSlice.jsx";
+import {setNotificationOpen} from "../../slices/notificationSlice.jsx";
 
 export default function ModalCreateObject({
    onNextStep = step => {},
@@ -303,6 +304,7 @@ export default function ModalCreateObject({
 
                return newTentant;
             }), objectCreate.createdObject?.id);
+
          }
       };
       
@@ -312,7 +314,11 @@ export default function ModalCreateObject({
       setErrorsFieldsBeforeValidate({});
       setStep(0);
       setMaxSteps(1);
+      const res = await getCards()
+      dispatch(setStateWindow(res.data))
       setIsOpen(false);
+
+      dispatch(setNotificationOpen({ notificationName: 'createObject' }))
    },
    prevStep = () => {
       if(stageForm === 'objectCreated' && objectCreate.type === 'sale-business') {
@@ -373,6 +379,16 @@ export default function ModalCreateObject({
             </div>
 
             <DialogContent>
+               <Typography
+                   sx={{
+                      padding: 2,
+                      display: step !== 0 ? 'block': 'none'
+                  }}
+                   variant="h6"
+               >
+                  Тип обьекта: {typesObject[objectCreate.type] }
+               </Typography>
+
                <Stepper activeStep={step}>
                   <Step>
                      <StepLabel> Выберите тип обьекта </StepLabel>
