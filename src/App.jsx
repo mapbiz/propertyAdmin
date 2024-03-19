@@ -42,7 +42,6 @@ export default function App() {
         setIsLoading(false);
 
     }, [tentants.isLoading]);
-    console.log({cards: activeTab})
   return (
     <div className={'h-auto pt-[120px]  max-w-[1280px] flex-1  mx-auto w-full flex gap-[20px] flex-col'}>
       <div className={'flex w-full justify-end'}>
@@ -64,7 +63,7 @@ export default function App() {
 
       <div className={'h-full relative flex flex-col gap-[20px]'}>
           { isLoading ?
-              <p> Подождите немного арендодаторы грузяться.... </p>
+              <p> Подождите немного арендаторы загружаются.... </p>
               :
             <>
                 {/*{*/}
