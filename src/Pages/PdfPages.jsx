@@ -339,6 +339,22 @@ export default function TestPdf() {
                                             Продажа торговой площади
                                         </Text>
                                     }
+                                    {
+                                        (card.type === 'sale-business') &&
+                                        <>
+                                            <Text style={styles.text64}>
+                                                ГАБ
+                                            </Text>
+                                            <Text style={styles.text64}>
+                                                {card.tenantsInfo.map(tentant => {
+                                                    return tentant.tentant.name
+                                                })}
+                                            </Text>
+                                            <Text style={styles.text64}>
+                                                {card.payback} лет
+                                            </Text>
+                                        </>
+                                    }
                                 </View>
                                 {/*блок зеленый*/}
                                 {/*Коммерческие условия*/}
