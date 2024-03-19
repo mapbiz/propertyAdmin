@@ -198,9 +198,10 @@ export default function ModalWindow({isCreate}) {
 
                     </div>
                     <div className={'pb-[20px]'}>
-                        <h2 className={'font-bold'}>ссылка панорамы</h2>
+                        <h2 className={'font-bold'}>Ссылка панорамы</h2>
                         <div className={'flex gap-[50px] '}>
                             <Input
+
                                 label={"Ссылка на панораму"}
                                 inputType="input"
                                 path="panorama"

@@ -136,6 +136,7 @@ export default function ModalCreateObject({
       if(objectCreate.isLoading === null) return;
 
       if(!objectCreate.isLoading && !!objectCreate?.error) {
+
          setErrorsFields({});
          setErrorsFieldsBeforeValidate({});
          setStep(1);
@@ -287,9 +288,6 @@ export default function ModalCreateObject({
          if(objectCreate.createdObject?.tenantsInfo?.length > 0) {
             const createTentant = objectCreate.createdObject?.tenantsInfo?.filter(tentant => tentant.type === 'create');
 
-            // console.log(createTentant, );
-
-            console.log(objectCreate.createdObject);
 
             await createTentantsInCard(createTentant.map(tentant => {
                const newTentant = {

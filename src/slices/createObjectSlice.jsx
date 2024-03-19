@@ -5,7 +5,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { createCard, deleteCard } from "../api/api";
 import { objectToFormData } from "../helpers/formData";
 
-import { objectValidationFactory } from "../helpers/ValidationInput";
+import {objectFilterEmpty} from "../helpers/object.js";
+import useCopyFile from "../helpers/useCopyFile.js";
 
 export const typesObject = {
    rent: "Аренда",
@@ -221,7 +222,24 @@ const initialState = {
 export const createObject = createAsyncThunk(
    'create/object',
    async objectData => {
-      const responceCreateObject = await createCard(objectToFormData(objectData));
+      const copyPhotos = useCopyFile({ files: objectData.photos }),
+          copyPhotosLayout = useCopyFile({ files: objectData.photosLayout });
+
+      const readyObjectData = objectToFormData(objectFilterEmpty(objectData));
+
+      readyObjectData.delete('photos');
+      readyObjectData.delete('photosLayout');
+
+      Array.from(copyPhotos.files).forEach(photoFile => {
+         readyObjectData.append('photos', photoFile);
+      })
+      Array.from(copyPhotosLayout.files).forEach(photoLayoutFile => {
+         readyObjectData.append('photosLayout', photoLayoutFile);
+      })
+
+
+
+      const responceCreateObject = await createCard(readyObjectData);
 
       if(responceCreateObject.status > 300) return responceCreateObject;
 

@@ -10,7 +10,6 @@ import Popup from "./components/Popup.jsx";
 import {setStateWindow} from "./slices/modalSlice.jsx";
 import tentants, { getTentants } from "./slices/tentants.jsx";
 
-
 export default function App() {
   const tab = useSelector((state) => state.tabMore.value.activeTab),
   tentantsStorage = useSelector(state => state.tentants);

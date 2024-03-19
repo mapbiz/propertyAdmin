@@ -56,6 +56,7 @@ export const getCards = async slug => await instanceApi.get('/objects');
 
 export const createCard = async data => await instanceApi.post('/object', data);
 
+
 // export const deleteCard = async (id) => {
 //     return await axios.delete(`https://65d32fb7522627d50108390b.mockapi.io/cards/${id}`)
 // }
