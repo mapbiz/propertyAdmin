@@ -1,12 +1,11 @@
 import List from '@mui/material/List';
-import IconButton from '@mui/material/IconButton';
+
+
 import ListItem from '@mui/material/ListItem';
 
 import AddIcon from '@mui/icons-material/Add';
 
-import Input from "./Input.jsx";
-
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 
@@ -14,12 +13,12 @@ import { createTentantsInCard, removeTentantOfObject, updateTentantsInCard } fro
 
 import { addNewTentant, joinTentant, setTentantData, deleteTenant } from "../slices/tagSlice.jsx";
 import Button from "@mui/material/Button";
-import Select from "@mui/material/Select";
+
 import MenuItem from "@mui/material/MenuItem";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
+
 import { ListItemAvatar, ListItemText, TextField, Menu } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Textarea from "./Input/Textarea.jsx";
 
 export default function Tentants({
 
@@ -143,7 +142,8 @@ export default function Tentants({
                                                                             <img
                                                                                 width="50"
                                                                                 height="50"
-                                                                                src={`https://prop-test.ru/server/public/${tentantInObject.tentant.logo}`}
+                                                                                src={`${import.meta.env.VITE_SERVER_URL}public/${tentantInObject.tentant.logo}`}
+                                                                                // src={`https://prop-test.ru/server/public/${tentantInObject.tentant.logo}`}
                                                                             />
                                                                         </ListItemAvatar>
                                                                         <ListItemText
@@ -245,7 +245,8 @@ export default function Tentants({
                                                                         />
                                                                         <div className={'flex flex-col w-full'}>
                                                                             <em className={'text-green-500'}>Новая строка начинается через ,</em>
-                                                                            <TextField
+                                                                            <Textarea
+                                                                                sx={{width: '100%', marginTop: '15px'}}
                                                                                 label="Детализация"
                                                                                 variant="standard"
                                                                                 defaultValue={tentantInObject.detalization.join(",")}

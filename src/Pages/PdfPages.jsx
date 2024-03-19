@@ -631,42 +631,42 @@ export default function TestPdf() {
                                         {
                                             card.info.floor
                                             &&
-                                            item('../../public/etazh.jpg', 'Этаж', `${card.info.floor}`)
+                                            item('./etazh.jpg', 'Этаж', `${card.info.floor}`)
                                         }
                                         {
                                             card.info.enter
                                             &&
-                                            item('../../public/vhod.png', 'Количество входов', `${card.info.enter}`)
+                                            item('./vhod.png', 'Количество входов', `${card.info.enter}`)
                                         }
                                         {
                                             card.info.square
                                             &&
-                                            item('../../public/ploshad.png', 'Площадь', `${card.info.square}`, 'м²')
+                                            item('./ploshad.png', 'Площадь', `${card.info.square}`, 'м²')
                                         }
                                         {
                                             card.info.ceilingHeight
                                             &&
-                                            item('../../public/potolok.png', 'Высота потолков', `${card.info.ceilingHeight}`, 'м')
+                                            item('./potolok.png', 'Высота потолков', `${card.info.ceilingHeight}`, 'м')
                                         }
                                         {
                                             card.info.force
                                             &&
-                                            item('../../public/set.png', 'Мощность', `${card.info.force}`, 'кВт')
+                                            item('./set.png', 'Мощность', `${card.info.force}`, 'кВт')
                                         }
                                         {
                                             card.info.layout
                                             &&
-                                            item('../../public/plan.png', 'Планировка', `${card.info.layout}`,)
+                                            item('./plan.png', 'Планировка', `${card.info.layout}`,)
                                         }
                                         {
                                             card.info.typeWindow
                                             &&
-                                            item('../../public/steklo.png', 'Остекление', `${card.info.typeWindow}`,)
+                                            item('./steklo.png', 'Остекление', `${card.info.typeWindow}`,)
                                         }
                                         {
                                             card.info.finishing
                                             &&
-                                            item('../../public/otdelka.png', 'Отделка', `${card.info.finishing}`,)
+                                            item('./otdelka.png', 'Отделка', `${card.info.finishing}`,)
                                         }
 
                                     </View>
@@ -898,7 +898,7 @@ export default function TestPdf() {
                                     </View>
                                 </View>
                             })}
-                            <View style={{display: "flex", flexDirection: 'row', flexWrap: 'wrap', gap: '60px'}}>
+                            <View style={{display: "flex", flexDirection: 'row', flexWrap: 'wrap', gap: '60px',marginTop: '200px'}}>
                                 {card.layoutImages.length > 1 ?
                                     card.layoutImages.map(item => {
                                         return (
