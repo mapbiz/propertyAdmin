@@ -465,8 +465,9 @@ export default function ModalCreateObject({
                                                       type="files"
                                                       textUploaded={
                                                          Array.from(createInputValue)?.length > 0 ? 
-                                                         Array.from(createInputValue).map(file => file.name.split(".")[0]).join(","): ''
+                                                         Array.from(createInputValue).map(file => file.name.split(".")[0]).join(", "): createInput.name
                                                       }
+                                                      
                                                       onUpload={files => {
                                                          const copiedFiles = useCopyFile({files});
 
@@ -481,6 +482,13 @@ export default function ModalCreateObject({
                                                          //    field: createInput.field,
                                                          // }))
                                                       }}
+                                                      isError={!!errorsFieldsBeforeValidate[createInput.field]}
+                                                      
+                                                      error={!!errorsFieldsBeforeValidate[createInput.field]}
+                                                      helperText={
+                                                         !!errorsFieldsBeforeValidate[createInput.field] ? 
+                                                         errorsFieldsBeforeValidate[createInput.field]: false
+                                                      }
                                                       label={createInput.name}
                                                    />
                                                    

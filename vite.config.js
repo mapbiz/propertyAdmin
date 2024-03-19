@@ -27,11 +27,6 @@ export default defineConfig({
         changeOrigin: true,
         ws: true,
         secure: false,
-        configure: proxy => {
-          proxy.on('proxyReq', (proxyReq, req, res) => {
-            console.log('req.headers.cookie', req.headers.cookie, req.url);
-          });
-        },
         rewrite: (path) => path.replace(/^\/auth/, ''),
       },
       "^/api/.*": {
