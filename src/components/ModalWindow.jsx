@@ -8,7 +8,7 @@ import {
     resetObject,
     setObject, updateCheckBox, updateRent
 } from "../slices/tagSlice.jsx";
-import {createCard, getCards, updateCard} from "../api/api.js";
+import {createCard, getCards, getCurrentCard, updateCard} from "../api/api.js";
 import {objectToFormData} from "../helpers/formData.js";
 import {useNavigate} from "react-router-dom";
 import {useState, useEffect} from "react";
@@ -61,11 +61,23 @@ export default function ModalWindow({isCreate}) {
     }
 
     const update = async (id) => {
-        const res = await updateCard(id, object).catch(err => {
-            alert(err.response.data.error.message)
-        })
+        const getCurrentTitle = await getCurrentCard(object.slug).then(r => r.data.title)
+        console.log({getCurrentTitle: getCurrentTitle})
+        if(getCurrentTitle === object.title) {
+            const {title, ...rest} = object
+            const res = await updateCard(id, rest).catch(err => {
+                alert(err.response.data.error.message)
+            })
 
-        if (res.data.ok) dispatch(setModalWindow({modalWindow: false}))
+            if (res.data.ok) dispatch(setModalWindow({modalWindow: false}))
+        } else {
+            const res = await updateCard(id, object).catch(err => {
+                alert(err.response.data.error.message)
+            })
+
+            if (res.data.ok) dispatch(setModalWindow({modalWindow: false}))
+        }
+
 
     }
 
