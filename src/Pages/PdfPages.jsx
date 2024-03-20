@@ -18,6 +18,8 @@ const images = [
 
 const apiKey = '6e61e348-993d-4a11-924c-702a0f0279f5'; // Замените на свой API-ключ
 
+
+
 // const yandexStaticMapsUrl = `https://static-maps.yandex.ru/1.x/?ll=${card.coordinates.lon},${lat}&size=400,400&z=12&l=map&apikey=${apiKey}`
 
 // Используйте yandexStaticMapsUrl для загрузки изображения или вставьте его в ваше приложение.
@@ -52,10 +54,22 @@ Font.register({family: 'InterBold', src: InterBold});
 export default function TestPdf() {
 
     const card = useSelector((state) => state.tagMore.value)
+
+
+    // Разделение текста на абзацы
+    const paragraphs = card.description.split('\r\n');
+    console.log({p: paragraphs})
+// Создание компонентов Text для каждого абзаца
+    const textComponents = paragraphs.map((paragraph, index) => (
+        <Text key={index} style={{ paddingTop: 10, fontSize: 12 }}>
+            {paragraph}
+        </Text>
+    ));
+
     const title = () => {
         return (
             <View style={styles.titleObject}>
-                <View style={{...styles.flexRow, ...styles.gap, }}>
+                <View style={{...styles.flexRow, ...styles.gap,}}>
                     <Image style={{width: '38px', height: '38px'}} src={map}></Image>
                     <Text style={styles.text}>{card.address}</Text>
                 </View>
@@ -247,10 +261,13 @@ export default function TestPdf() {
                                     display: 'flex',
                                     alignItems: "center",
                                     justifyContent: 'center'
-                                }}>{typeOfCard[card.type]}</Text>
-                                <Text style={{paddingTop: '40px', fontSize: '40px'}}>
-                                    {card.description}
+                                }}>{typeOfCard[card.type]}
                                 </Text>
+                                {paragraphs.map(item => {
+                                    return   <Text style={{paddingTop: '40px', fontSize: '40px'}}>
+                                        {item}
+                                    </Text>
+                                })}
                             </View>
                             <View style={{maxWidth: '1020px'}}>
                                 {/*блок площадь цена цена за м2*/}
@@ -898,7 +915,13 @@ export default function TestPdf() {
                                     </View>
                                 </View>
                             })}
-                            <View style={{display: "flex", flexDirection: 'row', flexWrap: 'wrap', gap: '60px',marginTop: '200px'}}>
+                            <View style={{
+                                display: "flex",
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                gap: '60px',
+                                marginTop: '200px'
+                            }}>
                                 {card.layoutImages.length > 1 ?
                                     card.layoutImages.map(item => {
                                         return (
