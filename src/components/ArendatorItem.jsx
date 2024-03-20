@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import {useDispatch, useSelector} from "react-redux";
 import { TextField, Typography } from "@mui/material";
 import { deleteTentant, editTentant, reverseImageGet } from "../api/api";
-import { deleteTentantOfStorage } from "../slices/tentants";
+import {deleteTentantOfStorage, getTentants} from "../slices/tentants";
 
 
 export default function ArendatorItem({key, logo, id, object, category, name}) {
@@ -143,7 +143,9 @@ export default function ArendatorItem({key, logo, id, object, category, name}) {
 
                     <Button 
                         onClick={async (e) => {
-                            await deleteTenant(id);
+                            await deleteTenant(id).finally(() => {
+                                dispatch(getTentants())
+                            });
                         }}      
                         variant={"contained"} 
                         color={"error"}
