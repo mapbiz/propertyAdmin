@@ -15,18 +15,23 @@ export default function NotificationCreateObject({ isSuccess = true }) {
             <IconButton
                 size="small"
                 color="primary"
-                onClick={ () => dispatch(setNotificationClose({ notificationName: 'createObject'}))}
+                onClick={() => dispatch(setNotificationClose({ notificationName: 'createObject'}))}
             >
                 <CloseIcon size="small" color="primary" />
             </IconButton>
         </>
     )
 
+    console.log(notificationOpen)
+
     return (
         <Snackbar
             open={notificationOpen}
             autoHideDuration={3000}
-            onClose={() => dispatch(setNotificationClose({ notificationName: 'createObject'}))}
+            onClose={() => {
+                console.log('close')
+                dispatch(setNotificationClose({notificationName: 'createObject'}))
+            }}
             action={actionNotification}
             message={isSuccess ? 'Обьект успешно создан': 'Ошибка при создании обьекта'}
         />

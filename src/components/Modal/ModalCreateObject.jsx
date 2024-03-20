@@ -297,10 +297,10 @@ export default function ModalCreateObject({
          setStep(0);
          setMaxSteps(1);
          setIsOpen(false);
-   
-         dispatch(setNotificationOpen({ notificationName: 'createObject' }))
       };
-      
+      if(isCreateObject) {
+         dispatch(setNotificationOpen({ notificationName: 'createObject' }))
+      }
 
    }, [objectCreate.isLoading, objectCreate.error, isCreateObject]);
 
