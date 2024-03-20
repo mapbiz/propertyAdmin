@@ -34,9 +34,17 @@ export default function ArendatorsList() {
     [category, setCategory] = useState(''),
     [logo, setLogo] = useState({});
 
+
+    const [errors, setErrors] = useState({});
+
     useEffect(() => {
         dispatch(getTentants());
     }, []);
+
+    useEffect(() => {
+        setErrors({});
+    }, [logo, name, category]) 
+
     useEffect(() => {
         if(tentants.isLoading) return;
 
@@ -44,15 +52,40 @@ export default function ArendatorsList() {
     }, [tentants.isLoading])
 
     const addNew = async () => {
-        const responceCreateTentant = await addTentant({
-            name,
-            category,
-            logo: logo.file,
-        });
+        try {
+            const responceCreateTentant = await addTentant({
+                name,
+                category,
+                logo: logo.file,
+            });
+            
 
-        dispatch(addNewTentant(responceCreateTentant.data.data));
+            dispatch(getTentants());
 
-        return setCreateTentant(false);
+            setLogo({});
+
+            return setCreateTentant(false);
+        }
+        catch(responceError) {
+            if(!!responceError.response.data?.errors) {
+                setErrors(beforeErrors => {
+                    let errors = {};
+
+                    responceError.response.data?.errors.forEach(errorObject => {
+                        errors[errorObject.field.split('/')[1]] = errorObject.message;
+                    });
+
+                    return errors;
+                });
+                console.log(errors);
+            };
+
+            if(!!responceError.response.data?.error) {
+                setErrors({
+                    name: responceError.response.data.error.message,
+                });
+            };
+        };
     };
 
     return (
@@ -79,6 +112,7 @@ export default function ArendatorsList() {
 
                             <input 
                                 type='file' 
+                                accept="image/*"
                                 className={`${ logo.toString().length > 0 ? 'opacity-0 absolute w-full h-full top-0 bottom-0': ''}`}
                                 onChange={e => {
                                     setLogo({
@@ -87,17 +121,32 @@ export default function ArendatorsList() {
                                     });
                                 }}
                             />
+
+                            {
+                                errors?.logo !== undefined &&
+                                <Typography 
+                                    variant="body"
+                                    color="error"
+                                >
+                                    {
+                                        errors.logo
+                                    }
+                                </Typography>
+                            }
                         </div>
                         <div className={'flex flex-col gap-2'}>
                             <div className="flex flex-col gap-1">
                                 <TextField
                                     label="Название"
                                     onChange={e => setName(e.target.value)}
-
+                                    error={!!errors?.name}
+                                    helperText={!!errors?.name ? errors.name: false}
                                 />
                                 <TextField
                                     label="Категория"
                                     onChange={e => setCategory(e.target.value)}
+                                    error={!!errors?.category}
+                                    helperText={!!errors?.category ? errors.category: false}
                                 />
                             </div>
                         </div>

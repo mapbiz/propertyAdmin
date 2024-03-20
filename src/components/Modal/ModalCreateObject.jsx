@@ -83,6 +83,8 @@ export default function ModalCreateObject({
    const [errorsFieldsValidate, setErrorsFields] = useState({}),
    [errorsFieldsBeforeValidate, setErrorsFieldsBeforeValidate] = useState({});
 
+   const [isCreateObject, setIsCreateObject] = useState(false);
+      
    useEffect(() => {
       if(objectCreate.type === null) return;
 
@@ -137,14 +139,14 @@ export default function ModalCreateObject({
    useEffect(() => {
       if(objectCreate.isLoading === null) return;
 
-      if(!objectCreate.isLoading && !!objectCreate?.error) {
+      // if(!objectCreate.isLoading && !!objectCreate?.error) {
 
-         setErrorsFields({});
-         setErrorsFieldsBeforeValidate({});
-         setStep(1);
-         setFormError("Поле Загловок должно быть уникальным");
-         setIsOpen(false);
-      };
+      //    setErrorsFields({});
+      //    setErrorsFieldsBeforeValidate({});
+      //    setStep(step-1);
+      //    setFormError("Поле Загловок должно быть уникальным");
+      //    //setIsOpen(false);
+      // };
 
       // if(!objectCreate.isLoading && objectCreate.createdObject !== null) {
       //    dispatch(setObject(objectCreate.createdObject));
@@ -274,18 +276,48 @@ export default function ModalCreateObject({
       dispatch(createObject(objectCreate.value));
    };
 
+   useEffect(() => {
+      if(objectCreate.isLoading) return;
+
+      const save = async () => {
+         const res = await getCards()
+         dispatch(setStateWindow(res.data));
+      };
+
+      if(!!objectCreate?.error) {
+         setFormError("Поле заголовок должно быть уникальным!");
+         setIsCreateObject(false);
+      }
+      if(!objectCreate?.error) {
+         dispatch(resetCreateObject());
+         setValidate(true);
+         setErrorsFields({});
+         setErrorsFieldsBeforeValidate({});
+         save();
+         setStep(0);
+         setMaxSteps(1);
+         setIsOpen(false);
+   
+         dispatch(setNotificationOpen({ notificationName: 'createObject' }))
+      };
+      
+
+   }, [objectCreate.isLoading, objectCreate.error, isCreateObject]);
 
    const nextStep = async () => {
       if(objectCreate.type === 'sale-business' && step === 1) {
          await enterTentant();
       };
       
+      setFormError('');
       setStep(step+1);
    },
    finishStep = async () => {
       if(getErrorsFields.length > 0) return;
 
-      if(objectCreate.type !== 'sale-business') dispatch(createObject(objectCreate.value));
+      if(objectCreate.type !== 'sale-business') {
+         dispatch(createObject(objectCreate.value));
+      }
       if(objectCreate.type === 'sale-business') {
          if(objectCreate.createdObject?.tenantsInfo?.length > 0) {
             const createTentant = objectCreate.createdObject?.tenantsInfo?.filter(tentant => tentant.type === 'create');
@@ -307,18 +339,23 @@ export default function ModalCreateObject({
 
          }
       };
-      
-      dispatch(resetCreateObject());
-      setValidate(true);
-      setErrorsFields({});
-      setErrorsFieldsBeforeValidate({});
-      setStep(0);
-      setMaxSteps(1);
-      const res = await getCards()
-      dispatch(setStateWindow(res.data))
-      setIsOpen(false);
 
-      dispatch(setNotificationOpen({ notificationName: 'createObject' }))
+
+      
+      console.log(formError);
+
+      setIsCreateObject(true);
+      // dispatch(resetCreateObject());
+      // setValidate(true);
+      // setErrorsFields({});
+      // setErrorsFieldsBeforeValidate({});
+      // setStep(0);
+      // setMaxSteps(1);
+      // const res = await getCards()
+      // dispatch(setStateWindow(res.data))
+      // setIsOpen(false);
+
+      // dispatch(setNotificationOpen({ notificationName: 'createObject' }))
    },
    prevStep = () => {
       if(stageForm === 'objectCreated' && objectCreate.type === 'sale-business') {
@@ -328,6 +365,7 @@ export default function ModalCreateObject({
          return confirmExit ? setStep(step-1): null;
       };
 
+      setFormError('');
       setStep(step-1);
    };
 

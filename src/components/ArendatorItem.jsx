@@ -22,6 +22,8 @@ export default function ArendatorItem({key, logo, id, object, category, name}) {
     [editData, setIsEditData] = useState({}),
     [isEdit, setIsEdit] = useState(false);
 
+    const [errors, setErrors] = useState({});
+
     useEffect(() => {
         const handleData = async () => {
             const getImageUrl = await reverseImageGet(logo);
@@ -46,14 +48,38 @@ export default function ArendatorItem({key, logo, id, object, category, name}) {
     }, [isEdit]);
 
     const onSaveTentant = async id => {
-        const responceEditTentant = await editTentant({
-            id,
-            name: editName,
-            category: editCategory,
-            logo: editLogo.file,
-        });
+        try {
+            const responceEditTentant = await editTentant({
+                id,
+                name: editName,
+                category: editCategory,
+                logo: editLogo.file,
+            });
 
-        location.reload();  
+            dispatch(getTentants()); 
+
+            return setMode('view');
+        }
+        catch(responceError) {
+            if(!!responceError.response.data?.errors) {
+                setErrors(beforeErrors => {
+                    let errors = {};
+
+                    responceError.response.data?.errors.forEach(errorObject => {
+                        errors[errorObject.field.split('/')[1]] = errorObject.message;
+                    });
+
+                    return errors;
+                });
+                console.log(errors);
+            };
+
+            if(!!responceError.response.data?.error) {
+                setErrors({
+                    name: responceError.response.data.error.message,
+                });
+            };
+        };
     },
     deleteTenant = async id => {
         const responceDeleteTentant = await deleteTentant(id);
@@ -105,12 +131,17 @@ export default function ArendatorItem({key, logo, id, object, category, name}) {
                         <>
                             <TextField
                                 label="Название"
+                                defaultValue={name}
                                 onChange={e => setEditName(e.target.value)}
-
+                                error={!!errors?.name}
+                                helperText={!!errors?.name ? errors.name: false}
                             />
                             <TextField
                                 label="Категория"
+                                defaultValue={category}
                                 onChange={e => setEditCategory(e.target.value)}
+                                error={!!errors?.category}
+                                helperText={!!errors?.category ? errors.category: false}
                             />
                         </>
                     }          

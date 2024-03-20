@@ -158,14 +158,14 @@ const initialState = {
       },
       priceRentYear: {
         input: 'number',
-        name: 'Арендная ставка в мес',
+        name: 'Арендная ставка в год',
         required: true,
       },
-      priceRentMouth: {
-         input: 'number',
-         name: 'Арендная ставка в год',
-         required: true,
-      },
+      // priceRentMouth: {
+      //    input: 'number',
+      //    name: 'Арендная ставка в мес',
+      //    required: true,
+      // },
 
       // panorama
       panorama: {
@@ -220,14 +220,14 @@ export const createObject = createAsyncThunk(
    'create/object',
    async objectData => {
       const copyPhotos = useCopyFile({ files: objectData.photos }),
-          copyPhotosLayout = useCopyFile({ files: objectData.photosLayout });
+      copyPhotosLayout = useCopyFile({ files: objectData.photosLayout });
 
-      console.log(objectData);
 
       const readyObjectData = objectToFormData(objectFilterEmpty(objectData));
 
 
       readyObjectData.delete('photos');
+      objectData.type === 'rent' ? readyObjectData.set('priceRentMouth', objectData.priceSquare): null;
       readyObjectData.delete('photosLayout');
 
       Array.from(copyPhotos.files).forEach(photoFile => {
@@ -290,6 +290,9 @@ export const createObjectSlice = createSlice({
 
          switch(type) {
             case "rent":
+               newObject.fields.priceGlobal.name = "Арендная плата";
+               newObject.fields.priceSquare.name = "Арендная плата за м2";
+
                delete newObject.value.payback;
                delete newObject.value.priceProfitability;
                delete newObject.value.globalRentFlowYear;
@@ -297,6 +300,9 @@ export const createObjectSlice = createSlice({
             break;
             
             case "sale":
+               newObject.fields.priceGlobal.name = "Цена";
+               newObject.fields.priceSquare.name = "Цена за м2";
+
                delete newObject.value.payback;
                delete newObject.value.priceProfitability;
                delete newObject.value.globalRentFlowYear;
@@ -305,6 +311,9 @@ export const createObjectSlice = createSlice({
                delete newObject.value.priceRentYear;
             break;
             case "sale-business":
+               newObject.fields.priceGlobal.name = "Цена";
+               newObject.fields.priceSquare.name = "Цена за м2";
+
                delete newObject.value.priceRentMouth;
                delete newObject.value.priceRentYear;
             break;
@@ -476,7 +485,10 @@ export const createObjectSlice = createSlice({
       })
       builder.addCase(createObject.rejected, (state, action) => {
          state.isLoading = false;
-         state.error = "Ошибка";
+         
+         state.error = {
+            response: action.error,
+         };
       });
       builder.addCase(createObject.fulfilled, (state, action) => {
 
@@ -487,6 +499,8 @@ export const createObjectSlice = createSlice({
          else {
             state.stage = stagesObject.created;
          };
+
+         state.error = undefined;
 
          state.isLoading = false;
       });
