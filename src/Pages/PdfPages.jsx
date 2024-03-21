@@ -19,7 +19,6 @@ const images = [
 const apiKey = '6e61e348-993d-4a11-924c-702a0f0279f5'; // Замените на свой API-ключ
 
 
-
 // const yandexStaticMapsUrl = `https://static-maps.yandex.ru/1.x/?ll=${card.coordinates.lon},${lat}&size=400,400&z=12&l=map&apikey=${apiKey}`
 
 // Используйте yandexStaticMapsUrl для загрузки изображения или вставьте его в ваше приложение.
@@ -61,7 +60,7 @@ export default function TestPdf() {
     console.log({p: paragraphs})
 // Создание компонентов Text для каждого абзаца
     const textComponents = paragraphs.map((paragraph, index) => (
-        <Text key={index} style={{ paddingTop: 10, fontSize: 12 }}>
+        <Text key={index} style={{paddingTop: 10, fontSize: 12}}>
             {paragraph}
         </Text>
     ));
@@ -73,10 +72,14 @@ export default function TestPdf() {
                     <Image style={{width: '38px', height: '38px'}} src={map}></Image>
                     <Text style={styles.text}>{card.address}</Text>
                 </View>
-                <View style={{...styles.flexRow, ...styles.gap}}>
-                    <Image style={{width: '38px', height: '38px'}} src={metro}></Image>
-                    <Text style={styles.text}>{card.metro}</Text>
-                </View>
+                {
+                    card.metro
+                    &&
+                    <View style={{...styles.flexRow, ...styles.gap}}>
+                        <Image style={{width: '38px', height: '38px'}} src={metro}></Image>
+                        <Text style={styles.text}>{card.metro}</Text>
+                    </View>
+                }
             </View>
         )
     }
@@ -264,7 +267,7 @@ export default function TestPdf() {
                                 }}>{typeOfCard[card.type]}
                                 </Text>
                                 {paragraphs.map(item => {
-                                    return   <Text style={{paddingTop: '40px', fontSize: '40px'}}>
+                                    return <Text style={{paddingTop: '40px', fontSize: '40px'}}>
                                         {item}
                                     </Text>
                                 })}
@@ -319,7 +322,11 @@ export default function TestPdf() {
                                         justifyContent: 'flex-end',
                                         alignItems: 'flex-end'
                                     }}>
-                                        <Text style={{fontSize: '40px'}}>Цена за м²:</Text>
+                                        <Text style={{fontSize: '40px'}}>
+                                            {card.type !== 'rent' ? 'Цена за м²' : 'Цена за м²/мес:'}
+
+
+                                        </Text>
                                         <Text style={{
                                             fontSize: '48px',
                                             fontWeight: 'bold',
@@ -401,11 +408,11 @@ export default function TestPdf() {
                                                         <Image style={{width: '40px', height: '40px'}}
                                                                src={specifications}></Image>
                                                         <Text style={{fontSize: '44px', color: '#144728'}}>
-                                                            Арендная ставка в месяц:
+                                                            Арендная ставка в месяц/м²:
                                                         </Text>
                                                     </View>
                                                     <Text style={{fontSize: '44px'}}>
-                                                        {card.price.rent.mouth && (card.price.rent.mouth).toLocaleString('ru')}
+                                                        {card.price.square && (card.price.square).toLocaleString('ru')}
                                                     </Text>
                                                 </View>
                                             }
