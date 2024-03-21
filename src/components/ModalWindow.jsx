@@ -302,19 +302,19 @@ export default function ModalWindow({isCreate}) {
                                 stateWindow === 'rent' &&
                                 <>
 
-                                    <TextField
-                                        type={'number'}
-                                        className={'w-full'}
-                                        onChange={(e) => {
-                                            dispatch(updateRent({
-                                                type: 'mouth',
-                                                value: e.target.value
-                                            }))
-                                        }}
-                                        value={object.price.rent?.mouth}
-                                        label={'Аренда в месяц'}
-                                        variant="outlined"
-                                    />
+                                    {/*<TextField*/}
+                                    {/*    type={'number'}*/}
+                                    {/*    className={'w-full'}*/}
+                                    {/*    onChange={(e) => {*/}
+                                    {/*        dispatch(updateRent({*/}
+                                    {/*            type: 'mouth',*/}
+                                    {/*            value: e.target.value*/}
+                                    {/*        }))*/}
+                                    {/*    }}*/}
+                                    {/*    value={object.price.rent?.mouth}*/}
+                                    {/*    label={'Аренда в месяц'}*/}
+                                    {/*    variant="outlined"*/}
+                                    {/*/>*/}
                                     <TextField
                                         type={'number'}
                                         className={'w-full'}
