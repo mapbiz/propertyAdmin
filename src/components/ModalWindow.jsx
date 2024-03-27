@@ -182,7 +182,6 @@ export default function ModalWindow({isCreate}) {
                             />
                         </div>
 
-                        {console.log(object)}
                         <Tag
                             type={'textarea'}
                             title={'Описание'}
@@ -281,12 +280,19 @@ export default function ModalWindow({isCreate}) {
                         <div className={'flex items-center'}>
                             <p>Зона погрузки/разгрузки:</p>
                             <Input
-
                                 inputType="checkbox"
                                 path="zone"
                             />
-
                         </div>
+
+                        <div className="flex items-center">
+                            <p>Новый?</p>
+                            <Input
+                                inputType="checkbox"
+                                path="isNew"
+                            />
+                        </div>
+
                         {
                             stateWindow === 'sale-business' &&
                             <>

@@ -68,6 +68,8 @@ const initialState = {
       // global rent flow
       globalRentFlowYear: '',
       globalRentFlowMouth: '',
+
+      isNew: false,
    },
    fields: {
       title: {
@@ -138,6 +140,11 @@ const initialState = {
       infoFloor: {
          input: 'number',
          name: 'Этажи'
+      },
+
+      isNew: {
+         input: 'checkbox',
+         name: 'Новый'
       },
 
       // price
