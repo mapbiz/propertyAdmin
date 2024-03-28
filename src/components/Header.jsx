@@ -4,7 +4,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {setTab} from "../slices/tabSlice.jsx";
 import {NavLink, useLocation, useNavigate, useParams} from "react-router-dom";
 import Button from "@mui/material/Button";
-
+import { IconButton } from "@mui/material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function Header() {
     const dispatch = useDispatch()
@@ -37,11 +38,21 @@ export default function Header() {
                 {
                     (location.pathname !== '/' && location.pathname !== '/pdf')
                     &&
-                    <button onClick={(e) => {
-                        navigate('/');
-                    }}>
-                        ОБЪЕКТЫ
-                    </button>
+                    <>
+                        <IconButton 
+                            color="primary"
+                            onClick={() => {
+                                navigate('/');
+                            }}
+                        >
+                            <ArrowBackIcon htmlColor="black" />
+                        </IconButton>
+                        <button onClick={() => {
+                            navigate('/');
+                        }}>
+                            ОБЪЕКТЫ
+                        </button>
+                    </>
                 }
                 {location.pathname !== '/arendators' &&
                     <>

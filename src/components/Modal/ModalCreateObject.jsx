@@ -61,7 +61,7 @@ export default function ModalCreateObject({
       )
    },
 }) {
-   const [isOpen, setIsOpen] = useState(false);
+   const [isOpen, setIsOpen] = useState(true);
 
    const [step, setStep] = useState(0),
    [maxSteps, setMaxSteps] = useState(1),
@@ -84,7 +84,9 @@ export default function ModalCreateObject({
    [errorsFieldsBeforeValidate, setErrorsFieldsBeforeValidate] = useState({});
 
    const [isCreateObject, setIsCreateObject] = useState(false);
-      
+   
+   const [lastBluredInput, setLastBluredInput] = useState({});
+
    useEffect(() => {
       if(objectCreate.type === null) return;
 
@@ -116,10 +118,14 @@ export default function ModalCreateObject({
    }, [objectCreate, objectCreate.value, objectCreate.type, objectCreate.fields]);
 
    useEffect(() => {
-
       setValidate(objectIsEmpty(errorsFieldsBeforeValidate));
-      console.log(objectIsEmpty(errorsFieldsBeforeValidate), errorsFieldsBeforeValidate);
    }, [errorsFieldsBeforeValidate]);
+
+   useEffect(() => {
+      if(objectIsEmpty(lastBluredInput)) return; 
+
+      console.log(lastBluredInput);
+   }, [lastBluredInput]);
 
    // Если шаг стал 0, сбросить валидацию
    useEffect(() => {
@@ -252,7 +258,7 @@ export default function ModalCreateObject({
          });
 
 
-         return addKeys(readyFieldArray);
+         return readyFieldArray;
       },
       [objectCreate]
    ),
@@ -399,6 +405,7 @@ export default function ModalCreateObject({
       return;
    };
 
+
    return (
       <>
          <Activator toggleOpen={toggleOpen} />
@@ -458,7 +465,7 @@ export default function ModalCreateObject({
                                  {
                                     sortObjectInputFields.length > 0 &&
                                     sortObjectInputFields
-                                    .map(createField => {
+                                    .map((createField, i) => {
                                        const createInput = createField,
                                        createInputValue = objectCreate.value[createInput.field];
 
@@ -471,14 +478,23 @@ export default function ModalCreateObject({
                                                       variant="outlined"
                                                       label={createInput.name}
                                                       defaultValue={createInputValue}
-                                                      onBlur={async e => {
+                                                      key={i * 9}
+                                                      onInput={e => {
                                                          dispatch(changeObjectField({
                                                             field: createInput.field,
                                                             value: e.target.value,
-                                                         }));
-                                                         
+                                                         }));                                                
+
                                                          tryFieldValidate(createInput.field, e.target.value);
                                                       }}
+                                                      // onBlur={e => {  
+                                                         // dispatch(changeObjectField({
+                                                         //    field: createInput.field,
+                                                         //    value: e.target.value,
+                                                         // }));                                                
+
+                                                         // tryFieldValidate(createInput.field, e.target.value);
+                                                      // }}
                                                       error={!!errorsFieldsBeforeValidate[createInput.field]}
                                                       helperText={
                                                          !!errorsFieldsBeforeValidate[createInput.field] ? 
@@ -629,7 +645,102 @@ export default function ModalCreateObject({
 
                                        return (
                                           <>
-                                             <ObjectInput key={createField.id} />
+                                             {
+                                                (createInput.input === 'text' || createInput.input === 'number' || createInput.input === 'textarea') &&
+                                                <TextField
+                                                   variant="outlined"
+                                                   label={createInput.name}
+                                                   defaultValue={createInputValue}
+                                                   type={createInput.input}
+                                                   key={i * 9}
+                                                   multiline={createInput.input === 'textarea'}
+                                                   onBlur={e => {  
+                                                      dispatch(changeObjectField({
+                                                         field: createInput.field,
+                                                         value: e.target.value,
+                                                      }));                                                
+
+                                                      tryFieldValidate(createInput.field, e.target.value);
+                                                   }}
+                                                   error={!!errorsFieldsBeforeValidate[createInput.field]}
+                                                   helperText={
+                                                      !!errorsFieldsBeforeValidate[createInput.field] ? 
+                                                      errorsFieldsBeforeValidate[createInput.field]: false
+                                                   }
+                                                />
+                                             }
+                                             {
+                                                (createInput.input === 'file' || createInput.input === 'files') &&
+                                                <div className="flex flex-col">
+                                                   <InputFile
+                                                      type={createInput.input}
+                                                      textUploaded={
+                                                         Array.from(createInputValue)?.length > 0 ? 
+                                                         Array.from(createInputValue).map(file => file.name.split(".")[0]).join(", "): createInput.name
+                                                      }
+                                                      
+                                                      onUpload={files => {
+                                                         const copiedFiles = useCopyFile({files});
+
+                                                         dispatch(changeObjectField({
+                                                            field: createInput.field,
+                                                            value: copiedFiles.files,
+                                                         }));
+
+
+                                                         tryFieldValidate(createInput.field, copiedFiles.copiedFiles)
+                                                         // if(!!createInput?.error) dispatch(clearErrorsOnField({
+                                                         //    field: createInput.field,
+                                                         // }))
+                                                      }}
+                                                      isError={!!errorsFieldsBeforeValidate[createInput.field]}
+                                                      
+                                                      error={!!errorsFieldsBeforeValidate[createInput.field]}
+                                                      helperText={
+                                                         !!errorsFieldsBeforeValidate[createInput.field] ? 
+                                                         errorsFieldsBeforeValidate[createInput.field]: false
+                                                      }
+                                                      label={createInput.name}
+                                                   />
+                                                   
+                                                   {
+                                                      !!createInput?.error &&
+                                                      <>
+                                                         <Typography
+                                                            color="error"
+                                                            variant="body"
+                                                         >
+                                                            {createInput.error}
+                                                         </Typography>
+                                                      </>
+                                                   }
+                                                </div>
+                                             }
+                                             {
+                                                createInput.input === 'checkbox' &&
+                                                <>
+                                                   <FormControlLabel
+                                                      control={
+                                                         <Checkbox
+                                                            checked={checkboxes[createInput.field]}
+                                                            onClick={e => {
+                                                               setCheckboxes(beforeCheck => {
+                                                                  return {
+                                                                     ...beforeCheck,
+                                                                     [createInput.field]: e.target.checked,
+                                                                  };
+                                                               })
+                                                               dispatch(changeObjectField({
+                                                                  field: createInput.field,
+                                                                  value: e.target.checked,
+                                                               }))
+                                                            }}
+                                                         />
+                                                      }
+                                                      label={createInput.name}
+                                                   />
+                                                </>
+                                             }
                                           </>
                                        )
                                     })

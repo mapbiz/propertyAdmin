@@ -14,13 +14,13 @@ export const countDuplicates = arrayWithDuplicates => {
 };
 
 /**
- * 
+ * @deprecated
  * @param {string} keyField 
  * @param {() => string | number} generateKeyValue 
  * @param {unkown[]} array 
  * @returns 
  */
-export const addKeys = (array, keyField = "id", generateKeyValue = () => Math.ceil(Math.random() * Number.MAX_SAFE_INTEGER)) => {
+export const addKeys = (array, keyField = "id", generateKeyValue = () => Math.ceil(Math.random() * Number.MAX_SAFE_INTEGER).toString().substring(1, 10)) => {
   return array.map(item => {
     return {
       ...item,

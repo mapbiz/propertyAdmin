@@ -178,7 +178,6 @@ const initialState = {
       panorama: {
          input: 'text',
          name: 'Ссылка на панораму',
-         required: true,
       },
 
       // images
