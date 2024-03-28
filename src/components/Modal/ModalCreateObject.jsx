@@ -61,7 +61,7 @@ export default function ModalCreateObject({
       )
    },
 }) {
-   const [isOpen, setIsOpen] = useState(true);
+   const [isOpen, setIsOpen] = useState(false);
 
    const [step, setStep] = useState(0),
    [maxSteps, setMaxSteps] = useState(1),
