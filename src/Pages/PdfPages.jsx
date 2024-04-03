@@ -10,6 +10,7 @@ import cardMap from '../../public/mapCard.jpg'
 import propertyLogo from '../../public/property.png'
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
+import {useEffect, useState} from "react";
 
 
 const images = [
@@ -51,13 +52,14 @@ const arendators = [
 Font.register({family: 'Inter', src: InterRegular});
 Font.register({family: 'InterBold', src: InterBold});
 export default function TestPdf() {
+    const reader = new FileReader();
 
     const card = useSelector((state) => state.tagMore.value)
 
 
     // Разделение текста на абзацы
     const paragraphs = card.description.split('\r\n');
-    console.log({p: paragraphs})
+
 // Создание компонентов Text для каждого абзаца
     const textComponents = paragraphs.map((paragraph, index) => (
         <Text key={index} style={{paddingTop: 10, fontSize: 12}}>
@@ -238,6 +240,9 @@ export default function TestPdf() {
         'sale-business': 'ГАБ'
     }
     const navigate = useNavigate()
+
+  
+
     return (
         <div className={'pt-[150px] flex flex-col justify-center w-full'}>
             <div className={'w-full flex justify-center mb-20'}>
@@ -253,9 +258,10 @@ export default function TestPdf() {
                         {title()}
                         <View style={{...styles.pt120, display: "flex", flexDirection: 'row', gap: '40px'}}>
                             <View style={{maxWidth: '1020px'}}>
-                                {card.images.length > 0
+                                {
+                                    card.images.length > 0
                                     &&
-                                    <Image style={styles.imagePreview} src={card.images[0].url}></Image>
+                                    <Image style={styles.imagePreview} src={`${card.images[0].url}`}></Image>
                                 }
                                 <Text style={{
                                     ...styles.textSale,

@@ -673,6 +673,7 @@ export default function ModalCreateObject({
                                                 (createInput.input === 'file' || createInput.input === 'files') &&
                                                 <div className="flex flex-col">
                                                    <InputFile
+                                                       accept="image/*"
                                                       type={createInput.input}
                                                       textUploaded={
                                                          Array.from(createInputValue)?.length > 0 ? 

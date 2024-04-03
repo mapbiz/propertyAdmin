@@ -25,6 +25,7 @@ import Checkbox from "@mui/material/Checkbox";
 import Input from "./Input.jsx";
 import Tentants from "./Tentants.jsx";
 
+
 export default function ModalWindow({isCreate}) {
     const [isUpload, setUpload] = useState(false)
     const [images, setImages] = useState([
@@ -38,6 +39,8 @@ export default function ModalWindow({isCreate}) {
             url: "https://loremflickr.com/640/480/cats"
         }
     ])
+
+    const tentants = useSelector(state => state.tentants.value);
 
     const object = useSelector((state) => state.tagMore.value)
     const modalWindow = useSelector((state) => state.modalWindow)
@@ -357,7 +360,12 @@ export default function ModalWindow({isCreate}) {
                             stateWindow === 'sale-business' &&
                             <>
                                 <h2 className={'font-bold'}>Арендаторы</h2>
-                                <Tentants/>
+                                {
+                                    tentants?.length > 0 ?
+                                    <Tentants />
+                                    :
+                                    <>Сначала создайте одного арендатора</>
+                                }
                             </>
                         }
 
