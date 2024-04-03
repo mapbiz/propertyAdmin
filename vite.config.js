@@ -10,6 +10,9 @@ export default defineConfig({
   plugins: [react()],
   base: (process.env.APP_BASE).toString().length > 0 ? process.env.APP_BASE: '/',
   publicDir: resolve('./public'),
+  preview: {
+    port: process.env.APP_PORT
+  },
   server: {
     port: process.env.APP_PORT,
     proxy: {
