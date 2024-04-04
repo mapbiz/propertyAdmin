@@ -253,6 +253,7 @@ export default function ModalWindow({isCreate}) {
                         </div>
                         <div className={'flex gap-2.5'}>
                             <Tag title={'Отделка:'} name={'info'} subName={'finishing'}/>
+                            <Tag title={'Площадь'} name={'info'} subName={'square'}/>
                             <Tag
                                 type={'number'}
                                 title={'Вознаграждение агента'}
