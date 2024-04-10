@@ -362,9 +362,9 @@ export default function ModalWindow({isCreate}) {
                             stateWindow === 'sale-business' &&
                             <>
                                 <h2 className={'font-bold'}>Общий арендный поток</h2>
-                                <Tag type={'number'} title={'Месячный арендный поток:'} subName={'year'}
+                                <Tag type={'number'} title={'Месячный арендный поток:'} subName={'mouth'}
                                      name={'globalRentFlow'}/>
-                                <Tag type={'number'} title={'Годовой арендный поток:'} subName={'mouth'}
+                                <Tag type={'number'} title={'Годовой арендный поток:'} subName={'year'}
                                      name={'globalRentFlow'}/>
                                 <Tag type={'number'} name={'payback'} title={'Окупаемость в годах:'}></Tag>
                             </>

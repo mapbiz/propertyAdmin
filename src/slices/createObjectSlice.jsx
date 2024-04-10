@@ -212,7 +212,7 @@ const initialState = {
       },
       globalRentFlowMouth: {
          input: 'number',
-         name: 'Общий месячный арендный поток в год',
+         name: 'месячный арендный поток',
          required: true,
       },
    },
