@@ -79,6 +79,7 @@ export default function Card({card}) {
                 <p>Тип объекта:</p>
                 <p>{typesObject[card.type]}</p>
             </div>
+
             <button
                 onClick={(e) => {
                     e.stopPropagation()

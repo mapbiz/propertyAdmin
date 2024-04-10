@@ -66,7 +66,7 @@ export default function ModalWindow({isCreate}) {
     const update = async (id) => {
         const getCurrentTitle = await getCurrentCard(object.slug).then(r => r.data.title)
         console.log({getCurrentTitle: getCurrentTitle})
-        if(getCurrentTitle === object.title) {
+        if (getCurrentTitle === object.title) {
             const {title, ...rest} = object
             const res = await updateCard(id, rest).catch(err => {
                 alert(err.response.data.error.message)
@@ -80,8 +80,66 @@ export default function ModalWindow({isCreate}) {
 
             if (res.data.ok) dispatch(setModalWindow({modalWindow: false}))
         }
+    }
+    console.log(object)
+    const copyObject = async (id) => {
+        try {
+            const getCurrentObject = await getCurrentCard(object.slug).then(r => r.data)
+            const rentCurrentMouth = getCurrentObject.price?.rent?.mouth
+            const rentCurrentYear = getCurrentObject.price?.rent?.year
+            const profitability = getCurrentObject.price?.profitability
+            const newTitle = `${getCurrentObject.title} copy`;
+            const coordinatesCurrent = getCurrentObject.coordinates
+            const priceCurrent = getCurrentObject.price
 
+            const {
+                layoutImages,
+                images,
+                info,
+                type,
+                updatedAt,
+                globalRentFlow,
+                price,
+                tenants,
+                slug,
+                id,
+                createdAt,
+                coordinates,
+                ...restObject
+            } = getCurrentObject
 
+            const newObject = {
+                ...restObject,
+                title: newTitle,
+                lat: coordinatesCurrent.lat,
+                lon: coordinatesCurrent.lon,
+                priceGlobal: price.global,
+                priceSquare: price.square,
+                photos: object.images.map(photo => {
+                    return photo.file
+                }),
+                photosLayout: object.layoutImages.map(photo => {
+                    return photo.file
+                }),
+                // Добавляем rentCurrentMouth, если оно существует
+                ...(rentCurrentMouth ? { rentCurrentMouth:  rentCurrentMouth } : {}),
+                ...(rentCurrentYear ? { priceRentYear: rentCurrentYear} : {}),
+                // ...(getCurrentObject.price?.rent?.mouth ? { rentCurrentMouth: profitability.price?.rent?.mouth } : {}),
+            }
+
+            const formData = objectToFormData(newObject)
+            const res = await createCard(formData);
+
+            if (res.data.ok) {
+                dispatch(setModalWindow({modalWindow: false}));
+            } else {
+                // Обработка случая, если операция не удалась.
+                console.error('Ошибка при создании копии объекта.');
+            }
+        } catch (err) {
+            // Обработка ошибок, например, при запросах к API.
+            alert(err.response.data.error.message);
+        }
     }
 
     const clickOutside = () => {
@@ -193,8 +251,11 @@ export default function ModalWindow({isCreate}) {
                             variant="outlined"
                         />
                         <div className={'flex gap-2.5'}>
-                            <Tag title={`${object.type === 'rent' ? 'Арендная ставка': 'Цена:'}`} subName={'global'} name={'price'}/>
-                            <Tag subName={'square'} title={`${object.type === 'rent' ? 'Арендная ставка в месяц': 'Цена за м²:'}`} name={'price'}/>
+                            <Tag title={`${object.type === 'rent' ? 'Арендная ставка' : 'Цена:'}`} subName={'global'}
+                                 name={'price'}/>
+                            <Tag subName={'square'}
+                                 title={`${object.type === 'rent' ? 'Арендная ставка в месяц' : 'Цена за м²:'}`}
+                                 name={'price'}/>
                         </div>
                         <div className={'flex gap-2.5'}>
                             <Tag
@@ -301,8 +362,10 @@ export default function ModalWindow({isCreate}) {
                             stateWindow === 'sale-business' &&
                             <>
                                 <h2 className={'font-bold'}>Общий арендный поток</h2>
-                                <Tag type={'number'} title={'Месячный арендный поток:'} subName={'year'} name={'globalRentFlow'}/>
-                                <Tag type={'number'} title={'Годовой арендный поток:'} subName={'mouth'} name={'globalRentFlow'}/>
+                                <Tag type={'number'} title={'Месячный арендный поток:'} subName={'year'}
+                                     name={'globalRentFlow'}/>
+                                <Tag type={'number'} title={'Годовой арендный поток:'} subName={'mouth'}
+                                     name={'globalRentFlow'}/>
                                 <Tag type={'number'} name={'payback'} title={'Окупаемость в годах:'}></Tag>
                             </>
                         }
@@ -338,6 +401,19 @@ export default function ModalWindow({isCreate}) {
                                         label={'Аренда в год'}
                                         variant="outlined"
                                     />
+                                    <TextField
+                                        type={'number'}
+                                        className={'w-full'}
+                                        onChange={(e) => {
+                                            dispatch(updateRent({
+                                                type: 'mouth',
+                                                value: e.target.value
+                                            }))
+                                        }}
+                                        value={object.price.rent?.mouth}
+                                        label={'Аренда в месяц'}
+                                        variant="outlined"
+                                    />
 
                                     {/*<Tag type={'number'} full={true} title={'Арендная ставка в мес:'} subName={'rent'}*/}
                                     {/*     sub3Name={'mouth'} name={'price'}/>*/}
@@ -363,15 +439,14 @@ export default function ModalWindow({isCreate}) {
                                 <h2 className={'font-bold'}>Арендаторы</h2>
                                 {
                                     tentants?.length > 0 ?
-                                    <Tentants />
-                                    :
-                                    <>Сначала создайте одного арендатора</>
+                                        <Tentants/>
+                                        :
+                                        <>Сначала создайте одного арендатора</>
                                 }
                             </>
                         }
 
                     </div>
-
                     <div className={'pt-[20px]'}>
                         <Button
                             component="label"
@@ -464,12 +539,29 @@ export default function ModalWindow({isCreate}) {
 
                                 }
                             }}
-                            className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}>{isCreate ? 'Создать' : 'Сохранить изменения'}</button>
+                            className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}>{isCreate ? 'Создать' : 'Сохранить изменения'}
+                        </button>
+
                         <button
                             className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}
                             onClick={() => {
                                 navigate('/pdf')
                             }}>Сформировать PDF
+                        </button>
+                        <button
+                            onClick={async () => {
+                                if (isCreate) {
+                                    create()
+                                } else {
+                                    await copyObject(object.id).finally(async () => {
+                                        const res = await getCards()
+                                        dispatch(setStateWindow(res.data))
+                                    })
+                                    // revalidate()
+                                }
+                            }}
+                            className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}>
+                            {'Копировать'}
                         </button>
                     </div>
 
