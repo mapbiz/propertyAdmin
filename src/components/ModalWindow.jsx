@@ -121,7 +121,7 @@ export default function ModalWindow({isCreate}) {
                 photosLayout: object.layoutImages.map(photo => {
                     return photo.file
                 }),
-                // Добавляем rentCurrentMouth, если оно существует
+                // Добавляем rentCurrentMouth и Year, если они существует
                 ...(rentCurrentMouth ? { rentCurrentMouth:  rentCurrentMouth } : {}),
                 ...(rentCurrentYear ? { priceRentYear: rentCurrentYear} : {}),
                 // ...(getCurrentObject.price?.rent?.mouth ? { rentCurrentMouth: profitability.price?.rent?.mouth } : {}),
@@ -218,9 +218,45 @@ export default function ModalWindow({isCreate}) {
             ></div>
             <div
                 className={`${isOpen ? 'block' : 'hidden'} left-[50%] translate-x-[-50%] fixed h-max w-max flex items-center justify-center`}>
-                <div className={'bg-white w-[1000px] h-[700px] px-[32px]  overflow-y-auto'}>
+                <div className={'bg-white  relative w-[1000px] max-h-[85vh] px-[32px]  overflow-y-auto'}>
+
                     <div className={'pt-[40px] flex flex-col gap-4 pb-[20px]'}>
-                        <p className={'font-bold text-red-700 text-center text-3xl'}>{infoProject[object.type]}</p>
+
+                        <div className={'flex justify-between items-center'}>
+                            <p className={'font-bold text-red-700 text-left text-3xl'}>
+                                {infoProject[object.type]}</p>
+                            <div className={'flex gap-4'}>
+                                <div>
+                                    <button
+                                        onClick={async () => {
+                                            if (isCreate) {
+                                                create()
+                                            } else {
+                                                await copyObject(object.id).finally(async () => {
+                                                    const res = await getCards()
+                                                    dispatch(setStateWindow(res.data))
+                                                })
+                                                // revalidate()
+                                            }
+                                        }}
+
+                                        className={'text-[20px]  right-12 my-[24px] py-2 leading-[28px] bg-[#144728] px-[20px]  text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}>
+                                        {'Копировать'}
+                                    </button>
+                                </div>
+                                <div>
+                                    <button
+                                        className={'text-[20px]  right-24 my-[24px] leading-[28px] bg-[#144728] px-[20px] py-2 text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}
+                                        onClick={() => {
+                                            navigate('/pdf')
+                                        }}>Сформировать PDF
+                                    </button>
+                                </div>
+
+                            </div>
+
+                        </div>
+
                         <h2 className={'font-bold'}>Основная информация</h2>
                         <Tag
                             title={'Название:'}
@@ -229,7 +265,7 @@ export default function ModalWindow({isCreate}) {
                             variant="outlined"
                         />
                         <div className={'flex gap-2.5'}>
-                            <Tag
+                        <Tag
                                 title={'Адрес'}
                                 name={'address'}
                                 className={'w-full'}
@@ -332,15 +368,6 @@ export default function ModalWindow({isCreate}) {
                                 inputType="checkbox"
                                 path="info.hood"
                             />
-                            {/*<Checkbox*/}
-                            {/*    onClick={(e) => {*/}
-                            {/*        dispatch(updateCheckBox({*/}
-                            {/*            type: 'hood',*/}
-                            {/*            value: e.target.checked*/}
-                            {/*        }))*/}
-                            {/*    }}*/}
-                            {/*    value={object.info.hood}>*/}
-                            {/*</Checkbox>*/}
                         </div>
                         <div className={'flex items-center'}>
                             <p>Зона погрузки/разгрузки:</p>
@@ -374,20 +401,6 @@ export default function ModalWindow({isCreate}) {
                             {
                                 stateWindow === 'rent' &&
                                 <>
-
-                                    {/*<TextField*/}
-                                    {/*    type={'number'}*/}
-                                    {/*    className={'w-full'}*/}
-                                    {/*    onChange={(e) => {*/}
-                                    {/*        dispatch(updateRent({*/}
-                                    {/*            type: 'mouth',*/}
-                                    {/*            value: e.target.value*/}
-                                    {/*        }))*/}
-                                    {/*    }}*/}
-                                    {/*    value={object.price.rent?.mouth}*/}
-                                    {/*    label={'Аренда в месяц'}*/}
-                                    {/*    variant="outlined"*/}
-                                    {/*/>*/}
                                     <TextField
                                         type={'number'}
                                         className={'w-full'}
@@ -415,10 +428,6 @@ export default function ModalWindow({isCreate}) {
                                         variant="outlined"
                                     />
 
-                                    {/*<Tag type={'number'} full={true} title={'Арендная ставка в мес:'} subName={'rent'}*/}
-                                    {/*     sub3Name={'mouth'} name={'price'}/>*/}
-                                    {/*<Tag type={'number'} full={true} title={'Арендная ставка в год:'} subName={'rent'} sub3Name={'year'}*/}
-                                    {/*     name={'price'}/>*/}
                                 </>
                             }
 
@@ -542,27 +551,7 @@ export default function ModalWindow({isCreate}) {
                             className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}>{isCreate ? 'Создать' : 'Сохранить изменения'}
                         </button>
 
-                        <button
-                            className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}
-                            onClick={() => {
-                                navigate('/pdf')
-                            }}>Сформировать PDF
-                        </button>
-                        <button
-                            onClick={async () => {
-                                if (isCreate) {
-                                    create()
-                                } else {
-                                    await copyObject(object.id).finally(async () => {
-                                        const res = await getCards()
-                                        dispatch(setStateWindow(res.data))
-                                    })
-                                    // revalidate()
-                                }
-                            }}
-                            className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}>
-                            {'Копировать'}
-                        </button>
+
                     </div>
 
                 </div>
