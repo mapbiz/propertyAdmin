@@ -41,15 +41,18 @@ export default function Auth() {
   }, []);
 
   return (
-    <div className={'w-full h-screen flex flex-col items-center justify-center'}>
+    <form onSubmit={async (e) => {
+      e.preventDefault()
+      await onClick()
+    }} className={'w-full h-screen flex flex-col items-center justify-center'}>
       <div className={'w-[400px] h-[290px] py-[44px] px-[16px] flex flex-col gap-4 rounded-3xl  mb-[100px] shadow-2xl'}>
         <div className={'w-full flex flex-col gap-[25px] pb-[10px]'}>
           <input placeholder={'login'} className={'w-full border-2 h-[50px] rounded-[15px] px-[10px]'} type="text" onChange={e => setLogin(e.target.value)} />
-          <input placeholder={'password'} className={'w-ful border-2 h-[50px] rounded-[15px] px-[10px]'} type="text" onChange={e => setPassword(e.target.value)}/>
+          <input placeholder={'password'} className={'w-ful border-2 h-[50px] rounded-[15px] px-[10px]'} type="password" onChange={e => setPassword(e.target.value)}/>
         </div>
 
-        <Button 
-          onClick={async () => await onClick()}
+        <Button
+            type={'submit'}
           text={'Авторизоваться'}
         />
       </div>
@@ -61,6 +64,6 @@ export default function Auth() {
         >{error}</Typography>
       }
 
-    </div>
+    </form>
   )
 }
