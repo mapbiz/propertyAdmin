@@ -123,8 +123,6 @@ export default function ModalCreateObject({
 
    useEffect(() => {
       if(objectIsEmpty(lastBluredInput)) return; 
-
-      console.log(lastBluredInput);
    }, [lastBluredInput]);
 
    // Если шаг стал 0, сбросить валидацию
@@ -294,16 +292,16 @@ export default function ModalCreateObject({
          setFormError("Поле заголовок должно быть уникальным!");
          setIsCreateObject(false);
       }
-      if(!objectCreate?.error) {
-         dispatch(resetCreateObject());
-         setValidate(true);
-         setErrorsFields({});
-         setErrorsFieldsBeforeValidate({});
-         save();
-         setStep(0);
-         setMaxSteps(1);
-         setIsOpen(false);
-      };
+      // if(!objectCreate?.error) {
+         // dispatch(resetCreateObject());
+         // setValidate(true);
+         // setErrorsFields({});
+         // setErrorsFieldsBeforeValidate({});
+         // save();
+         // setStep(0);
+         // setMaxSteps(1);
+         // setIsOpen(false);
+      // };
       if(isCreateObject) {
          dispatch(setNotificationOpen({ notificationName: 'createObject' }))
       }
@@ -346,11 +344,16 @@ export default function ModalCreateObject({
          }
       };
 
-
-      
-      console.log(formError);
-
       setIsCreateObject(true);
+
+      dispatch(resetCreateObject());
+      setValidate(true);
+      setErrorsFields({});
+      setErrorsFieldsBeforeValidate({});
+      // save();
+      setStep(0);
+      setMaxSteps(1);
+      setIsOpen(false);
       // dispatch(resetCreateObject());
       // setValidate(true);
       // setErrorsFields({});
