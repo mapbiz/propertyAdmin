@@ -15,7 +15,9 @@ import {
 } from "@mui/material";
 import {useEffect, useState} from "react";
 
-export default function ObjectTentant({}) {
+export default function ObjectTentant({
+    isOpen = true,
+}) {
     const createdObjectTentants = useSelector(state => state.createObject),
         tentants = useSelector(state => state.tentants.value);
 
@@ -27,23 +29,33 @@ export default function ObjectTentant({}) {
     const open = Boolean(anchorEl);
 
 
+    const [newTentantData, setNewTentantData] = useState([]);
+
     const handleMenuClick = e => {
         setAnchorEl(e.currentTarget);
     };
 
+    useEffect(() => {
+        console.log(isOpen);
+
+        if(!isOpen) {
+            console.log(newTentantData);
+        };
+    }, [isOpen]);
+
     const handleClose = () => {
             setAnchorEl(null);
-        },
-        handleCloseItem = tentant => {
-            console.log({tentant});
+    },
+    handleCloseItem = tentant => {
+        console.log({tentant});
 
-            dispatch(joinNewTentant({
-                tentant,
-            }));
-            setJoinedTentant(before => [...before, tentant.id]);
+        dispatch(joinNewTentant({
+            tentant,
+        }));
+        setJoinedTentant(before => [...before, tentant.id]);
 
-            return handleClose();
-        };
+        return handleClose();
+    };
     return (
         <>
             {
@@ -54,7 +66,7 @@ export default function ObjectTentant({}) {
                         <>
                             <Card sx={{display: 'flex', flexDirection: 'column'}}>
                                 <CardMedia
-                                    image={`https://prop-test.ru/server/public/${tentantInObject.tentant.logo}`}
+                                    image={`/public/${tentantInObject.tentant.logo}`}
                                     sx={{height: 250, width: 250}}
                                 />
                                 <CardContent>
@@ -82,7 +94,9 @@ export default function ObjectTentant({}) {
                                                         field: 'indexation',
                                                         value: +e.target.value,
                                                         tentantId: tentantInObject.tentant.id,
-                                                    }))
+                                                    }));
+
+                                                    return;
                                                 }}
                                             />
                                             <TextField

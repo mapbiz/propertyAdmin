@@ -60,7 +60,7 @@ export default function Card({card}) {
                 dispatch(setObject(currentCard.data));
             }}
             className={'w-full cursor-pointer  border-2 min-h-[120px] gap-[50px] items-center hover:shadow-lg hover:bg-green-100 transition-all duration-300 flex px-[32px]'}>
-            <img className={'w-[150px]'} src={`${import.meta.env.VITE_SERVER_URL}public/${card.images[0]}`} alt={''}/>
+            <img className={'w-[150px]'} src={`/public/${card.images[0]}`} alt={''}/>
             <div className={'whitespace-nowrap text-ellipsis overflow-hidden text-start w-full max-w-[300px]'}>
                 <p>Название объекта</p>
                 <p>{card.title}</p>

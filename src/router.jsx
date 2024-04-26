@@ -21,9 +21,6 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        action() {
-          console.log('test');
-        },
         element: <App />
       },
       {

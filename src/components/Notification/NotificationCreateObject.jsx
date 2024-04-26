@@ -25,7 +25,7 @@ export default function NotificationCreateObject({ isSuccess = true }) {
     )
 
     useEffect(() => {
-        if(createObject.stage === 'created') dispatch(setNotificationOpen({ notificationName: 'createObject' }));
+        if(createObject.stage === 'created' || createObject.stage === 'createdSaleBusiness') dispatch(setNotificationOpen({ notificationName: 'createObject' }));
     }, [createObject]); 
 
     return (

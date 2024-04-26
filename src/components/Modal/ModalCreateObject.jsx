@@ -87,6 +87,8 @@ export default function ModalCreateObject({
    
    const [lastBluredInput, setLastBluredInput] = useState({});
 
+   const [test, setTest] = useState(true);
+
    useEffect(() => {
       if(objectCreate.type === null) return;
 
@@ -302,9 +304,9 @@ export default function ModalCreateObject({
          // setMaxSteps(1);
          // setIsOpen(false);
       // };
-      if(isCreateObject) {
-         dispatch(setNotificationOpen({ notificationName: 'createObject' }))
-      }
+      // if(isCreateObject) {
+      //    dispatch(setNotificationOpen({ notificationName: 'createObject' }))
+      // }
 
    }, [objectCreate.isLoading, objectCreate.error, isCreateObject]);
 
@@ -472,179 +474,6 @@ export default function ModalCreateObject({
                                        const createInput = createField,
                                        createInputValue = objectCreate.value[createInput.field];
 
-                                       const ObjectInput = () => {
-                                          switch(createInput.input) {
-                                             case "text":
-                                             return (
-                                                <>
-                                                   <TextField
-                                                      variant="outlined"
-                                                      label={createInput.name}
-                                                      defaultValue={createInputValue}
-                                                      key={i * 9}
-                                                      onInput={e => {
-                                                         dispatch(changeObjectField({
-                                                            field: createInput.field,
-                                                            value: e.target.value,
-                                                         }));                                                
-
-                                                         tryFieldValidate(createInput.field, e.target.value);
-                                                      }}
-                                                      // onBlur={e => {  
-                                                         // dispatch(changeObjectField({
-                                                         //    field: createInput.field,
-                                                         //    value: e.target.value,
-                                                         // }));                                                
-
-                                                         // tryFieldValidate(createInput.field, e.target.value);
-                                                      // }}
-                                                      error={!!errorsFieldsBeforeValidate[createInput.field]}
-                                                      helperText={
-                                                         !!errorsFieldsBeforeValidate[createInput.field] ? 
-                                                         errorsFieldsBeforeValidate[createInput.field]: false
-                                                      }
-                                                   />
-                                                </>
-                                             );
-                                             case "number":
-                                             return (
-                                                <>
-                                                   <TextField
-                                                      variant="outlined"
-                                                      type="number"
-                                                      label={createInput.name}
-                                                      defaultValue={createInputValue}
-                                                      onBlur={e => {
-                                                         dispatch(changeObjectField({
-                                                            field: createInput.field,
-                                                            value: +e.target.value,
-                                                         }));
-
-                                                         tryFieldValidate(createInput.field, e.target.value);
-                                                      }}
-                                                      error={!!errorsFieldsBeforeValidate[createInput.field]}
-                                                      helperText={
-                                                         !!errorsFieldsBeforeValidate[createInput.field] ? 
-                                                         errorsFieldsBeforeValidate[createInput.field]: false
-                                                      }
-                                                   />
-                                                </>
-                                             );
-                                             case "files":
-                                             return (
-                                                <div className="flex flex-col">
-                                                   <InputFile
-                                                      type="files"
-                                                      textUploaded={
-                                                         Array.from(createInputValue)?.length > 0 ? 
-                                                         Array.from(createInputValue).map(file => file.name.split(".")[0]).join(", "): createInput.name
-                                                      }
-                                                      
-                                                      onUpload={files => {
-                                                         const copiedFiles = useCopyFile({files});
-
-                                                         dispatch(changeObjectField({
-                                                            field: createInput.field,
-                                                            value: copiedFiles.files,
-                                                         }));
-
-
-                                                         tryFieldValidate(createInput.field, copiedFiles.copiedFiles)
-                                                         // if(!!createInput?.error) dispatch(clearErrorsOnField({
-                                                         //    field: createInput.field,
-                                                         // }))
-                                                      }}
-                                                      isError={!!errorsFieldsBeforeValidate[createInput.field]}
-                                                      
-                                                      error={!!errorsFieldsBeforeValidate[createInput.field]}
-                                                      helperText={
-                                                         !!errorsFieldsBeforeValidate[createInput.field] ? 
-                                                         errorsFieldsBeforeValidate[createInput.field]: false
-                                                      }
-                                                      label={createInput.name}
-                                                   />
-                                                   
-                                                   {
-                                                      !!createInput?.error &&
-                                                      <>
-                                                         <Typography
-                                                            color="error"
-                                                            variant="body"
-                                                         >
-                                                            {createInput.error}
-                                                         </Typography>
-                                                      </>
-                                                   }
-                                                </div>
-                                             );
-                                             case "file":
-                                             return (
-                                                <>
-                                                   <InputFile
-                                                      type="file"
-                                                      textUploaded={!!createInputValue?.name ? createInputValue.name.split(".")[0]: ''}
-                                                      onUpload={file => {
-                                                         dispatch(changeObjectField({
-                                                            field: createInput.field,
-                                                            value: file,
-                                                         }));
-                                                      }}
-                                                      label={createInput.name}
-                                                   />
-                                                </>
-                                             )
-                                             case "textarea":
-                                             return (
-                                                <div className="w-full flex">
-                                                   <Textarea
-                                                      placeholder={createInput.name}
-                                                      defaultValue={createInputValue}
-                                                      onBlur={e => {
-                                                         dispatch(changeObjectField({
-                                                            field: createInput.field,
-                                                            value: e.target.value,
-                                                         }))
-                                                      }}
-                                                      
-                                                      type="textarea"
-                                                      variant="outlined"
-                                                   />
-                                                </div>
-                                             )
-                                             case "checkbox": 
-                                             return (
-                                                <>
-                                                   <FormControlLabel
-                                                      control={
-                                                         <Checkbox
-                                                            checked={checkboxes[createInput.field]}
-                                                            onClick={e => {
-                                                               setCheckboxes(beforeCheck => {
-                                                                  return {
-                                                                     ...beforeCheck,
-                                                                     [createInput.field]: e.target.checked,
-                                                                  };
-                                                               })
-                                                               dispatch(changeObjectField({
-                                                                  field: createInput.field,
-                                                                  value: e.target.checked,
-                                                               }))
-                                                            }}
-                                                         />
-                                                      }
-                                                      label={createInput.name}
-                                                   />
-                                                   
-                                                </>
-                                             )
-                                             default:
-                                             return (
-                                                <>
-                                                   Нет такого типа { createInput.input }
-                                                </>
-                                             );
-                                          };
-                                       };
 
                                        return (
                                           <>
@@ -768,8 +597,9 @@ export default function ModalCreateObject({
                            <Card>
                               <CardContent>
                                  {/* <Tentants /> */}
+                                 <button onClick={() => setTest(t => !t)}>test</button>
                                  <ObjectTentant
-                                    
+                                    open={test}
                                  />
                               </CardContent>
                            </Card>
