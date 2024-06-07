@@ -287,10 +287,10 @@ export default function ModalWindow({isCreate}) {
                             variant="outlined"
                         />
                         <div className={'flex gap-2.5'}>
-                            <Tag title={`${object.type === 'rent' ? 'Арендная ставка' : 'Цена:'}`} subName={'global'}
+                            <Tag title={`${object.type === 'rent' ? 'Аренда/мес' : 'Цена:'}`} subName={'global'}
                                  name={'price'}/>
                             <Tag subName={'square'}
-                                 title={`${object.type === 'rent' ? 'Арендная ставка в месяц' : 'Цена за м²:'}`}
+                                 title={`${object.type === 'rent' ? 'Арендная ставка м2/мес' : 'Цена за м²:'}`}
                                  name={'price'}/>
                         </div>
                         <div className={'flex gap-2.5'}>
