@@ -8,7 +8,7 @@ import useCopyFile from "../../helpers/useCopyFile";
 export default function InputFile({
    type='file',
    label,
-    accept="*",
+   accept="*",
    isError=false,
    textUploaded = '',
    onUpload = files => {},

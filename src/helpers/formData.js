@@ -22,6 +22,11 @@ export const objectToFormData = (object, formName) => {
       })
     }
 
+    console.log({
+      prop,
+      currentData,
+    });
+
     if(!Array.isArray(currentData) && !(currentData instanceof FileList)) formData.set(prop, currentData);
   }
 

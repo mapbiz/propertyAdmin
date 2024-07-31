@@ -52,6 +52,7 @@ const initialState = {
       priceGlobal: '',
       priceRentYear: '',
       priceRentMouth: '',
+      priceSale: '',
 
       // panorama
       panorama: '',
@@ -59,6 +60,7 @@ const initialState = {
       // images
       photos: [],
       photosLayout: [],
+      tentantLogo: '',
       // photoMap: '',
 
       // coordinates
@@ -168,6 +170,10 @@ const initialState = {
         name: 'Арендная ставка в год',
         required: true,
       },
+      priceSale: {
+         input: 'number',
+         name: 'Сниженная цена'
+      },
       // priceRentMouth: {
       //    input: 'number',
       //    name: 'Арендная ставка в мес',
@@ -190,6 +196,10 @@ const initialState = {
          input: 'files',
          name: 'Фотографии планировки',
          required: true,
+      },
+      tentantLogo: {
+         input: 'file',
+         name: 'Логотип арендодатора'
       },
 
       // coordinates
@@ -228,9 +238,14 @@ export const createObject = createAsyncThunk(
       const copyPhotos = useCopyFile({ files: objectData.photos }),
       copyPhotosLayout = useCopyFile({ files: objectData.photosLayout });
 
-
       const readyObjectData = objectToFormData(objectFilterEmpty(objectData));
 
+      let copyTentantLogo;
+
+      if(!!objectData.tentantLogo) {
+         copyTentantLogo = useCopyFile({ files: [objectData.tentantLogo] }).copiedFiles[0];
+         readyObjectData.set('tentantLogo', copyTentantLogo);
+      }
 
       readyObjectData.delete('photos');
       objectData.type === 'rent' ? readyObjectData.set('priceRentMouth', objectData.priceSquare): null;
