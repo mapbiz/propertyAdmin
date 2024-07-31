@@ -140,6 +140,7 @@ export const updateCard = async (id, data) => {
         priceSquare: data.price.square,
         priceProfitability: data.price.profitability,
         priceGlobal: data.price.global,
+        priceSale: data.price.sale,
         priceRentYear: data.price.rent.year,
         priceRentMouth: data.price.rent.mouth,
         lat: data.coordinates.lat,

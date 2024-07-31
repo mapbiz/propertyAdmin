@@ -2,12 +2,14 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { IconButton } from '@mui/material';
+import { colors } from '@mui/material';
 
 import { swapElements } from '../../helpers/array';
 
 export default function ImageSwitcher({ 
     imgs = [],
     setImgs = newImgs => {},
+    onDelete = () => {},
     onNext = () => {},
     onPrevious = () => {}, 
 }) {
@@ -38,14 +40,14 @@ export default function ImageSwitcher({
 
         setImgs(clonedImages);
 
-        return;
+        return onDelete();
     };
 
     return (
         <>
             {
                 imgs.length > 0 &&
-                <div className='flex gap-2'>
+                <div className='flex gap-2 overflow-auto'>
                     {
                         imgs.map((img, i) => {
                             return (
@@ -53,15 +55,24 @@ export default function ImageSwitcher({
                                     key={i}
                                     className="relative group"
                                 >
-                                    <div className="absolute top-[50%] translate-y-[-50%] w-full flex justify-between">
+                                    <div className="absolute top-[50%] translate-y-[-50%] w-full flex justify-between ">
                                         <IconButton
-                                            color="success"  
+                                            color="dark" 
+                                            size="medium"
+                                            sx={{
+                                                opacity: ".9",
+                                                backgroundColor: colors.grey.A100,
+                                            }}
                                             onClick={() => handlePrevious(i)}
                                         >
                                             <KeyboardArrowLeftIcon />
                                         </IconButton>
                                         <IconButton
-                                            color="success" 
+                                            color="dark" 
+                                            sx={{
+                                                opacity: ".9",
+                                                backgroundColor: colors.grey.A100,
+                                            }}
                                             onClick={() => handleNext(i)}
                                         >
                                             <KeyboardArrowRightIcon />
@@ -69,7 +80,7 @@ export default function ImageSwitcher({
                                     </div>
 
                                     <img
-                                        className={'max-h-[150px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
+                                        className={'max-h-[300px] h-full w-full object-center object-cover'}
                                         src={img}
                                     />
 
@@ -77,6 +88,10 @@ export default function ImageSwitcher({
                                         <IconButton
                                             color="error"
                                             onClick={() => handleDelete(i)}
+                                            sx={{
+                                                opacity: ".9",
+                                                backgroundColor: colors.grey.A100,
+                                            }}
                                         >
                                             <DeleteIcon />
                                         </IconButton>

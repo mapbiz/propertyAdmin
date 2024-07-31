@@ -8,7 +8,7 @@ import {
     resetObject,
     setObject, updateCheckBox, updateRent
 } from "../slices/tagSlice.jsx";
-import {createCard, getCards, getCurrentCard, updateCard} from "../api/api.js";
+import {createCard, getCards, getCurrentCard, reverseImageGet, updateCard} from "../api/api.js";
 import {objectToFormData} from "../helpers/formData.js";
 import {useNavigate} from "react-router-dom";
 import {useState, useEffect} from "react";
@@ -40,7 +40,7 @@ export default function ModalWindow({isCreate}) {
             url: "https://loremflickr.com/640/480/cats"
         }
     ])
-    
+
     const tentants = useSelector(state => state.tentants.value);
 
     const object = useSelector((state) => state.tagMore.value)
@@ -49,6 +49,14 @@ export default function ModalWindow({isCreate}) {
     const isOpen = modalWindow.modalWindow
     const stateWindow = object.type
     const dispatch = useDispatch()
+
+    const [layoutImages, setLayoutImages] = useState([]);
+
+    useEffect(() => {
+        if(object.layoutImages.length === 0) return;
+
+        setLayoutImages(object.layoutImages);
+    }, [object]);
 
     const imgToBlob = () => {
         const files = images.filter((el) => el.file.value)
@@ -66,20 +74,43 @@ export default function ModalWindow({isCreate}) {
 
     const update = async (id) => {
         const getCurrentTitle = await getCurrentCard(object.slug).then(r => r.data.title)
-        console.log({getCurrentTitle: getCurrentTitle})
+
+        const copyObject = {
+            ...object, 
+            images: await Promise.all(object.images.map(async image => {
+                return {
+                    ...image,
+                    file: (await axios.get(image.url, {
+                        responseType: 'blob',
+                    })).data    
+                }
+            })),
+            layoutImages: await Promise.all(object.layoutImages.map(async layoutImage => {
+                return {
+                    ...layoutImage,
+                    file: (await axios.get(layoutImage.url, {
+                        responseType: 'blob',
+                    })).data    
+                }
+            })),
+        };
+
         if (getCurrentTitle === object.title) {
-            const {title, ...rest} = object
-            const res = await updateCard(id, rest).catch(err => {
+            const {title, ...rest} = copyObject
+            const res = await updateCard(id, rest)
+            .catch(err => {
                 alert(err.response.data.error.message)
             })
 
-            if (res.data.ok) dispatch(setModalWindow({modalWindow: false}))
+            console.log(res);
+
+            if (res.status === 200) dispatch(setModalWindow({modalWindow: false}))
         } else {
-            const res = await updateCard(id, object).catch(err => {
+            const res = await updateCard(id, copyObject).catch(err => {
                 alert(err.response.data.error.message)
             })
 
-            if (res.data.ok) dispatch(setModalWindow({modalWindow: false}))
+            if (res.status === 200) dispatch(setModalWindow({modalWindow: false}))
         }
     }
     const copyObject = async (id) => {
@@ -154,9 +185,10 @@ export default function ModalWindow({isCreate}) {
 
 
     const handleFileChange = (event) => {
+        /** @type { FileList } */
         const files = event.target.files;
         // Предполагаем, что вы загружаете и обрабатываете один файл за раз
-        if (files.length > 0) {
+        if (files.length === 1) {
             const file = files[0];
 
             // Здесь должна быть логика для отправки файла на сервер и получения URL
@@ -169,11 +201,21 @@ export default function ModalWindow({isCreate}) {
                 file
             }));
         }
+        else {
+            Array.from(files).forEach(file => {
+                const url = URL.createObjectURL(file);
+
+                dispatch(addLayoutImage({
+                    url,
+                    file,
+                }));
+            });
+        };
     }
     const handleImagesChange = (event) => {
         const files = event.target.files;
         // Предполагаем, что вы загружаете и обрабатываете один файл за раз
-        if (files.length > 0) {
+        if (files.length === 1) {
             const file = files[0];
 
             // Здесь должна быть логика для отправки файла на сервер и получения URL
@@ -186,6 +228,16 @@ export default function ModalWindow({isCreate}) {
                 file
             }));
         }
+        else {
+            Array.from(files).forEach(file => {
+                const url = URL.createObjectURL(file); 
+
+                dispatch(addCardImage({
+                    url,
+                    file,
+                }));
+            });
+        };
     }
 
 
@@ -292,6 +344,12 @@ export default function ModalWindow({isCreate}) {
                             <Tag subName={'square'}
                                  title={`${object.type === 'rent' ? 'Арендная ставка м2/мес' : 'Цена за м²:'}`}
                                  name={'price'}/>
+
+                            <Tag 
+                                name="price"
+                                subName="sale"
+                                title="Сниженная цена"
+                            />
                         </div>
                         <div className={'flex gap-2.5'}>
                             <Tag
@@ -471,7 +529,19 @@ export default function ModalWindow({isCreate}) {
                         </Button>
 
                         <div className="flex flex-wrap gap-2 pt-4 ">
-                            <div
+                            <ImageSwitcher
+                                imgs={object.images.map(image => image.url)}
+                                setImgs={newImgs => { 
+                                    dispatch(setObject({
+                                        images: newImgs.map(img => {
+                                            return {
+                                                url: img,
+                                            };
+                                        }),
+                                    })); 
+                                }}
+                            />
+                            {/* <div
                                 className={'flex flex-col relative '}
                             >
                                 <div className={'flex gap-2.5'}>
@@ -493,7 +563,7 @@ export default function ModalWindow({isCreate}) {
                                         )
                                     })}
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
 
@@ -513,7 +583,7 @@ export default function ModalWindow({isCreate}) {
                         </Button>
 
                         <div className="flex flex-wrap gap-2 pt-4 ">
-                            {object.layoutImages && object.layoutImages.map((item, index) => {
+                            {/* {object.layoutImages && object.layoutImages.map((item, index) => {
                                 return (
                                     <div className={'flex flex-col'}>
                                         <img
@@ -531,7 +601,19 @@ export default function ModalWindow({isCreate}) {
 
 
                                 )
-                            })}
+                            })} */}
+                            <ImageSwitcher
+                                imgs={layoutImages.map(layoutImage => layoutImage.url)}
+                                setImgs={newImgs => { 
+                                    dispatch(setObject({
+                                        layoutImages: newImgs.map(img => {
+                                            return {
+                                                url: img,
+                                            };
+                                        }),
+                                    })); 
+                                }}
+                            />
                         </div>
                     </div>
                     <div className={'flex gap-2'}>
