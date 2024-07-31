@@ -20,6 +20,7 @@ const initialState = {
                 mouth: null
             }
         },
+        tentantLogo: "",
         square: '',
         windowType: '',
         cellingHeight: '',
@@ -162,6 +163,9 @@ export const tagSlice = createSlice({
         addCardImage: (state, action) => {
             state.value.images.push(action.payload);
         },
+        addTentantLogo: (state, action) => {
+            state.value.tentantLogo = action.payload;
+        },
         removeLayoutImage: (state, action) => {
             state.value.layoutImages.splice(action.payload, 1);
         },
@@ -268,6 +272,7 @@ export const {
     deleteTenant,
     setTentantData,
     setObjectField,
+    addTentantLogo,
 } = tagSlice.actions
 
 export default tagSlice.reducer

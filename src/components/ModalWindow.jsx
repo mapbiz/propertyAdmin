@@ -3,6 +3,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {
     addCardImage,
     addLayoutImage,
+    addTentantLogo,
     removeCardImage,
     removeLayoutImage,
     resetObject,
@@ -528,6 +529,8 @@ export default function ModalWindow({isCreate}) {
                                                  type="file"/>
                         </Button>
 
+                        
+
                         <div className="flex flex-wrap gap-2 pt-4 ">
                             <ImageSwitcher
                                 imgs={object.images.map(image => image.url)}
@@ -566,7 +569,47 @@ export default function ModalWindow({isCreate}) {
                             </div> */}
                         </div>
                     </div>
+                    <div className="pt-[20px]">
+                        <Button
+                            component="label"
+                            role={undefined}
+                            variant="contained"
+                            tabIndex={-1}
+                            startIcon={<CloudUploadIcon/>}
+                        >
+                            Загрузить логотип арендатора
+                            <VisuallyHiddenInput multiple
+                                                 onChange={async e => {
+                                                    console.log(e);
+                                                    const file = e.target.files[0];
+                                                    
+                                                    const url = URL.createObjectURL(file);
 
+                                                    dispatch(addTentantLogo({
+                                                        url,
+                                                        file,
+                                                    }));
+                                                    // // Здесь должна быть логика для отправки файла на сервер и получения URL
+                                                    // // Для примера предположим, что вы получили URL как 'urlToUploadedFile'
+                                                    // const urlToUploadedFile = URL.createObjectURL(file);
+                                        
+                                                    // // Добавляем URL в redux
+                                                    // dispatch(addCardImage({
+                                                    //     url: urlToUploadedFile,
+                                                    //     file
+                                                    // }));
+                                                 }}
+                                                 type="file"/>
+                        </Button>
+                    </div>       
+                    <div className="flex gap-2">
+
+                        <img 
+                            className="max-h-[300px] h-full w-full object-center object-cover"
+                            src={!!object.tentantLogo?.url ? object.tentantLogo.url: !!object.tentantLogo.match('http|https|blob') ? object.tentantLogo: location.origin + "/public/" + object.tentantLogo }
+                        />
+                    
+                    </div> 
                     <div className={'pt-[20px]'}>
 
                         <Button
@@ -634,8 +677,7 @@ export default function ModalWindow({isCreate}) {
                         </button>
 
 
-                    </div>
-
+                    </div>                    
                 </div>
             </div>
         </>
