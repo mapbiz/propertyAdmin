@@ -20,6 +20,8 @@
 # helpers
 #### Содержание раздела
 - [Содержание](#содержание)
+- [Компоненты](#компоненты)
+ - [ImageSwitcher](#imageswitcher)
 - [helpers](#helpers)
    - [Маленькие функции](#маленькие-функции)
       - [array](#array)
@@ -27,6 +29,31 @@
       - [object](#object)
    - [Кастомные хуки](#кастомные-хуки)
       - [useCopyFile](#usecopyfile)
+
+## Компоненты
+### ImageSwitcher
+   ```jsx
+         // Тестовый массив изображений
+         const [imgs, setImgs] = useState([
+            "https://t0.gstatic.com/licensed-image?q=tbn:ANd9GcTZCSmCzmIPm0up8wmW566cK5w3sSTUChT5UnaU3VnFxrHwoRNSnks0xUBmj2r2oeJk",
+
+            "https://loremflickr.com/640/480/cats"
+         ]);
+
+         return (
+            // Базовый пример
+            <ImageSwitcher
+               imgs={imgs}
+               setImgs={newImgs => {
+                  setImgs(prevImgs => {
+                     return [
+                     ...newImgs, 
+                     ]
+                  })
+               }}
+            />
+         );
+   ```
 
 ## Маленькие функции 
 Небольшие функции которые облегчают стандатрные действия/шорткоды

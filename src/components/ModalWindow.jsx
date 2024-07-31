@@ -24,6 +24,7 @@ import axios from "axios";
 import Checkbox from "@mui/material/Checkbox";
 import Input from "./Input.jsx";
 import Tentants from "./Tentants.jsx";
+import ImageSwitcher from "./ImageSwitcher/ImageSwitcher.jsx";
 
 
 export default function ModalWindow({isCreate}) {
@@ -39,7 +40,7 @@ export default function ModalWindow({isCreate}) {
             url: "https://loremflickr.com/640/480/cats"
         }
     ])
-
+    
     const tentants = useSelector(state => state.tentants.value);
 
     const object = useSelector((state) => state.tagMore.value)
@@ -81,7 +82,6 @@ export default function ModalWindow({isCreate}) {
             if (res.data.ok) dispatch(setModalWindow({modalWindow: false}))
         }
     }
-    console.log(object)
     const copyObject = async (id) => {
         try {
             const getCurrentObject = await getCurrentCard(object.slug).then(r => r.data)

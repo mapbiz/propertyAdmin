@@ -1,6 +1,22 @@
 
+/**
+ * @param {Array<unknown>} array 
+ * @param {number} index1 
+ * @param {number} index2 
+ */
 export const swapElements = (array, index1, index2) => {
-  array[index1] = array.splice(index2, 1, array[index1])[0];
+  // array[index1] = array.splice(index2, 1, array[index1])[0];
+
+  // return array;
+  // return array.with(index1, array[index2]).with(index2, array[index1]);
+  const itemIndexFirst = array[index1];
+
+  const clonedArray = [...array];
+
+  clonedArray[index1] = clonedArray[index2];
+  clonedArray[index2] = itemIndexFirst;
+
+  return clonedArray;
 };
 
 export const countDuplicates = arrayWithDuplicates => {

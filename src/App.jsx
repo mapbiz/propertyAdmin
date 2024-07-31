@@ -10,6 +10,7 @@ import Popup from "./components/Popup.jsx";
 import {setStateWindow} from "./slices/modalSlice.jsx";
 import tentants, { getTentants } from "./slices/tentants.jsx";
 import NotificationCreateObject from "./components/Notification/NotificationCreateObject.jsx";
+import ImageSwitcher from './components/ImageSwitcher/ImageSwitcher.jsx';
 
 export default function App() {
   const tab = useSelector((state) => state.tabMore.value.activeTab),
@@ -20,6 +21,7 @@ export default function App() {
   const [isCreateWindow, setCreateWindow] = useState(false),
   [openCreateObjectModal, setOpenCreateObjectModal] = useState(false);
   // const [cards, setCards] = useState([])
+
 
     const [isLoading, setIsLoading] = useState(true)
     const activeTab = useSelector(state => state.tabMore.value.activeTab)
