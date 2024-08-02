@@ -18,7 +18,11 @@ const initialState = {
             rent: {
                 year: null,
                 mouth: null
-            }
+            },
+            sale: {
+                global: null, 
+                square: null,
+            },
         },
         tentantLogo: "",
         square: '',

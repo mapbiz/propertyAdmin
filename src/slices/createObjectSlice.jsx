@@ -52,7 +52,8 @@ const initialState = {
       priceGlobal: '',
       priceRentYear: '',
       priceRentMouth: '',
-      priceSale: '',
+      priceSaleGlobal: '',
+      priceSaleSquare: '',
 
       // panorama
       panorama: '',
@@ -170,10 +171,18 @@ const initialState = {
         name: 'Арендная ставка в год',
         required: true,
       },
-      priceSale: {
+      priceSaleGlobal: {
          input: 'number',
-         name: 'Сниженная цена'
+         name: 'Сниженная цена',
       },
+      priceSaleSquare: {
+         input: 'number',
+         name: 'Сниженная цена м2',
+      },
+      // priceSale: {
+      //    input: 'number',
+      //    name: 'Сниженная цена'
+      // },
       // priceRentMouth: {
       //    input: 'number',
       //    name: 'Арендная ставка в мес',

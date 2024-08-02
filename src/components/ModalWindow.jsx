@@ -100,7 +100,9 @@ export default function ModalWindow({isCreate}) {
             const {title, ...rest} = copyObject
             const res = await updateCard(id, rest)
             .catch(err => {
-                alert(err.response.data.error.message)
+                console.log(err);
+                if(!!err.response?.data?.error?.message) alert(err.response?.data?.error?.message);
+                else alert('Неизвестная ошибка!')
             })
 
             console.log(res);
@@ -349,7 +351,14 @@ export default function ModalWindow({isCreate}) {
                             <Tag 
                                 name="price"
                                 subName="sale"
+                                sub3Name="global"
                                 title="Сниженная цена"
+                            />
+                            <Tag
+                                name="price"
+                                subName="sale"
+                                sub3Name="square"
+                                title="Сниженная цена м2"
                             />
                         </div>
                         <div className={'flex gap-2.5'}>
@@ -665,7 +674,8 @@ export default function ModalWindow({isCreate}) {
                                 if (isCreate) {
                                     create()
                                 } else {
-                                    await update(object.id).finally(async () => {
+                                    await update(object.id)
+                                    .finally(async () => {
                                         const res = await getCards()
                                         dispatch(setStateWindow(res.data))
                                     })
