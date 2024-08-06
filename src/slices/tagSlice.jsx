@@ -170,6 +170,9 @@ export const tagSlice = createSlice({
         addTentantLogo: (state, action) => {
             state.value.tentantLogo = action.payload;
         },
+        removeTentantLogo: state => {
+            state.value.tentantLogo = 'delete';
+        },
         removeLayoutImage: (state, action) => {
             state.value.layoutImages.splice(action.payload, 1);
         },
@@ -277,6 +280,7 @@ export const {
     setTentantData,
     setObjectField,
     addTentantLogo,
+    removeTentantLogo
 } = tagSlice.actions
 
 export default tagSlice.reducer

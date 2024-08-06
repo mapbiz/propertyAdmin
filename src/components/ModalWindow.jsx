@@ -6,6 +6,7 @@ import {
     addTentantLogo,
     removeCardImage,
     removeLayoutImage,
+    removeTentantLogo,
     resetObject,
     setObject, updateCheckBox, updateRent
 } from "../slices/tagSlice.jsx";
@@ -18,7 +19,7 @@ import {setModalWindow, setStateWindow} from "../slices/modalSlice.jsx";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload.js";
 import Button from "@mui/material/Button";
 import {styled} from "@mui/material/styles";
-import {TextareaAutosize, TextField} from "@mui/material";
+import {CircularProgress, TextareaAutosize, TextField} from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import MultipleSelectCheckmarks from "./MultipleSelectCheckmarks.jsx";
 import axios from "axios";
@@ -27,6 +28,7 @@ import Input from "./Input.jsx";
 import Tentants from "./Tentants.jsx";
 import ImageSwitcher from "./ImageSwitcher/ImageSwitcher.jsx";
 
+import { IconButton } from '@mui/material';
 
 export default function ModalWindow({isCreate}) {
     const [isUpload, setUpload] = useState(false)
@@ -41,6 +43,8 @@ export default function ModalWindow({isCreate}) {
             url: "https://loremflickr.com/640/480/cats"
         }
     ])
+
+    const [changeIsLoading, setChangeIsLoading] = useState(false); 
 
     const tentants = useSelector(state => state.tentants.value);
 
@@ -57,6 +61,9 @@ export default function ModalWindow({isCreate}) {
         if(object.layoutImages.length === 0) return;
 
         setLayoutImages(object.layoutImages);
+
+        console.log(object.tentantLogo.length);
+        
     }, [object]);
 
     const imgToBlob = () => {
@@ -95,25 +102,29 @@ export default function ModalWindow({isCreate}) {
                 }
             })),
         };
+        
 
+
+        setChangeIsLoading(true);
         if (getCurrentTitle === object.title) {
             const {title, ...rest} = copyObject
             const res = await updateCard(id, rest)
             .catch(err => {
-                console.log(err);
                 if(!!err.response?.data?.error?.message) alert(err.response?.data?.error?.message);
                 else alert('Неизвестная ошибка!')
             })
 
-            console.log(res);
-
             if (res.status === 200) dispatch(setModalWindow({modalWindow: false}))
+
+            setChangeIsLoading(false);
         } else {
             const res = await updateCard(id, copyObject).catch(err => {
                 alert(err.response.data.error.message)
             })
 
             if (res.status === 200) dispatch(setModalWindow({modalWindow: false}))
+
+            setChangeIsLoading(false);
         }
     }
     const copyObject = async (id) => {
@@ -587,38 +598,46 @@ export default function ModalWindow({isCreate}) {
                             startIcon={<CloudUploadIcon/>}
                         >
                             Загрузить логотип арендатора
-                            <VisuallyHiddenInput multiple
-                                                 onChange={async e => {
-                                                    console.log(e);
-                                                    const file = e.target.files[0];
-                                                    
-                                                    const url = URL.createObjectURL(file);
+                            <VisuallyHiddenInput         
+                                onChange={async e => {
+                                    const file = e.target.files[0];
+                                    
+                                    const url = URL.createObjectURL(file);
 
-                                                    dispatch(addTentantLogo({
-                                                        url,
-                                                        file,
-                                                    }));
-                                                    // // Здесь должна быть логика для отправки файла на сервер и получения URL
-                                                    // // Для примера предположим, что вы получили URL как 'urlToUploadedFile'
-                                                    // const urlToUploadedFile = URL.createObjectURL(file);
-                                        
-                                                    // // Добавляем URL в redux
-                                                    // dispatch(addCardImage({
-                                                    //     url: urlToUploadedFile,
-                                                    //     file
-                                                    // }));
-                                                 }}
-                                                 type="file"/>
+                                    dispatch(addTentantLogo({
+                                        url,
+                                        file,
+                                    }));
+                                }}
+                                type="file"
+                            />
                         </Button>
                     </div>       
-                    <div className="flex gap-2">
+                    {
+                        (object.tentantLogo !== 'delete' && object.tentantLogo.length !== 0) &&
+                        <div className="relative flex gap-2 group">   
+                            <img 
+                                className="max-h-[300px] h-full w-full object-center object-cover"
+                                src={!!object.tentantLogo?.url ? object.tentantLogo.url: !!object.tentantLogo.match('http|https|blob') ? object.tentantLogo: location.origin + "/public/" + object.tentantLogo }
+                            />
 
-                        <img 
-                            className="max-h-[300px] h-full w-full object-center object-cover"
-                            src={!!object.tentantLogo?.url ? object.tentantLogo.url: !!object.tentantLogo.match('http|https|blob') ? object.tentantLogo: location.origin + "/public/" + object.tentantLogo }
-                        />
-                    
-                    </div> 
+                            <div className="transition-opacity duration-300 group-hover:opacity-100 opacity-0 absolute bottom-0 left-[50%]">
+                                <IconButton
+                                    onClick={() => {
+                                        dispatch(removeTentantLogo())
+                                    }} 
+                                    color="error"
+                                    sx={{
+                                        opacity: ".9",
+                                        backgroundColor: "#f5f5f5",
+                                    }}
+                                >
+                                    <DeleteIcon />
+                                </IconButton>
+                            </div>
+                        </div> 
+                    }
+
                     <div className={'pt-[20px]'}>
 
                         <Button
@@ -683,10 +702,21 @@ export default function ModalWindow({isCreate}) {
 
                                 }
                             }}
-                            className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}>{isCreate ? 'Создать' : 'Сохранить изменения'}
+                            className={'text-[20px] my-[24px] leading-[28px] bg-[#144728] px-[40px] py-[14px] text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'}
+                        >
+                            {
+                                changeIsLoading ?
+                                <span className="flex items-center gap-2">
+                                    Подождите немного...
+                                    <CircularProgress 
+                                        size={25}
+                                        color="success"
+                                    />
+                                </span>
+                                :
+                                <span>{isCreate ? 'Создать' : 'Сохранить изменения'} </span>
+                            }
                         </button>
-
-
                     </div>                    
                 </div>
             </div>

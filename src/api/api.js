@@ -152,7 +152,7 @@ export const updateCard = async (id, data) => {
         photosLayout: data.layoutImages.map(img => {
             return img.file
         }),
-        tentantLogo: data.tentantLogo.file,
+        tentantLogo: typeof data.tentantLogo === 'string' ? data.tentantLogo.length > 0 ? data.tenstantsInfo: undefined: data.tentantLogo.file,
         globalRentFlowYear: data.globalRentFlow.year,
         globalRentFlowMouth: data.globalRentFlow.mouth,
     })
