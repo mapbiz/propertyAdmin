@@ -1,564 +1,579 @@
-import deepObject from "object-path";
+import deepObject from "object-path"
 
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
-import { createCard, deleteCard } from "../api/api";
-import { objectToFormData } from "../helpers/formData";
+import { createCard, deleteCard } from "../api/api"
+import { objectToFormData } from "../helpers/formData"
 
-import {objectFilterEmpty} from "../helpers/object.js";
-import useCopyFile from "../helpers/useCopyFile.js";
+import { objectFilterEmpty } from "../helpers/object.js"
+import useCopyFile from "../helpers/useCopyFile.js"
 
 export const typesObject = {
-   rent: "Аренда",
-   sale: "Продажа",
-   'sale-business': "ГАБ",
-};
+  rent: "Аренда",
+  sale: "Продажа",
+  "sale-business": "ГАБ",
+}
 export const stagesObject = {
-   beforeInput: 'beforeInput',
-   pickedType: 'pickedType',
-   input: 'input',
-   beforeValidate: 'beforeValidate',
-   validate: 'validate',
-   error: 'error',
-   beforeCreate: 'beforeCreate',
-   created: 'created',
-   createdSaleBusiness: 'createdSaleBusiness',
-};
+  beforeInput: "beforeInput",
+  pickedType: "pickedType",
+  input: "input",
+  beforeValidate: "beforeValidate",
+  validate: "validate",
+  error: "error",
+  beforeCreate: "beforeCreate",
+  created: "created",
+  createdSaleBusiness: "createdSaleBusiness",
+}
 
 const initialState = {
-   value: {
-      title: '',
-      description: '',
-      agentRemuneration: '',
-      zone: false,
-      address: '',
-      metro: '',
-      payback: '',
+  value: {
+    title: "",
+    description: "",
+    agentRemuneration: "",
+    zone: false,
+    address: "",
+    metro: "",
+    payback: "",
 
-      // info
-      infoSquare: '',
-      infoTypeWindow: '',
-      infoLayout: '',
-      infoCeilingHeight: '',
-      infoEnter: '',
-      infoFloor: '',
-      infoForce: '',
-      infoFinishing: '',
-      infoHood: false,
+    // info
+    infoSquare: "",
+    infoTypeWindow: "",
+    infoLayout: "",
+    infoCeilingHeight: "",
+    infoEnter: "",
+    infoFloor: "",
+    infoForce: "",
+    infoFinishing: "",
+    infoHood: false,
 
-      // price
-      priceSquare: '',
-      priceProfitability: '',
-      priceGlobal: '',
-      priceRentYear: '',
-      priceRentMouth: '',
-      priceSaleGlobal: '',
-      priceSaleSquare: '',
+    // price
+    priceSquare: "",
+    priceProfitability: "",
+    priceGlobal: "",
+    priceRentYear: "",
+    priceRentMouth: "",
+    priceSaleGlobal: "",
+    priceSaleSquare: "",
 
-      // panorama
-      panorama: '',
+    // panorama
+    panorama: "",
 
-      // images
-      photos: [],
-      photosLayout: [],
-      tentantLogo: '',
-      // photoMap: '',
+    // images
+    photos: [],
+    photosLayout: [],
+    tentantLogo: "",
+    // photoMap: '',
 
-      // coordinates
-      lat: '',
-      lon: '',
+    // coordinates
+    lat: "",
+    lon: "",
 
-      // global rent flow
-      globalRentFlowYear: '',
-      globalRentFlowMouth: '',
+    // global rent flow
+    globalRentFlowYear: "",
+    globalRentFlowMouth: "",
 
-      isNew: false,
-   },
-   fields: {
-      title: {
-         input: "text",
-         name: "Заголовок",
-         required: true,
-      },
-      description: {
-         input: 'textarea',
-         name: 'Описание',
-      },
-      agentRemuneration: {
-         input: 'number',
-         name: 'Вознаграждение агента',
-      },
-      zone: {
-         input: 'checkbox',
-         name: 'Зона погрузки/разгрузки'
-      },
-      address: {
-         input: 'text',
-         name: 'Адрес',
-         required: true,
-      },
-      metro: {
-         input: 'text',
-         name: 'Метро'
-      }, 
-      payback: {
-         input: 'number',
-         name: 'Окупаемость в годах',
-         required: true,
-      },
+    isNew: false,
+    isNewPrice: false,
+  },
+  fields: {
+    title: {
+      input: "text",
+      name: "Заголовок",
+      required: true,
+    },
+    description: {
+      input: "textarea",
+      name: "Описание",
+    },
+    agentRemuneration: {
+      input: "number",
+      name: "Вознаграждение агента",
+    },
+    zone: {
+      input: "checkbox",
+      name: "Зона погрузки/разгрузки",
+    },
+    address: {
+      input: "text",
+      name: "Адрес",
+      required: true,
+    },
+    metro: {
+      input: "text",
+      name: "Метро",
+    },
+    payback: {
+      input: "number",
+      name: "Окупаемость в годах",
+      required: true,
+    },
 
-      // info
-      infoSquare: {
-         input: 'number',
-         name: 'Площадь (информация об обьекте)',
-      },
-      infoTypeWindow: {
-         input: 'text',
-         name: 'Тип окон',
-      },
-      infoLayout: {
-         input: 'text',
-         name: 'Планировка',
-      },
-      infoCeilingHeight: {
-         input: 'text',
-         name: 'Высота потолков'
-      },
-      infoEnter: {
-         input: 'text',
-         name: 'Вход'
-      },
-      infoForce: {
-         input: 'number', 
-         name: 'Эл. мощность'
-      },
-      infoFinishing: {
-         input: 'text',
-         name: 'Отделка'
-      },
-      infoHood: {
-         input: 'checkbox',
-         name: 'Вытяжка'
-      },
-      infoFloor: {
-         input: 'number',
-         name: 'Этажи'
-      },
+    // info
+    infoSquare: {
+      input: "number",
+      name: "Площадь (информация об обьекте)",
+    },
+    infoTypeWindow: {
+      input: "text",
+      name: "Тип окон",
+    },
+    infoLayout: {
+      input: "text",
+      name: "Планировка",
+    },
+    infoCeilingHeight: {
+      input: "text",
+      name: "Высота потолков",
+    },
+    infoEnter: {
+      input: "text",
+      name: "Вход",
+    },
+    infoForce: {
+      input: "number",
+      name: "Эл. мощность",
+    },
+    infoFinishing: {
+      input: "text",
+      name: "Отделка",
+    },
+    infoHood: {
+      input: "checkbox",
+      name: "Вытяжка",
+    },
+    infoFloor: {
+      input: "number",
+      name: "Этажи",
+    },
 
-      isNew: {
-         input: 'checkbox',
-         name: 'Новый'
-      },
+    isNew: {
+      input: "checkbox",
+      name: "Новый обьект",
+    },
+    isNewPrice: {
+      input: "checkbox",
+      name: "Новая цена",
+    },
 
-      // price
-      priceSquare: {
-         input: 'number',
-         name: 'Цена/Арендная ставка за м2',
-         required: true,
-      },
-      priceProfitability: {
-         input: 'number',
-         name: 'Доходность в % годовых',
-         required: true,
-      },
-      priceGlobal: {
-         input: 'number',
-         name: 'Цена/Арендная плата',
-         required: true,
-      },
-      priceRentYear: {
-        input: 'number',
-        name: 'Арендная ставка в год',
-        required: true,
-      },
-      priceSaleGlobal: {
-         input: 'number',
-         name: 'Сниженная цена',
-      },
-      priceSaleSquare: {
-         input: 'number',
-         name: 'Сниженная цена м2',
-      },
-      // priceSale: {
-      //    input: 'number',
-      //    name: 'Сниженная цена'
-      // },
-      // priceRentMouth: {
-      //    input: 'number',
-      //    name: 'Арендная ставка в мес',
-      //    required: true,
-      // },
+    // price
+    priceSquare: {
+      input: "number",
+      name: "Цена/Арендная ставка за м2",
+      required: true,
+    },
+    priceProfitability: {
+      input: "number",
+      name: "Доходность в % годовых",
+      required: true,
+    },
+    priceGlobal: {
+      input: "number",
+      name: "Цена/Арендная плата",
+      required: true,
+    },
+    priceRentYear: {
+      input: "number",
+      name: "Арендная ставка в год",
+      required: true,
+    },
+    priceSaleGlobal: {
+      input: "number",
+      name: "Сниженная цена",
+    },
+    priceSaleSquare: {
+      input: "number",
+      name: "Сниженная цена м2",
+    },
+    // priceSale: {
+    //    input: 'number',
+    //    name: 'Сниженная цена'
+    // },
+    // priceRentMouth: {
+    //    input: 'number',
+    //    name: 'Арендная ставка в мес',
+    //    required: true,
+    // },
 
-      // panorama
-      panorama: {
-         input: 'text',
-         name: 'Ссылка на панораму',
-      },
+    // panorama
+    panorama: {
+      input: "text",
+      name: "Ссылка на панораму",
+    },
 
-      // images
-      photos: {
-         input: 'files',
-         name: 'Фотографии объекта',
-         required: true,
-      },
-      photosLayout: {
-         input: 'files',
-         name: 'Фотографии планировки',
-         required: true,
-      },
-      tentantLogo: {
-         input: 'file',
-         name: 'Логотип арендодатора'
-      },
+    // images
+    photos: {
+      input: "files",
+      name: "Фотографии объекта",
+      required: true,
+    },
+    photosLayout: {
+      input: "files",
+      name: "Фотографии планировки",
+      required: true,
+    },
+    tentantLogo: {
+      input: "file",
+      name: "Логотип арендодатора",
+    },
 
-      // coordinates
-      lat: {
-         input: 'number',
-         name: 'Широта',
-         required: true,
-      },
-      lon: {
-         input: 'number',
-         name: 'Долгота',
-         required: true,
-      },
+    // coordinates
+    lat: {
+      input: "number",
+      name: "Широта",
+      required: true,
+    },
+    lon: {
+      input: "number",
+      name: "Долгота",
+      required: true,
+    },
 
-      // global rent flow
-      globalRentFlowYear: {
-         input: 'number',
-         name: "Общий арендный поток в год",
-         required: true,
-      },
-      globalRentFlowMouth: {
-         input: 'number',
-         name: 'месячный арендный поток',
-         required: true,
-      },
-   },
-   createdObject: null,
-   type: null,
-   stage: 'beforeInput',
-   isLoading: null,
-}; 
+    // global rent flow
+    globalRentFlowYear: {
+      input: "number",
+      name: "Общий арендный поток в год",
+      required: true,
+    },
+    globalRentFlowMouth: {
+      input: "number",
+      name: "месячный арендный поток",
+      required: true,
+    },
+  },
+  createdObject: null,
+  type: null,
+  stage: "beforeInput",
+  isLoading: null,
+}
 
 export const createObject = createAsyncThunk(
-   'create/object',
-   async objectData => {
+  "create/object",
+  async (objectData, { rejectWithValue }) => {
+    try {
       const copyPhotos = useCopyFile({ files: objectData.photos }),
-      copyPhotosLayout = useCopyFile({ files: objectData.photosLayout });
+        copyPhotosLayout = useCopyFile({ files: objectData.photosLayout })
 
-      const readyObjectData = objectToFormData(objectFilterEmpty(objectData));
+      const readyObjectData = objectToFormData(objectFilterEmpty(objectData))
 
-      let copyTentantLogo;
+      let copyTentantLogo
 
-      if(!!objectData.tentantLogo) {
-         copyTentantLogo = useCopyFile({ files: [objectData.tentantLogo] }).copiedFiles[0];
-         readyObjectData.set('tentantLogo', copyTentantLogo);
+      if (!!objectData.tentantLogo) {
+        copyTentantLogo = useCopyFile({ files: [objectData.tentantLogo] })
+          .copiedFiles[0]
+        readyObjectData.set("tentantLogo", copyTentantLogo)
       }
 
-      readyObjectData.delete('photos');
-      objectData.type === 'rent' ? readyObjectData.set('priceRentMouth', objectData.priceSquare): null;
-      readyObjectData.delete('photosLayout');
+      readyObjectData.delete("photos")
+      objectData.type === "rent"
+        ? readyObjectData.set("priceRentMouth", objectData.priceSquare)
+        : null
+      readyObjectData.delete("photosLayout")
 
       Array.from(copyPhotos.files).forEach(photoFile => {
-         readyObjectData.append('photos', photoFile);
+        readyObjectData.append("photos", photoFile)
       })
       Array.from(copyPhotosLayout.files).forEach(photoLayoutFile => {
-         readyObjectData.append('photosLayout', photoLayoutFile);
+        readyObjectData.append("photosLayout", photoLayoutFile)
       })
 
+      const responceCreateObject = await createCard(readyObjectData)
 
+      if (responceCreateObject.status !== 201) return responceCreateObject
 
-      const responceCreateObject = await createCard(readyObjectData);
-
-      if(responceCreateObject.status > 300) return responceCreateObject;
-
-      return responceCreateObject.data;
-   },
+      return responceCreateObject.data
+    } catch (err) {
+      // console.log(err)
+      return rejectWithValue(err)
+    }
+  }
 )
 export const deleteCreatedObject = createAsyncThunk(
-   'delete/created/object',
-   async createdObjectId => {
-      const responceDelete = await deleteCard(createdObjectId);
-      
-      return;  
-   }
+  "delete/created/object",
+  async createdObjectId => {
+    const responceDelete = await deleteCard(createdObjectId)
+
+    return
+  }
 )
 
 export const createObjectSlice = createSlice({
-   name: 'createObject',
-   initialState,
-   reducers: {
-      resetCreateObject: state => {
-         state = initialState;
-      },
-      
-      /** 
-       * @param {{ payload: { stage: 'beforeInput' | 'error' | 'input' | 'validate' | 'pickedType' | 'beforeCreate' | 'created' | 'createdSaleBusiness' } }} action 
-      */
-      pickObjectStage: (state, action) => {
-         const {
-            stage
-         } = action.payload;
+  name: "createObject",
+  initialState,
+  reducers: {
+    resetCreateObject: state => {
+      state = initialState
+    },
 
-         const newObject = JSON.parse(JSON.stringify(state));
+    /**
+     * @param {{ payload: { stage: 'beforeInput' | 'error' | 'input' | 'validate' | 'pickedType' | 'beforeCreate' | 'created' | 'createdSaleBusiness' } }} action
+     */
+    pickObjectStage: (state, action) => {
+      const { stage } = action.payload
 
-         if(!stagesObject[stage]) console.error(`${stage} не существует такого этапа создания обьекта!`);
-         else newObject.stage = stage;
+      const newObject = JSON.parse(JSON.stringify(state))
 
-         state = newObject;
-      },
+      if (!stagesObject[stage])
+        console.error(`${stage} не существует такого этапа создания обьекта!`)
+      else newObject.stage = stage
 
-      /**
-       * 
-       * @param {{ payload: { type: 'rent' | 'sale' | 'sale-business' } }} action 
-       */
-      pickObjectType: (state, action) => {
-         const { type } = action.payload;
+      state = newObject
+    },
 
-         let newObject = JSON.parse(JSON.stringify(initialState));
+    /**
+     *
+     * @param {{ payload: { type: 'rent' | 'sale' | 'sale-business' } }} action
+     */
+    pickObjectType: (state, action) => {
+      const { type } = action.payload
 
-         switch(type) {
-            case "rent":
-               newObject.fields.priceGlobal.name = "Арендная плата";
-               newObject.fields.priceSquare.name = "Арендная плата за м2";
+      let newObject = JSON.parse(JSON.stringify(initialState))
 
-               delete newObject.value.payback;
-               delete newObject.value.priceProfitability;
-               delete newObject.value.globalRentFlowYear;
-               delete newObject.value.globalRentFlowMouth;
-            break;
-            
-            case "sale":
-               newObject.fields.priceGlobal.name = "Цена";
-               newObject.fields.priceSquare.name = "Цена за м2";
+      switch (type) {
+        case "rent":
+          newObject.fields.priceGlobal.name = "Арендная плата"
+          newObject.fields.priceSquare.name = "Арендная плата за м2"
 
-               delete newObject.value.payback;
-               delete newObject.value.priceProfitability;
-               delete newObject.value.globalRentFlowYear;
-               delete newObject.value.globalRentFlowMouth;
-               delete newObject.value.priceRentMouth;
-               delete newObject.value.priceRentYear;
-            break;
-            case "sale-business":
-               newObject.fields.priceGlobal.name = "Цена";
-               newObject.fields.priceSquare.name = "Цена за м2";
+          delete newObject.value.payback
+          delete newObject.value.priceProfitability
+          delete newObject.value.globalRentFlowYear
+          delete newObject.value.globalRentFlowMouth
+          break
 
-               delete newObject.value.priceRentMouth;
-               delete newObject.value.priceRentYear;
-            break;
-         }
+        case "sale":
+          newObject.fields.priceGlobal.name = "Цена"
+          newObject.fields.priceSquare.name = "Цена за м2"
 
-         newObject.type = type;
-         newObject.stage = stagesObject.pickedType;
-         
-         return state = newObject;
-      },
+          delete newObject.value.payback
+          delete newObject.value.priceProfitability
+          delete newObject.value.globalRentFlowYear
+          delete newObject.value.globalRentFlowMouth
+          delete newObject.value.priceRentMouth
+          delete newObject.value.priceRentYear
+          break
+        case "sale-business":
+          newObject.fields.priceGlobal.name = "Цена"
+          newObject.fields.priceSquare.name = "Цена за м2"
 
-      /**
-       * 
-       * @param {{ payload: { field: string, value: any } }} action 
-       */
-      changeObjectField: (state, action) => {
-         const {
-            field,
-            value,
-         } = action.payload;
+          delete newObject.value.priceRentMouth
+          delete newObject.value.priceRentYear
+          break
+      }
 
-         
-         if(!field) return;
-         // if(value.toString().length === 0) return;
+      newObject.type = type
+      newObject.stage = stagesObject.pickedType
 
-         // state.stage = stagesObject.input;
-         state.value[field] = value;
-      },
-      /**
-       * 
-       * @param {{ payload: { field: string } }} action 
-       */
-      resetObjectField: (state, action) => {
-         const { field } = action.payload;
+      return (state = newObject)
+    },
 
-         delete state.value[field];
-      }, 
+    /**
+     *
+     * @param {{ payload: { field: string, value: any } }} action
+     */
+    changeObjectField: (state, action) => {
+      const { field, value } = action.payload
 
-      /**
-       * @param {{ payload: { errors: string[], field: string } }} action 
-       */
-      setErrorsOnField: (state, action) => {
-         const {
-            errors,
-            field
-         } = action.payload;
+      if (!field) return
+      // if(value.toString().length === 0) return;
 
-         state.fields[field].error = errors.join(", ");
-         state.stage = stagesObject.error;
-      },
-      /**
-       * @param {{ payload: { field: string } }} action 
-      */
-      clearErrorsOnField(state, action) {
-         const { field } = action.payload;
+      // state.stage = stagesObject.input;
+      state.value[field] = value
+    },
+    /**
+     *
+     * @param {{ payload: { field: string } }} action
+     */
+    resetObjectField: (state, action) => {
+      const { field } = action.payload
 
-         Reflect.deleteProperty(state.fields[field], 'error');
+      delete state.value[field]
+    },
 
-         const newObject = JSON.parse(JSON.stringify(state));
+    /**
+     * @param {{ payload: { errors: string[], field: string } }} action
+     */
+    setErrorsOnField: (state, action) => {
+      const { errors, field } = action.payload
 
-         const getRequiredFields = Object
-         .keys(newObject.value)
-         .map(objectField => {
-            if(!!newObject.fields[objectField]?.required) return {
-               fieldName: objectField,
-               field: newObject.fields[objectField],
-               value: newObject.value[objectField],
-            };
-         })
-         .filter(field => !!field);
+      state.fields[field].error = errors.join(", ")
+      state.stage = stagesObject.error
+    },
+    /**
+     * @param {{ payload: { field: string } }} action
+     */
+    clearErrorsOnField(state, action) {
+      const { field } = action.payload
 
-         const errorsFields = getRequiredFields.filter(objectField => !!objectField.field?.error);
+      Reflect.deleteProperty(state.fields[field], "error")
 
-         newObject.stage = errorsFields.length === 0 ? stagesObject.beforeCreate: stagesObject.error;
-      
-         state = newObject;
-         state.stage = errorsFields.length === 0 ? stagesObject.beforeCreate: stagesObject.error;
-      },
+      const newObject = JSON.parse(JSON.stringify(state))
 
-      validateFieldsObject: state => {
-         const newObject = JSON.parse(JSON.stringify(state));
+      const getRequiredFields = Object.keys(newObject.value)
+        .map(objectField => {
+          if (!!newObject.fields[objectField]?.required)
+            return {
+              fieldName: objectField,
+              field: newObject.fields[objectField],
+              value: newObject.value[objectField],
+            }
+        })
+        .filter(field => !!field)
 
-         state.stage = stagesObject.beforeValidate;
+      const errorsFields = getRequiredFields.filter(
+        objectField => !!objectField.field?.error
+      )
 
-         let requiredFields = Object
-         .keys(newObject.value)
-         .map(objectField => {
-            if(!!newObject.fields[objectField]?.required) return {
-               fieldName: objectField,
-               fieldInfo: newObject.fields[objectField],
-               value: newObject.value[objectField],
-            };
-         })
-         .filter(field => !!field);
+      newObject.stage =
+        errorsFields.length === 0
+          ? stagesObject.beforeCreate
+          : stagesObject.error
 
-         requiredFields = requiredFields.map(requiredField => {
-            if(requiredField.value.toString().length === 0) return {
-               ...requiredField,
-               fieldInfo: {
-                  ...requiredField.fieldInfo,
-                  error: "Поле обязательно для заполнения",
-               },
-            };
-            return requiredField;
-         });
+      state = newObject
+      state.stage =
+        errorsFields.length === 0
+          ? stagesObject.beforeCreate
+          : stagesObject.error
+    },
 
-         
-         const errorRequiredFields = requiredFields.filter(objectField => !!objectField.fieldInfo?.error);
+    validateFieldsObject: state => {
+      const newObject = JSON.parse(JSON.stringify(state))
 
-         if(errorRequiredFields.length > 0) {
-            newObject.stage = stagesObject.error;
-            
-            errorRequiredFields.forEach(errRequiredField => {
-               newObject.fields[errRequiredField.fieldName] = {
-                  ...errRequiredField.fieldInfo,
-               }
-            });
+      state.stage = stagesObject.beforeValidate
 
-         } 
-         else newObject.stage = stagesObject.validate;
-         
-         return state = newObject;
-      },
-      removeTentant: (state, action) => {
-         state.createdObject.tenantsInfo.splice(state.createdObject.tenantsInfo.findIndex(tentantInObject => tentantInObject.tentant.id === action.payload), 1);
-      },
-      // tentant
-      /** 
-       * @param { { payload: { tentant: object } } } action 
-       */
-      joinNewTentant: (state, action) => {
-         if(state.createdObject === null) return;
+      let requiredFields = Object.keys(newObject.value)
+        .map(objectField => {
+          if (!!newObject.fields[objectField]?.required)
+            return {
+              fieldName: objectField,
+              fieldInfo: newObject.fields[objectField],
+              value: newObject.value[objectField],
+            }
+        })
+        .filter(field => !!field)
 
-         state.createdObject.tenantsInfo.push({
-            type: 'create',
-            tentant: action.payload.tentant,
-            detalization: [
-               ''
-            ],
-            indexation: null,
-            contract: '',
-            rentFlow: {
-               mount: null,
-               year: null
+      requiredFields = requiredFields.map(requiredField => {
+        if (requiredField.value.toString().length === 0)
+          return {
+            ...requiredField,
+            fieldInfo: {
+              ...requiredField.fieldInfo,
+              error: "Поле обязательно для заполнения",
             },
-         })
-      },
-      /** 
-       * @param {{ payload: { field: string, value: unkown, tentantId: string } }} action 
-       */
-      setTentantData: (state, action) => {
-         const {
-            field,
-            value,
-            tentantId,
-         } = action.payload;
-
-         const findTentantInObject = state.createdObject.tenantsInfo.findIndex(tentantInObject => tentantInObject.tentant.id === tentantId);
-
-         if(findTentantInObject === -1) console.error("Ошибка такого арендатора нет!");
-         else {
-            deepObject.set(state.createdObject.tenantsInfo[findTentantInObject], field, value);
-         };
-      },
-   },
-   extraReducers: builder => {
-      builder.addCase(createObject.pending, state => {
-         state.isLoading = true;
+          }
+        return requiredField
       })
-      builder.addCase(createObject.rejected, (state, action) => {
-         state.isLoading = false;
-         
-         state.error = {
-            response: action.error,
-         };
-      });
-      builder.addCase(createObject.fulfilled, (state, action) => {
 
-         if(state.type === 'sale-business') {
-            state.stage = stagesObject.createdSaleBusiness;
-            state.createdObject = action.payload.data;
-         }
-         else {
-            state.stage = stagesObject.created;
-         };
+      const errorRequiredFields = requiredFields.filter(
+        objectField => !!objectField.fieldInfo?.error
+      )
 
-         state.error = undefined;
+      if (errorRequiredFields.length > 0) {
+        newObject.stage = stagesObject.error
 
-         state.isLoading = false;
-      });
+        errorRequiredFields.forEach(errRequiredField => {
+          newObject.fields[errRequiredField.fieldName] = {
+            ...errRequiredField.fieldInfo,
+          }
+        })
+      } else newObject.stage = stagesObject.validate
 
-      builder.addCase(deleteCreatedObject.fulfilled, (state, action) => {
-         state.createdObject = null;
-      });
-   }
-});
+      return (state = newObject)
+    },
+    removeTentant: (state, action) => {
+      state.createdObject.tenantsInfo.splice(
+        state.createdObject.tenantsInfo.findIndex(
+          tentantInObject => tentantInObject.tentant.id === action.payload
+        ),
+        1
+      )
+    },
+    // tentant
+    /**
+     * @param { { payload: { tentant: object } } } action
+     */
+    joinNewTentant: (state, action) => {
+      if (state.createdObject === null) return
+
+      state.createdObject.tenantsInfo.push({
+        type: "create",
+        tentant: action.payload.tentant,
+        detalization: [""],
+        indexation: null,
+        contract: "",
+        rentFlow: {
+          mount: null,
+          year: null,
+        },
+      })
+    },
+    /**
+     * @param {{ payload: { field: string, value: unkown, tentantId: string } }} action
+     */
+    setTentantData: (state, action) => {
+      const { field, value, tentantId } = action.payload
+
+      const findTentantInObject = state.createdObject.tenantsInfo.findIndex(
+        tentantInObject => tentantInObject.tentant.id === tentantId
+      )
+
+      if (findTentantInObject === -1)
+        console.error("Ошибка такого арендатора нет!")
+      else {
+        deepObject.set(
+          state.createdObject.tenantsInfo[findTentantInObject],
+          field,
+          value
+        )
+      }
+    },
+  },
+  extraReducers: builder => {
+    builder.addCase(createObject.pending, state => {
+      state.isLoading = true
+    })
+    builder.addCase(createObject.rejected, (state, action) => {
+      state.isLoading = false
+
+      state.error = {
+        response: action.payload.response,
+      }
+    })
+    builder.addCase(createObject.fulfilled, (state, action) => {
+      if (state.type === "sale-business") {
+        state.stage = stagesObject.createdSaleBusiness
+        state.createdObject = action.payload.data
+      } else {
+        state.stage = stagesObject.created
+      }
+
+      state.error = undefined
+
+      state.isLoading = false
+    })
+
+    builder.addCase(deleteCreatedObject.fulfilled, (state, action) => {
+      state.createdObject = null
+    })
+  },
+})
 
 export const {
-   pickObjectType,
-   pickObjectStage,
-   resetCreateObject,
+  pickObjectType,
+  pickObjectStage,
+  resetCreateObject,
 
-   // object field
-   changeObjectField,
-   resetObjectField,
+  // object field
+  changeObjectField,
+  resetObjectField,
 
-   // error field
-   setErrorsOnField,
-   clearErrorsOnField,
-   validateFieldsObject,
+  // error field
+  setErrorsOnField,
+  clearErrorsOnField,
+  validateFieldsObject,
 
-   // tentants
-   joinNewTentant,
-   setTentantData,
-   removeTentant
-} = createObjectSlice.actions;
+  // tentants
+  joinNewTentant,
+  setTentantData,
+  removeTentant,
+} = createObjectSlice.actions
 
-export default createObjectSlice.reducer;
+export default createObjectSlice.reducer
