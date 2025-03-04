@@ -1,84 +1,124 @@
-import HeaderBtn from "./HeaderBtn.jsx";
-import {useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {setTab} from "../slices/tabSlice.jsx";
-import {NavLink, useLocation, useNavigate, useParams} from "react-router-dom";
-import Button from "@mui/material/Button";
-import { IconButton } from "@mui/material";
+import HeaderBtn from './HeaderBtn.jsx';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setTab } from '../slices/tabSlice.jsx';
+import { NavLink, useLocation, useNavigate, useParams } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import { IconButton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function Header() {
-    const dispatch = useDispatch()
-    const selector = useSelector(state => state.tabMore.value.activeTab)
-    const [active, setActive] = useState('all')
+  const dispatch = useDispatch();
+  const selector = useSelector(state => state.tabMore.value.activeTab);
+  const [active, setActive] = useState('all');
 
-    const navigate = useNavigate()
-    const location = useLocation()
-    console.log(location.pathname)
-    return (
-        <header
-            className={'shadow-xl flex  gap-[40px] fixed w-full z-50 bg-white h-[90px] px-[16px] md:px-[32px] xl:px-[60px]'}>
-            <div className={'flex  mx-auto max-w-[1280px] w-full items-center'}>
-                <img  onClick={() => {
-                    navigate('/')
-                }} className={'cursor-pointer max-h-[60px]'} src="/property.png" alt=""/>
+  const navigate = useNavigate();
+  const location = useLocation();
+  console.log(location.pathname);
+  return (
+    <header
+      className={
+        'shadow-xl flex  gap-[40px] fixed w-full z-50 bg-white h-[90px] px-[16px] md:px-[32px] xl:px-[60px]'
+      }
+    >
+      <div className={'flex  mx-auto max-w-[1280px] w-full items-center'}>
+        <img
+          onClick={() => {
+            navigate('/');
+          }}
+          className={'cursor-pointer max-h-[60px]'}
+          src="/property.png"
+          alt=""
+        />
 
-                <nav className={` flex gap-[40px]`}>
-                {
-                    location.pathname !== '/arendators'
-                    &&
-                    <button onClick={(e) => {
+        <nav className={` flex gap-[40px]`}>
+          {location.pathname !== '/arendators' && (
+            <button
+              onClick={e => {
+                navigate('/arendators');
+              }}
+            >
+              АРЕНДАТОРЫ
+            </button>
+          )}
 
-                        navigate('/arendators');
-                    }}>
-                        АРЕНДАТОРЫ
-                    </button>
-                }
-
-                {
-                    (location.pathname !== '/' && location.pathname !== '/pdf')
-                    &&
-                    <>
-                        <IconButton 
-                            color="primary"
-                            onClick={() => {
-                                navigate('/');
-                            }}
-                        >
-                            <ArrowBackIcon htmlColor="black" />
-                        </IconButton>
-                        <button onClick={() => {
-                            navigate('/');
-                        }}>
-                            ОБЪЕКТЫ
-                        </button>
-                    </>
-                }
-                {location.pathname !== '/arendators' &&
-                    <>
-                        <HeaderBtn change={(e) => {
-                            navigate('/')
-                            dispatch(setTab({
-                                ['activeTab']: 'all'
-                            }))
-                        }} state={'all'} active={selector}  text={'ВСЕ ОБЪЕКТЫ'}/>
-                        <HeaderBtn change={(e) => {
-                            navigate('/')
-                            dispatch(setTab({
-                                ['activeTab']: 'rent'
-                            }))
-                        }} state={'rent'} active={selector}  text={'АРЕНДА'}/>
-                        <HeaderBtn change={(e) => {
-                            navigate('/')
-                            dispatch(setTab({
-                                ['activeTab']: 'sale'
-                            }))
-                        }}  state={'sale'} active={selector}  text={'ПРОДАЖА'}/>
-                    </>
-
-                }
+          {location.pathname !== '/' && location.pathname !== '/pdf' && (
+            <>
+              <IconButton
+                color="primary"
+                onClick={() => {
+                  navigate('/');
+                }}
+              >
+                <ArrowBackIcon htmlColor="black" />
+              </IconButton>
+              <button
+                onClick={() => {
+                  navigate('/');
+                }}
+              >
+                ОБЪЕКТЫ
+              </button>
+            </>
+          )}
+          {location.pathname !== '/arendators' && (
+            <>
+              <HeaderBtn
+                change={e => {
+                  navigate('/');
+                  dispatch(
+                    setTab({
+                      ['activeTab']: 'all',
+                    }),
+                  );
+                }}
+                state={'all'}
+                active={selector}
+                text={'ВСЕ ОБЪЕКТЫ'}
+              />
+              <HeaderBtn
+                change={e => {
+                  navigate('/');
+                  dispatch(
+                    setTab({
+                      ['activeTab']: 'rent',
+                    }),
+                  );
+                }}
+                state={'rent'}
+                active={selector}
+                text={'АРЕНДА'}
+              />
+              <HeaderBtn
+                change={e => {
+                  navigate('/');
+                  dispatch(
+                    setTab({
+                      ['activeTab']: 'sale',
+                    }),
+                  );
+                }}
+                state={'sale'}
+                active={selector}
+                text={'ПРОДАЖА'}
+              />
+              <HeaderBtn
+                change={() => {
+                  navigate('/');
+                  dispatch(
+                    setTab({
+                      activeTab: 'archive',
+                    }),
+                  );
+                }}
+                state={'archive'}
+                active={selector}
+                text={'АРХИВ'}
+              />
+            </>
+          )}
         </nav>
-            </div>
-        </header>
-    )
+      </div>
+    </header>
+  );
 }
