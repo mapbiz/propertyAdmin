@@ -15,15 +15,19 @@ export default function Card({
   noDisplay = false,
   onForceDelete = null,
 
+  isOpenDelete = () => {},
+  isCloseDelete = () => {},
+
   isArchive = false,
 }) {
   const deleteObject = async () => {
-    if (typeof onForceDelete === 'function') return await onForceDelete(card);
-
+    isOpenDelete();
     if (window.confirm(`Удалить карточку - ${card.title}`)) {
       const resToDelete = await deleteCard(card.id).finally(async () => {
         const res = await getCards();
         dispatch(setStateWindow(res.data));
+
+        isCloseDelete();
       });
       resToDelete();
     }
@@ -117,6 +121,21 @@ export default function Card({
         <p>{typesObject[card.type]}</p>
       </div>
 
+      {isArchive && (
+        <button
+          onClick={async e => {
+            e.stopPropagation();
+            e.preventDefault();
+
+            await onForceDelete(card);
+          }}
+          className={clsx(
+            'bg-gray-600 md:hover:bg-gray-700 text-[20px] leading-[28px]  px-[40px] py-[14px] text-white rounded-[5px]  shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter',
+          )}
+        >
+          Разархивировать
+        </button>
+      )}
       <button
         onClick={e => {
           e.stopPropagation();
@@ -124,13 +143,10 @@ export default function Card({
           deleteObject();
         }}
         className={clsx(
-          isArchive
-            ? 'bg-gray-600 md:hover:bg-gray-700'
-            : 'bg-red-700 md:hover:bg-red-800',
-          'text-[20px] leading-[28px]  px-[40px] py-[14px] text-white rounded-[5px]  shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter',
+          'bg-red-700 md:hover:bg-red-800 text-[20px] leading-[28px]  px-[40px] py-[14px] text-white rounded-[5px]  shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter',
         )}
       >
-        {isArchive ? 'Разархивировать' : 'Удалить'}
+        Удалить
       </button>
     </div>
   );

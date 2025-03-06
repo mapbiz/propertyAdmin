@@ -69,13 +69,15 @@ export default function App() {
     }
   };
 
+  const [isOpenDelete, setIsOpenDelete] = useState(false);
+
   useEffect(() => {
     if (activeTab !== 'archive') return;
 
     setIsArcLoading(false);
 
     getArchiveds();
-  }, [activeTab]);
+  }, [activeTab, isOpenDelete]);
 
   const handleUnArchive = async card => {
     const isConfirm = window.confirm(
@@ -133,6 +135,12 @@ export default function App() {
                     <Card
                       isArchive
                       noDisplay
+                      isCloseDelete={() => {
+                        setIsOpenDelete(false);
+                      }}
+                      isOpenDelete={() => {
+                        setIsOpenDelete(true);
+                      }}
                       key={card.id}
                       card={card}
                       onForceDelete={handleUnArchive}
