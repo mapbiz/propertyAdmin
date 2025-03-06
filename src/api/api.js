@@ -50,6 +50,9 @@ export const getArchiveCards = async () =>
 export const unArchiveCard = async id =>
   await instanceApi.delete(`/object/archive/${id}`);
 
+export const archiveCard = async id =>
+  await instanceApi.delete(`/archive/object/${id}`);
+
 // export const getCards = async (slug) => {
 //     return await axios.get(`https://prop-test.ru/server/api/v1/objects`)
 // }

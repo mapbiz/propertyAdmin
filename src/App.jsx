@@ -22,9 +22,14 @@ export default function App() {
     [openCreateObjectModal, setOpenCreateObjectModal] = useState(false);
   // const [cards, setCards] = useState([])
 
+  const modalWindow = useSelector(state => state.modalWindow),
+    isOpen = modalWindow.modalWindow;
+
   const [isLoading, setIsLoading] = useState(true);
   const activeTab = useSelector(state => state.tabMore.value.activeTab);
   useEffect(() => {
+    if (activeTab === 'archive') return;
+
     async function fetchData() {
       try {
         const res = await getCards();
@@ -35,7 +40,8 @@ export default function App() {
     }
     fetchData();
     dispatch(getTentants());
-  }, []);
+  }, [activeTab, isOpen]);
+
   useEffect(() => {
     if (tentants.isLoading) return;
 
