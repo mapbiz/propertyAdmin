@@ -60,7 +60,9 @@ export const archiveCard = async id =>
 // export const authUser = async (login, password) => await axios.post('/admin/login', { login, password }, { withCredentials: true }),
 // authMe = async () => await axios.get('/admin/auth/me', { withCredentials: true });
 
-export const createCard = async data => await instanceApi.post('/object', data);
+export const createCard = async data => {
+  return await instanceApi.post('/object', data);
+};
 
 // export const deleteCard = async (id) => {
 //     return await axios.delete(`https://65d32fb7522627d50108390b.mockapi.io/cards/${id}`)

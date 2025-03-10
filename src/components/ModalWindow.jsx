@@ -67,6 +67,8 @@ export default function ModalWindow({ isCreate }) {
 
   const [layoutImages, setLayoutImages] = useState([]);
 
+  const [isLoadingCopy, setIsLoadingCopy] = useState(false);
+
   useEffect(() => {
     if (object.layoutImages.length === 0) return;
 
@@ -189,7 +191,6 @@ export default function ModalWindow({ isCreate }) {
         ...(rentCurrentYear ? { priceRentYear: rentCurrentYear } : {}),
         // ...(getCurrentObject.price?.rent?.mouth ? { rentCurrentMouth: profitability.price?.rent?.mouth } : {}),
       };
-
       const formData = objectToFormData(newObject);
       const res = await createCard(formData);
 
@@ -340,22 +341,28 @@ export default function ModalWindow({ isCreate }) {
               <div className={'flex gap-4'}>
                 <div>
                   <button
+                    disabled={isLoadingCopy}
                     onClick={async () => {
                       if (isCreate) {
                         create();
                       } else {
+                        setIsLoadingCopy(true);
+
                         await copyObject(object.id).finally(async () => {
                           const res = await getCards();
                           dispatch(setStateWindow(res.data));
+                          setIsLoadingCopy(false);
                         });
                         // revalidate()
                       }
                     }}
                     className={
-                      'text-[20px]  right-12 my-[24px] py-2 leading-[28px] bg-[#144728] px-[20px]  text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter'
+                      'text-[20px]  right-12 my-[24px] py-2 leading-[28px] bg-[#144728] px-[20px]  text-white rounded-[5px] md:hover:bg-[#1E653A] shadow-lg active:bg-[#0B2716] duration-300 font-[300] font-inter whitespace-nowrap disabled:!bg-[#144728af]'
                     }
                   >
-                    {'Копировать'}
+                    {isLoadingCopy
+                      ? 'Подождите идет копирование...'
+                      : 'Копировать'}
                   </button>
                 </div>
                 <div>
@@ -640,28 +647,28 @@ export default function ModalWindow({ isCreate }) {
                 }}
               />
               {/* <div
-                                className={'flex flex-col relative '}
-                            >
-                                <div className={'flex gap-2.5'}>
-                                    {object.images && object.images.map((item, index) => {
-                                        return (
-                                            <div className={'flex flex-col'}>
-                                                <img
-                                                    className={'max-h-[150px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
-                                                    src={`${item.url}`}
-                                                />
-                                                <Button onClick={(e) => {
-                                                    dispatch(removeCardImage(index));
-                                                }}
-                                                        color={'error'}
-                                                        variant={"contained"}>
-                                                    Удалить
-                                                </Button>
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-                            </div> */}
+                                  className={'flex flex-col relative '}
+                              >
+                                  <div className={'flex gap-2.5'}>
+                                      {object.images && object.images.map((item, index) => {
+                                          return (
+                                              <div className={'flex flex-col'}>
+                                                  <img
+                                                      className={'max-h-[150px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
+                                                      src={`${item.url}`}
+                                                  />
+                                                  <Button onClick={(e) => {
+                                                      dispatch(removeCardImage(index));
+                                                  }}
+                                                          color={'error'}
+                                                          variant={"contained"}>
+                                                      Удалить
+                                                  </Button>
+                                              </div>
+                                          )
+                                      })}
+                                  </div>
+                              </div> */}
             </div>
           </div>
           <div className="pt-[20px]">
@@ -739,24 +746,24 @@ export default function ModalWindow({ isCreate }) {
 
             <div className="flex flex-wrap gap-2 pt-4 ">
               {/* {object.layoutImages && object.layoutImages.map((item, index) => {
-                                return (
-                                    <div className={'flex flex-col'}>
-                                        <img
-                                            className={'max-h-[150px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
-                                            src={item.url}
-                                            alt={''}/>
-                                        <Button onClick={(e) => {
-                                            dispatch(removeLayoutImage(index));
-                                        }}
-                                                color={'error'}
-                                                variant={"contained"}>
-                                            Удалить
-                                        </Button>
-                                    </div>
+                                  return (
+                                      <div className={'flex flex-col'}>
+                                          <img
+                                              className={'max-h-[150px] object-contain rounded-tl-[5px] rounded--tr-[5px]'}
+                                              src={item.url}
+                                              alt={''}/>
+                                          <Button onClick={(e) => {
+                                              dispatch(removeLayoutImage(index));
+                                          }}
+                                                  color={'error'}
+                                                  variant={"contained"}>
+                                              Удалить
+                                          </Button>
+                                      </div>
 
 
-                                )
-                            })} */}
+                                  )
+                              })} */}
               <ImageSwitcher
                 imgs={layoutImages.map(layoutImage => layoutImage.url)}
                 setImgs={newImgs => {
