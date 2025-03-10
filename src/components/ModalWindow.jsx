@@ -191,6 +191,16 @@ export default function ModalWindow({ isCreate }) {
         ...(rentCurrentYear ? { priceRentYear: rentCurrentYear } : {}),
         // ...(getCurrentObject.price?.rent?.mouth ? { rentCurrentMouth: profitability.price?.rent?.mouth } : {}),
       };
+
+      if (!!newObject?.tentantLogo)
+        newObject.tentantLogo = (
+          await reverseImageGet(`/${newObject.tentantLogo}`)
+        ).data;
+
+      console.log({
+        newObject,
+      });
+
       const formData = objectToFormData(newObject);
       const res = await createCard(formData);
 
