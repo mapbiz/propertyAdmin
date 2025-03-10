@@ -14,6 +14,7 @@ import {
 } from '../slices/tagSlice.jsx';
 import {
   createCard,
+  createTentantsInCard,
   getCards,
   getCurrentCard,
   reverseImageGet,
@@ -187,24 +188,40 @@ export default function ModalWindow({ isCreate }) {
           return photo.file;
         }),
         // Добавляем rentCurrentMouth и Year, если они существует
-        ...(rentCurrentMouth ? { rentCurrentMouth: rentCurrentMouth } : {}),
+        ...(rentCurrentMouth ? { priceRentMouth: rentCurrentMouth } : {}),
         ...(rentCurrentYear ? { priceRentYear: rentCurrentYear } : {}),
+        priceProfitability: profitability,
+        globalRentFlowMouth: globalRentFlow?.mouth,
+        globalRentFlowYear: globalRentFlow?.year,
         // ...(getCurrentObject.price?.rent?.mouth ? { rentCurrentMouth: profitability.price?.rent?.mouth } : {}),
       };
+
+      let tenantsInfo = [];
+
+      if (!!newObject?.tenantsInfo) {
+        tenantsInfo = newObject.tenantsInfo;
+        Reflect.deleteProperty(newObject, 'tenantsInfo');
+      }
 
       if (!!newObject?.tentantLogo)
         newObject.tentantLogo = (
           await reverseImageGet(`/${newObject.tentantLogo}`)
         ).data;
 
-      console.log({
-        newObject,
-      });
-
       const formData = objectToFormData(newObject);
       const res = await createCard(formData);
 
       if (res.data.ok) {
+        if (tenantsInfo.length > 0) {
+          await createTentantsInCard(
+            tenantsInfo.map(tentantInfo => ({
+              ...tentantInfo,
+              tentantId: tentantInfo.tentant.id,
+            })),
+            res.data.data.id,
+          );
+        }
+
         dispatch(setModalWindow({ modalWindow: false }));
       } else {
         // Обработка случая, если операция не удалась.
@@ -212,7 +229,18 @@ export default function ModalWindow({ isCreate }) {
       }
     } catch (err) {
       // Обработка ошибок, например, при запросах к API.
-      alert(err.response.data.error.message);
+      if (err?.response?.data?.error)
+        return alert(err.response?.data?.error?.message);
+      // if (err?.response?.data?.errors)
+      //   return alert(
+      //     err?.response?.data?.errors
+      //       ?.map(errObj => errObj.field + '\n' + errObj.message)
+      //       .join('\n'),
+      //   );
+      if (err) {
+        console.error(err);
+        return alert('Неизвестная ошибка попробуйте снова!');
+      }
     }
   };
 
